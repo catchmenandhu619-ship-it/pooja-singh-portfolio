@@ -608,8 +608,8 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* ============ SECTION 3: SELECTED WORK (dark) ============ */}
-      <section id="work" className="relative z-30 flex w-full flex-col bg-[#0a0a0a] text-white">
+      {/* ============ SECTION 3: SELECTED WORK ============ */}
+      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900">
         {/* Pterodactyl flying overlap into the section above */}
         <motion.img
           src={PTERODACTYL_IMG}
@@ -618,7 +618,7 @@ export default function App() {
           whileInView={{ x: '-50%', y: '-78%', opacity: 1 }}
           viewport={{ once: true, margin: '100px' }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[160vw] max-w-none md:w-[1100px]"
+          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[160vw] max-w-none opacity-15 md:w-[1100px]"
         />
 
         {/* Heading area */}
@@ -627,14 +627,14 @@ export default function App() {
             {...fadeUp}
             viewport={{ once: true, margin: '-100px' }}
             transition={{ duration: 0.9, ease: 'easeOut' }}
-            className="max-w-3xl text-[1.8rem] font-medium leading-[1.15] tracking-tight md:text-[3rem] lg:text-[3.4rem]"
+            className="max-w-3xl text-[1.8rem] font-medium leading-[1.15] tracking-tight text-gray-900 md:text-[3rem] lg:text-[3.4rem]"
           >
             Work that doesn't just{' '}
             <span className="mx-2 inline-flex translate-y-[-4px] gap-2 align-middle md:mx-3 md:gap-3">
               {[Clapperboard, Sparkles, ImageIcon].map((Icon, i) => (
                 <span
                   key={i}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black text-white/50 transition-colors duration-300 hover:border-crimson hover:bg-crimson hover:text-white md:h-14 md:w-14"
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-400 transition-colors duration-300 hover:border-crimson hover:bg-crimson hover:text-white md:h-14 md:w-14"
                 >
                   <Icon size={20} strokeWidth={1.5} />
                 </span>
@@ -649,7 +649,7 @@ export default function App() {
             transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
             className="shrink-0"
           >
-            <p className="mb-6 text-[9px] uppercase leading-relaxed tracking-widest text-white/40 md:text-[10px]">
+            <p className="mb-6 text-[9px] uppercase leading-relaxed tracking-widest text-gray-500 md:text-[10px]">
               I don't just make content
               <br />I make content that converts
             </p>
@@ -657,7 +657,7 @@ export default function App() {
               {['Strategic', 'Brand-Aligned', 'High-Retention'].map((pill) => (
                 <span
                   key={pill}
-                  className="rounded-full border border-white/20 px-5 py-2 text-[9px] uppercase tracking-widest text-white/60 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
+                  className="rounded-full border border-gray-300 px-5 py-2 text-[9px] uppercase tracking-widest text-gray-600 transition-colors duration-300 hover:border-gray-900 hover:bg-gray-900 hover:text-white"
                 >
                   {pill}
                 </span>
@@ -666,7 +666,7 @@ export default function App() {
           </motion.div>
         </div>
 
-        <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+        <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
 
         {/* AGGRESSIVE NEW DESIGN - Skills Showcase */}
         <div className="relative z-10 px-6 py-20 sm:px-10 md:py-32 lg:px-16">
@@ -688,9 +688,9 @@ export default function App() {
               transition={{ duration: 0.5 }}
               className="text-center"
             >
-              <h3 className="text-3xl font-bold tracking-tight text-white md:text-4xl">{CHAPTERS[activeChapter].name}</h3>
-              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/60">{CHAPTERS[activeChapter].desc}</p>
-              <div className="mt-6 flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-white/40">
+              <h3 className="text-3xl font-bold tracking-tight text-gray-900 md:text-4xl">{CHAPTERS[activeChapter].name}</h3>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-gray-600">{CHAPTERS[activeChapter].desc}</p>
+              <div className="mt-6 flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-gray-500">
                 <span className="text-lg font-bold text-crimson">0{activeChapter + 1}</span>
                 <span>/</span>
                 <span>05</span>
@@ -708,7 +708,7 @@ export default function App() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/30" />
+                <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/50" />
                 <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-crimson md:text-3xl">Technical Skills</h3>
                 <div className="flex-1 h-px bg-gradient-to-r from-crimson/30 to-transparent" />
               </div>
@@ -733,11 +733,11 @@ export default function App() {
                     <motion.div
                       whileHover={{ scale: 1.05, rotateZ: 2 }}
                       transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-crimson/40 bg-gradient-to-br from-crimson/10 to-crimson/5 p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.3)]"
+                      className="relative h-full w-full rounded-xl border-2 border-crimson/30 bg-gradient-to-br from-crimson/5 to-white p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.2)]"
                     >
                       <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-crimson/20 group-hover:bg-crimson/40 transition-colors" />
-                        <p className="text-sm font-bold text-white md:text-base">{skill}</p>
+                        <div className="h-8 w-8 rounded-full bg-crimson/10 group-hover:bg-crimson/20 transition-colors" />
+                        <p className="text-sm font-bold text-gray-900 md:text-base">{skill}</p>
                       </div>
                     </motion.div>
                   </motion.div>
@@ -753,8 +753,8 @@ export default function App() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-purple-500 to-purple-500/30" />
-                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-400 md:text-3xl">AI Toolset</h3>
+                <div className="h-1 w-12 bg-gradient-to-r from-purple-600 to-purple-600/50" />
+                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-600 md:text-3xl">AI Toolset</h3>
                 <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent" />
               </div>
               <motion.div
@@ -778,11 +778,11 @@ export default function App() {
                     <motion.div
                       whileHover={{ scale: 1.05, rotateZ: -2 }}
                       transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-purple-500/40 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-4 transition-all duration-300 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
+                      className="relative h-full w-full rounded-xl border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-white p-4 transition-all duration-300 hover:border-purple-600 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
                     >
                       <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-purple-500/20 group-hover:bg-purple-500/40 transition-colors" />
-                        <p className="text-sm font-bold text-white md:text-base">{tool}</p>
+                        <div className="h-8 w-8 rounded-full bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors" />
+                        <p className="text-sm font-bold text-gray-900 md:text-base">{tool}</p>
                       </div>
                     </motion.div>
                   </motion.div>
@@ -798,9 +798,9 @@ export default function App() {
               transition={{ duration: 0.8, ease: 'easeOut' }}
             >
               <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-amber-400 to-amber-400/30" />
-                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-400 md:text-3xl">Specializations</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-amber-400/30 to-transparent" />
+                <div className="h-1 w-12 bg-gradient-to-r from-amber-600 to-amber-600/50" />
+                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-600 md:text-3xl">Specializations</h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
               </div>
               <motion.div
                 initial="initial"
@@ -823,11 +823,11 @@ export default function App() {
                     <motion.div
                       whileHover={{ scale: 1.05, rotateZ: 2 }}
                       transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-amber-400/40 bg-gradient-to-br from-amber-400/10 to-amber-400/5 p-4 transition-all duration-300 hover:border-amber-400 hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]"
+                      className="relative h-full w-full rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-white p-4 transition-all duration-300 hover:border-amber-600 hover:shadow-[0_0_30px_rgba(217,119,6,0.2)]"
                     >
                       <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-amber-400/20 group-hover:bg-amber-400/40 transition-colors" />
-                        <p className="text-sm font-bold text-white md:text-base">{spec}</p>
+                        <div className="h-8 w-8 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors" />
+                        <p className="text-sm font-bold text-gray-900 md:text-base">{spec}</p>
                       </div>
                     </motion.div>
                   </motion.div>
@@ -838,7 +838,7 @@ export default function App() {
         </div>
 
         {/* Section footer line */}
-        <div className="relative z-10 px-6 py-8 text-[10px] uppercase tracking-widest text-white/40 sm:px-10 lg:px-16">
+        <div className="relative z-10 px-6 py-8 text-[10px] uppercase tracking-widest text-gray-400 sm:px-10 lg:px-16">
           CUT. GRADE. SHIP. REPEAT.
         </div>
       </section>
