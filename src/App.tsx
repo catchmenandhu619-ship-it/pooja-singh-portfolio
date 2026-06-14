@@ -146,7 +146,6 @@ export default function App() {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null)
   const [isVideoLoading, setIsVideoLoading] = useState(false)
-  const videoRef = useRef<HTMLVideoElement>(null)
   const contactVideoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
