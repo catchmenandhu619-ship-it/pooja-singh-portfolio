@@ -666,15 +666,13 @@ export default function App() {
           </motion.div>
         </div>
 
-        <div className="relative z-10 h-px bg-white/10" />
+        <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
-        {/* Two-column panel */}
-        <div className="relative z-10 flex flex-col md:flex-row">
-          {/* Left panel */}
-          <div className="flex min-h-[320px] flex-col justify-between border-b border-white/10 p-8 md:min-h-[500px] md:w-[35%] md:border-b-0 md:border-r">
-            <div className="text-xl tracking-[0.3em] text-white/30">***</div>
-
-            <div className="relative min-h-[260px] flex-1 md:min-h-[340px]">
+        {/* AGGRESSIVE NEW DESIGN - Skills Showcase */}
+        <div className="relative z-10 px-6 py-20 sm:px-10 md:py-32 lg:px-16">
+          {/* Chapter Gallery - Integrated */}
+          <div className="mb-24 flex flex-col items-center gap-8">
+            <div className="relative h-40 w-full max-w-lg md:h-56">
               <AnimatePresence mode="wait">
                 <SandTransitionImage
                   key={activeChapter}
@@ -683,119 +681,159 @@ export default function App() {
                 />
               </AnimatePresence>
             </div>
-
-            <p className="mx-auto mb-6 max-w-[260px] text-center text-[12px] leading-[1.6] text-white/50">
-              {CHAPTERS[activeChapter].desc}
-            </p>
-
-            <div className="flex items-center gap-2 text-[10px] uppercase tracking-widest text-white/40">
-              <div className="h-4 overflow-hidden">
-                <motion.div
-                  key={activeChapter}
-                  initial={{ y: 14 }}
-                  animate={{ y: 0 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                >
-                  0{activeChapter + 1}
-                </motion.div>
+            <motion.div
+              key={activeChapter}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-center"
+            >
+              <h3 className="text-3xl font-bold tracking-tight text-white md:text-4xl">{CHAPTERS[activeChapter].name}</h3>
+              <p className="mt-4 max-w-2xl text-base leading-relaxed text-white/60">{CHAPTERS[activeChapter].desc}</p>
+              <div className="mt-6 flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-white/40">
+                <span className="text-lg font-bold text-crimson">0{activeChapter + 1}</span>
+                <span>/</span>
+                <span>05</span>
               </div>
-              <span className="text-white/20">/</span>
-              <span>05</span>
-            </div>
+            </motion.div>
           </div>
 
-          {/* Right panel - Skills & Tools */}
-          <div className="md:w-[65%]">
-            <div className="border-b border-white/10 p-6 text-[10px] uppercase tracking-widest text-white/40 md:p-8">
-              <span>Tools & Expertise</span>
-            </div>
-
-            {/* Technical Skills */}
-            <div className="border-b border-white/10 p-6 md:p-8">
-              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                <span className="h-1 w-1 rounded-full bg-crimson" />
-                <span className="text-crimson">Technical Skills</span>
-              </h3>
+          {/* Three Categories - Full Width Showcase */}
+          <div className="space-y-20">
+            {/* Technical Skills - Bold Red Theme */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            >
+              <div className="mb-8 flex items-center gap-4">
+                <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/30" />
+                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-crimson md:text-3xl">Technical Skills</h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-crimson/30 to-transparent" />
+              </div>
               <motion.div
                 initial="initial"
                 whileInView="whileInView"
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.08, delayChildren: 0.1 }}
-                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+                transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
               >
-                {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
+                {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill, idx) => (
                   <motion.div
                     key={skill}
                     variants={{
-                      initial: { opacity: 0, y: 10, scale: 0.95 },
-                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                      initial: { opacity: 0, rotateX: -20, y: 20 },
+                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
                     }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-crimson hover:bg-gradient-to-br hover:from-crimson/20 hover:to-crimson/5 hover:text-white hover:shadow-[0_0_20px_rgba(255,61,46,0.2)]"
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="group relative h-32 cursor-pointer"
+                    style={{ perspective: '1000px' }}
                   >
-                    <span className="relative z-10">{skill}</span>
+                    <motion.div
+                      whileHover={{ scale: 1.05, rotateZ: 2 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative h-full w-full rounded-xl border-2 border-crimson/40 bg-gradient-to-br from-crimson/10 to-crimson/5 p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.3)]"
+                    >
+                      <div className="flex h-full flex-col justify-between">
+                        <div className="h-8 w-8 rounded-full bg-crimson/20 group-hover:bg-crimson/40 transition-colors" />
+                        <p className="text-sm font-bold text-white md:text-base">{skill}</p>
+                      </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </motion.div>
-            </div>
+            </motion.div>
 
-            {/* AI Toolset */}
-            <div className="border-b border-white/10 p-6 md:p-8">
-              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                <span className="h-1 w-1 rounded-full bg-purple-500" />
-                <span className="text-purple-400">AI Toolset</span>
-              </h3>
+            {/* AI Toolset - Bold Purple Theme */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            >
+              <div className="mb-8 flex items-center gap-4">
+                <div className="h-1 w-12 bg-gradient-to-r from-purple-500 to-purple-500/30" />
+                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-400 md:text-3xl">AI Toolset</h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent" />
+              </div>
               <motion.div
                 initial="initial"
                 whileInView="whileInView"
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.08, delayChildren: 0.15 }}
-                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+                transition={{ staggerChildren: 0.06, delayChildren: 0.15 }}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'].map((tool) => (
                   <motion.div
                     key={tool}
                     variants={{
-                      initial: { opacity: 0, y: 10, scale: 0.95 },
-                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                      initial: { opacity: 0, rotateX: -20, y: 20 },
+                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
                     }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-purple-500/5 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]"
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="group relative h-32 cursor-pointer"
+                    style={{ perspective: '1000px' }}
                   >
-                    <span className="relative z-10">{tool}</span>
+                    <motion.div
+                      whileHover={{ scale: 1.05, rotateZ: -2 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative h-full w-full rounded-xl border-2 border-purple-500/40 bg-gradient-to-br from-purple-500/10 to-purple-500/5 p-4 transition-all duration-300 hover:border-purple-500 hover:shadow-[0_0_30px_rgba(168,85,247,0.3)]"
+                    >
+                      <div className="flex h-full flex-col justify-between">
+                        <div className="h-8 w-8 rounded-full bg-purple-500/20 group-hover:bg-purple-500/40 transition-colors" />
+                        <p className="text-sm font-bold text-white md:text-base">{tool}</p>
+                      </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </motion.div>
-            </div>
+            </motion.div>
 
-            {/* Specializations */}
-            <div className="p-6 md:p-8">
-              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
-                <span className="h-1 w-1 rounded-full bg-amber-400" />
-                <span className="text-amber-400">Specializations</span>
-              </h3>
+            {/* Specializations - Bold Amber Theme */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-100px' }}
+              transition={{ duration: 0.8, ease: 'easeOut' }}
+            >
+              <div className="mb-8 flex items-center gap-4">
+                <div className="h-1 w-12 bg-gradient-to-r from-amber-400 to-amber-400/30" />
+                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-400 md:text-3xl">Specializations</h3>
+                <div className="flex-1 h-px bg-gradient-to-r from-amber-400/30 to-transparent" />
+              </div>
               <motion.div
                 initial="initial"
                 whileInView="whileInView"
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.08, delayChildren: 0.2 }}
-                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+                transition={{ staggerChildren: 0.06, delayChildren: 0.2 }}
+                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
               >
                 {['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'].map((spec) => (
                   <motion.div
                     key={spec}
                     variants={{
-                      initial: { opacity: 0, y: 10, scale: 0.95 },
-                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                      initial: { opacity: 0, rotateX: -20, y: 20 },
+                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
                     }}
-                    transition={{ duration: 0.4, ease: 'easeOut' }}
-                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-amber-400 hover:bg-gradient-to-br hover:from-amber-400/20 hover:to-amber-400/5 hover:text-white hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]"
+                    transition={{ duration: 0.5, ease: 'easeOut' }}
+                    className="group relative h-32 cursor-pointer"
+                    style={{ perspective: '1000px' }}
                   >
-                    <span className="relative z-10">{spec}</span>
+                    <motion.div
+                      whileHover={{ scale: 1.05, rotateZ: 2 }}
+                      transition={{ duration: 0.3 }}
+                      className="relative h-full w-full rounded-xl border-2 border-amber-400/40 bg-gradient-to-br from-amber-400/10 to-amber-400/5 p-4 transition-all duration-300 hover:border-amber-400 hover:shadow-[0_0_30px_rgba(251,191,36,0.3)]"
+                    >
+                      <div className="flex h-full flex-col justify-between">
+                        <div className="h-8 w-8 rounded-full bg-amber-400/20 group-hover:bg-amber-400/40 transition-colors" />
+                        <p className="text-sm font-bold text-white md:text-base">{spec}</p>
+                      </div>
+                    </motion.div>
                   </motion.div>
                 ))}
               </motion.div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
