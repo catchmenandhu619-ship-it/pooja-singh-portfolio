@@ -214,6 +214,7 @@ export default function App() {
           loop
           playsInline
           className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: 'center right' }}
           src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260606_154941_df1a96e1-a06f-450c-bd02-d863414cc1a0.mp4"
         />
 
@@ -830,10 +831,10 @@ export default function App() {
               transition={{ duration: 0.3 }}
               className="relative bg-black rounded-lg overflow-hidden shadow-2xl"
               style={{
-                maxWidth: videoAspectRatio && videoAspectRatio < 1 ? '60vw' : '95vw',
-                maxHeight: '95vh',
-                width: videoAspectRatio && videoAspectRatio < 1 ? '60vw' : '95vw',
-                height: videoAspectRatio && videoAspectRatio < 1 ? '95vh' : 'auto',
+                maxWidth: videoAspectRatio && videoAspectRatio < 1 ? 'min(90vw, 500px)' : '95vw',
+                maxHeight: '90vh',
+                width: videoAspectRatio && videoAspectRatio < 1 ? 'min(90vw, 500px)' : '95vw',
+                height: videoAspectRatio && videoAspectRatio < 1 ? '90vh' : 'auto',
                 aspectRatio: videoAspectRatio || '16 / 9',
               }}
               onClick={(e) => e.stopPropagation()}
