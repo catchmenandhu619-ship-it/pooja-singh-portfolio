@@ -712,53 +712,89 @@ export default function App() {
 
             {/* Technical Skills */}
             <div className="border-b border-white/10 p-6 md:p-8">
-              <h3 className="mb-4 text-[11px] font-bold uppercase tracking-wider text-crimson">
-                Technical Skills
+              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
+                <span className="h-1 w-1 rounded-full bg-crimson" />
+                <span className="text-crimson">Technical Skills</span>
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <motion.div
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ staggerChildren: 0.08, delayChildren: 0.1 }}
+                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+              >
                 {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
-                  <div
+                  <motion.div
                     key={skill}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[12px] font-medium text-white/80 transition-colors duration-300 hover:border-crimson hover:bg-crimson/10 hover:text-white"
+                    variants={{
+                      initial: { opacity: 0, y: 10, scale: 0.95 },
+                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                    }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-crimson hover:bg-gradient-to-br hover:from-crimson/20 hover:to-crimson/5 hover:text-white hover:shadow-[0_0_20px_rgba(255,61,46,0.2)]"
                   >
-                    {skill}
-                  </div>
+                    <span className="relative z-10">{skill}</span>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* AI Toolset */}
             <div className="border-b border-white/10 p-6 md:p-8">
-              <h3 className="mb-4 text-[11px] font-bold uppercase tracking-wider text-crimson">
-                AI Toolset
+              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
+                <span className="h-1 w-1 rounded-full bg-purple-500" />
+                <span className="text-purple-400">AI Toolset</span>
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <motion.div
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ staggerChildren: 0.08, delayChildren: 0.15 }}
+                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+              >
                 {['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'].map((tool) => (
-                  <div
+                  <motion.div
                     key={tool}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[12px] font-medium text-white/80 transition-colors duration-300 hover:border-crimson hover:bg-crimson/10 hover:text-white"
+                    variants={{
+                      initial: { opacity: 0, y: 10, scale: 0.95 },
+                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                    }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-purple-500 hover:bg-gradient-to-br hover:from-purple-500/20 hover:to-purple-500/5 hover:text-white hover:shadow-[0_0_20px_rgba(168,85,247,0.2)]"
                   >
-                    {tool}
-                  </div>
+                    <span className="relative z-10">{tool}</span>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
 
             {/* Specializations */}
             <div className="p-6 md:p-8">
-              <h3 className="mb-4 text-[11px] font-bold uppercase tracking-wider text-crimson">
-                Specializations
+              <h3 className="mb-6 flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider">
+                <span className="h-1 w-1 rounded-full bg-amber-400" />
+                <span className="text-amber-400">Specializations</span>
               </h3>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <motion.div
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ staggerChildren: 0.08, delayChildren: 0.2 }}
+                className="grid grid-cols-2 gap-3 sm:grid-cols-3"
+              >
                 {['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'].map((spec) => (
-                  <div
+                  <motion.div
                     key={spec}
-                    className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-[12px] font-medium text-white/80 transition-colors duration-300 hover:border-crimson hover:bg-crimson/10 hover:text-white"
+                    variants={{
+                      initial: { opacity: 0, y: 10, scale: 0.95 },
+                      whileInView: { opacity: 1, y: 0, scale: 1 },
+                    }}
+                    transition={{ duration: 0.4, ease: 'easeOut' }}
+                    className="group relative rounded-lg border border-white/20 bg-gradient-to-br from-white/8 to-white/0 px-4 py-3 text-[12px] font-medium text-white/85 transition-all duration-300 hover:border-amber-400 hover:bg-gradient-to-br hover:from-amber-400/20 hover:to-amber-400/5 hover:text-white hover:shadow-[0_0_20px_rgba(251,191,36,0.2)]"
                   >
-                    {spec}
-                  </div>
+                    <span className="relative z-10">{spec}</span>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
