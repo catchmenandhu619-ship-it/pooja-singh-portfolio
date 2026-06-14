@@ -143,6 +143,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeChapter, setActiveChapter] = useState(0)
   const [showVideo, setShowVideo] = useState(false)
+  const [dinoAnimationComplete, setDinoAnimationComplete] = useState(false)
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null)
   const [isVideoLoading, setIsVideoLoading] = useState(false)
@@ -379,116 +380,130 @@ export default function App() {
       {/* ============ SECTION 2: WHAT I DO (light) ============ */}
       <section
         id="about"
-        className="relative z-20 flex w-full flex-col items-center bg-[#fcfcfc] px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16"
+        className="relative z-20 flex w-full flex-col items-center bg-white px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16"
       >
-        {/* Walking-dinosaur video playing behind the text (delayed reveal) */}
-        {showVideo && (
+        {/* Walking-dinosaur video as preloader */}
+        {showVideo && !dinoAnimationComplete && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1.6, ease: 'easeOut' }}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+            className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-white"
           >
             <video
               autoPlay
-              loop
               muted
               playsInline
-              className="h-full w-full object-cover"
+              className="h-full w-full object-contain"
+              style={{ backgroundColor: '#ffffff' }}
               src={DINO_VIDEO}
+              onEnded={() => setDinoAnimationComplete(true)}
             />
           </motion.div>
         )}
 
-        {/* Section label */}
-        <motion.div
-          {...fadeUp}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="relative z-10 mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] md:mb-12 md:text-[11px]"
-        >
-          <span className="text-crimson">[ 02 ]</span>{' '}
-          <span className="font-semibold text-gray-900">What I Do</span>
-        </motion.div>
-
-        {/* Main statement */}
-        <motion.h2
-          {...fadeUp}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-          className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]"
-        >
-          Raw footage in. Scroll-stopping stories out — editing, motion and
-          design built to make brands{' '}
-          <span className="text-crimson">impossible to ignore.</span>
-        </motion.h2>
-
-        {/* Skill pills */}
-        <motion.div
-          id="skills"
-          initial="initial"
-          whileInView="whileInView"
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
-          className="relative z-10 mb-14 flex flex-wrap items-center justify-center gap-3 md:mb-20 md:gap-4"
-        >
-          {SKILL_PILLS.map(({ icon: Icon, label }) => (
-            <motion.button
-              key={label}
-              variants={{
-                initial: { opacity: 0, y: 20 },
-                whileInView: { opacity: 1, y: 0 },
-              }}
+        {/* Content - only visible after dinosaur animation */}
+        <AnimatePresence>
+          {dinoAnimationComplete && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex items-center gap-2 rounded-full border border-gray-400 bg-white/75 px-5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-gray-800 backdrop-blur-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)] transition-colors duration-300 hover:border-black hover:bg-black hover:text-white"
+              className="relative z-10 w-full flex flex-col items-center"
             >
-              <Icon size={14} strokeWidth={2} />
-              {label}
-            </motion.button>
-          ))}
-        </motion.div>
+              {/* Section label */}
+              <motion.div
+                {...fadeUp}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] md:mb-12 md:text-[11px]"
+              >
+                <span className="text-crimson">[ 02 ]</span>{' '}
+                <span className="font-semibold text-gray-900">What I Do</span>
+              </motion.div>
 
-        {/* Experience strip */}
-        <motion.div
-          {...fadeUp}
-          viewport={{ once: true, margin: '-80px' }}
-          transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="relative z-10 grid w-full max-w-[1000px] gap-10 rounded-xl border-t border-gray-300 bg-black/85 px-8 py-12 sm:grid-cols-2 sm:px-12 sm:py-14"
-        >
-          <div>
-            <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-[14px]">
-              2026 — Adda Education
-            </div>
-            <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-4xl">
-              Video Editor
-            </div>
-            <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-[15px]">
-              High-engagement educational video content with motion graphics —
-              100% on-time delivery across high-volume schedules.
-            </p>
-          </div>
-          <div>
-            <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-[14px]">
-              2025 — 1to10X (Tech Startup)
-            </div>
-            <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-4xl">
-              Creative Content & Video Specialist
-            </div>
-            <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-[15px]">
-              Owned the full production cycle — concept, shoot, edit. Pioneered
-              generative AI workflows, boosting production efficiency by 30%.
-            </p>
-          </div>
-        </motion.div>
+              {/* Main statement */}
+              <motion.h2
+                {...fadeUp}
+                viewport={{ once: true, margin: '-100px' }}
+                transition={{ duration: 0.9, ease: 'easeOut' }}
+                className="mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]"
+              >
+                Raw footage in. Scroll-stopping stories out — editing, motion and
+                design built to make brands{' '}
+                <span className="text-crimson">impossible to ignore.</span>
+              </motion.h2>
 
-        {/* Spacer — room for the pterodactyl from the next section to overlap upward */}
-        <div className="min-h-[220px] w-full md:min-h-[450px]" />
+              {/* Skill pills */}
+              <motion.div
+                id="skills"
+                initial="initial"
+                whileInView="whileInView"
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ staggerChildren: 0.1, delayChildren: 0.2 }}
+                className="mb-14 flex flex-wrap items-center justify-center gap-3 md:mb-20 md:gap-4"
+              >
+                {SKILL_PILLS.map(({ icon: Icon, label }) => (
+                  <motion.button
+                    key={label}
+                    variants={{
+                      initial: { opacity: 0, y: 20 },
+                      whileInView: { opacity: 1, y: 0 },
+                    }}
+                    transition={{ duration: 0.6, ease: 'easeOut' }}
+                    className="flex items-center gap-2 rounded-full border border-gray-400 bg-white/75 px-5 py-2.5 text-[11px] font-medium uppercase tracking-wider text-gray-800 backdrop-blur-sm drop-shadow-[0_1px_2px_rgba(0,0,0,0.15)] transition-colors duration-300 hover:border-black hover:bg-black hover:text-white"
+                  >
+                    <Icon size={14} strokeWidth={2} />
+                    {label}
+                  </motion.button>
+                ))}
+              </motion.div>
 
-        {/* Bottom text */}
-        <div className="pointer-events-none relative z-10 mt-16 hidden w-full max-w-[1200px] justify-between text-[10px] font-medium uppercase tracking-widest text-gray-500 md:flex">
-          <span>I DON'T JUST EDIT VIDEOS.</span>
-          <span>POOJA SINGH (C) 2026</span>
-        </div>
+              {/* Experience strip */}
+              <motion.div
+                {...fadeUp}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="grid w-full max-w-[1000px] gap-10 rounded-xl border-t border-gray-300 bg-black/85 px-8 py-12 sm:grid-cols-2 sm:px-12 sm:py-14"
+              >
+                <div>
+                  <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-[14px]">
+                    2026 — Adda Education
+                  </div>
+                  <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-4xl">
+                    Video Editor
+                  </div>
+                  <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-[15px]">
+                    High-engagement educational video content with motion graphics —
+                    100% on-time delivery across high-volume schedules.
+                  </p>
+                </div>
+                <div>
+                  <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-[14px]">
+                    2025 — 1to10X (Tech Startup)
+                  </div>
+                  <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] sm:text-4xl">
+                    Creative Content & Video Specialist
+                  </div>
+                  <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)] sm:text-[15px]">
+                    Owned the full production cycle — concept, shoot, edit. Pioneered
+                    generative AI workflows, boosting production efficiency by 30%.
+                  </p>
+                </div>
+              </motion.div>
+
+              {/* Spacer — room for the pterodactyl from the next section to overlap upward */}
+              <div className="min-h-[220px] w-full md:min-h-[450px]" />
+
+              {/* Bottom text */}
+              <div className="pointer-events-none mt-16 hidden w-full max-w-[1200px] justify-between text-[10px] font-medium uppercase tracking-widest text-gray-500 md:flex">
+                <span>I DON'T JUST EDIT VIDEOS.</span>
+                <span>POOJA SINGH (C) 2026</span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </section>
 
       {/* ============ SECTION 2.5: PROJECTS PORTFOLIO ============ */}
