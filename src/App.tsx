@@ -389,14 +389,14 @@ export default function App() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center overflow-hidden bg-white"
+            className="pointer-events-none fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-white"
           >
             <video
               autoPlay
               muted
               playsInline
-              className="h-full w-full object-contain"
-              style={{ backgroundColor: '#ffffff' }}
+              className="h-full w-full object-cover"
+              style={{ backgroundColor: '#ffffff', objectPosition: 'left center' }}
               src={DINO_VIDEO}
               onEnded={() => setDinoAnimationComplete(true)}
             />
