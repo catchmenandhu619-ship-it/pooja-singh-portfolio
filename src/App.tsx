@@ -146,6 +146,7 @@ export default function App() {
   const [selectedVideo, setSelectedVideo] = useState<string | null>(null)
   const [videoAspectRatio, setVideoAspectRatio] = useState<number | null>(null)
   const [isVideoLoading, setIsVideoLoading] = useState(false)
+  const [videoThumbnails, setVideoThumbnails] = useState<{ [key: string]: string }>({})
   const contactVideoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -195,6 +196,36 @@ export default function App() {
     setIsVideoLoading(true)
     setVideoAspectRatio(null)
   }, [selectedVideo])
+
+  // Fetch Vimeo thumbnails
+  useEffect(() => {
+    const videoIds = [
+      '1201241359',
+      '1201241358',
+      '1201241357',
+      '1201243199',
+      '1201243165',
+      '1201243162',
+      '1201243163',
+      '1201243164',
+    ]
+
+    videoIds.forEach((videoId) => {
+      fetch(`https://vimeo.com/api/v2/video/${videoId}.json`)
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data[0] && data[0].thumbnail_large) {
+            setVideoThumbnails((prev) => ({
+              ...prev,
+              [videoId]: data[0].thumbnail_large,
+            }))
+          }
+        })
+        .catch(() => {
+          // Silently fail if thumbnail fetch fails
+        })
+    })
+  }, [])
 
   // Increase contact video playback speed
   useEffect(() => {
@@ -542,7 +573,7 @@ export default function App() {
               className="group relative aspect-video overflow-hidden rounded-lg bg-gray-900 shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer"
               onClick={() => setSelectedVideo(videoId)}
               style={{
-                backgroundImage: `url('https://res.cloudinary.com/dxh4m2kyv/video/upload/so_2/${['Project1_jlclkr', 'Project2_rs2hyp', 'Project3_txa12o', 'Project4_qdgp7e', 'Project5_nk5klx', 'Project6_dfg7yu', 'Project7_np6piy', 'Project8_nlwa4s'][idx]}.jpg')`,
+                backgroundImage: videoThumbnails[videoId] ? `url('${videoThumbnails[videoId]}')` : `url('https://res.cloudinary.com/dxh4m2kyv/video/upload/so_2/${['Project1_jlclkr', 'Project2_rs2hyp', 'Project3_txa12o', 'Project4_qdgp7e', 'Project5_nk5klx', 'Project6_dfg7yu', 'Project7_np6piy', 'Project8_nlwa4s'][idx]}.jpg')`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }}
