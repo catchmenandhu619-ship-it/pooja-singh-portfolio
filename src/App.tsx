@@ -613,12 +613,12 @@ export default function App() {
         {/* Pterodactyl flying overlap into the section above */}
         <motion.img
           src={PTERODACTYL_IMG}
-          alt=""
+          alt="pterodactyl"
           initial={{ x: '-50%', y: '-65%', opacity: 0 }}
           whileInView={{ x: '-50%', y: '-78%', opacity: 1 }}
           viewport={{ once: true, margin: '100px' }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[160vw] max-w-none opacity-25 md:w-[1100px]"
+          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[120vw] max-w-none opacity-25 sm:w-[140vw] md:w-[1100px]"
         />
 
         {/* Heading area */}
@@ -672,7 +672,7 @@ export default function App() {
         <div className="relative z-10 px-6 py-20 sm:px-10 md:py-32 lg:px-16">
           {/* Chapter Gallery - Integrated */}
           <div className="mb-24 flex flex-col items-center gap-8">
-            <div className="relative h-40 w-full max-w-lg md:h-56">
+            <div className="relative h-48 w-full max-w-sm sm:max-w-md md:max-w-lg md:h-56 lg:max-w-2xl">
               <AnimatePresence mode="wait">
                 <SandTransitionImage
                   key={activeChapter}
