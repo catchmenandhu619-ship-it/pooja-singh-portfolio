@@ -33,35 +33,33 @@ const CHAPTERS = [
   {
     name: 'YouTube Edits',
     desc: 'High-retention edits for education and startup channels',
-    image: 'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779624247/01_udnber.png',
+    image: '/assets/dinosaurs/chapter-01.jpg',
   },
   {
     name: 'Motion Graphics',
     desc: 'Dynamic text animations and visual storytelling',
-    image: 'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779624374/02_pmvxxl.png',
+    image: '/assets/dinosaurs/chapter-02.jpg',
   },
   {
     name: 'Thumbnail Design',
     desc: 'High-CTR thumbnails and social media carousels',
-    image: 'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779624236/03_hcp3jc.png',
+    image: '/assets/dinosaurs/chapter-03.jpg',
   },
   {
     name: 'Brand Decks',
     desc: 'Presentation decks and visual aids with strict brand consistency',
-    image: 'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779624256/04_get63z.png',
+    image: '/assets/dinosaurs/chapter-04.jpg',
   },
   {
     name: 'AI Content',
     desc: 'Generative AI workflows — Midjourney, HeyGen, Sora and beyond',
-    image: 'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779624251/05_kz1tyu.png',
+    image: '/assets/dinosaurs/chapter-05.jpg',
   },
 ]
 
-const PTERODACTYL_IMG =
-  'https://res.cloudinary.com/dsdxaxkiz/image/upload/v1779625001/ChatGPT_Image_May_23_2026_12_24_44_PM_1_lv1dne.png'
+const PTERODACTYL_IMG = '/assets/dinosaurs/pterodactyl.png'
 
-const DINO_VIDEO =
-  'https://res.cloudinary.com/dsdxaxkiz/video/upload/v1779624998/magnific_use-img-2-as-the-exact-ba_Piu3X0W42C_wnrc8f.mp4'
+const DINO_VIDEO = '/assets/dinosaurs/walking-dino.mp4'
 
 /**
  * Sand/particle dissolve transition driven by an SVG filter chain
