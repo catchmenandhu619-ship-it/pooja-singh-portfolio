@@ -75,8 +75,15 @@ function SandTransitionImage({ src, alt }: { src: string; alt: string }) {
   const offsetRef = useRef<SVGFEOffsetElement>(null)
   const blurRef = useRef<SVGFEGaussianBlurElement>(null)
   const matrixRef = useRef<SVGFEColorMatrixElement>(null)
+  const [isMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
 
   useEffect(() => {
+    // Skip complex SVG animations on mobile for better performance
+    if (isMobile) {
+      if (!isPresent) safeToRemove?.()
+      return
+    }
+
     const DURATION = 900
     const entering = isPresent
     const start = performance.now()
@@ -98,37 +105,41 @@ function SandTransitionImage({ src, alt }: { src: string; alt: string }) {
       )
       if (t < 1) {
         raf = requestAnimationFrame(tick)
-      } else if (!entering) {
+      } else if (!isPresent) {
         safeToRemove?.()
       }
     }
 
     raf = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(raf)
-  }, [isPresent, safeToRemove])
+  }, [isPresent, safeToRemove, isMobile])
 
   return (
     <>
-      <svg className="absolute h-0 w-0" aria-hidden="true">
-        <filter id={filterId.current} x="-50%" y="-50%" width="200%" height="200%">
-          <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="4" result="noise" />
-          <feDisplacementMap ref={dispRef} in="SourceGraphic" in2="noise" scale="0" />
-          <feOffset ref={offsetRef} dx="0" dy="0" />
-          <feGaussianBlur ref={blurRef} stdDeviation="0" />
-          <feColorMatrix
-            ref={matrixRef}
-            type="matrix"
-            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
-          />
-        </filter>
-      </svg>
+      {!isMobile && (
+        <svg className="absolute h-0 w-0" aria-hidden="true">
+          <filter id={filterId.current} x="-50%" y="-50%" width="200%" height="200%">
+            <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="4" result="noise" />
+            <feDisplacementMap ref={dispRef} in="SourceGraphic" in2="noise" scale="0" />
+            <feOffset ref={offsetRef} dx="0" dy="0" />
+            <feGaussianBlur ref={blurRef} stdDeviation="0" />
+            <feColorMatrix
+              ref={matrixRef}
+              type="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
+            />
+          </filter>
+        </svg>
+      )}
       <img
         src={src}
         alt={alt}
         crossOrigin="anonymous"
         referrerPolicy="no-referrer"
-        className="absolute inset-0 m-auto h-[80%] w-[80%] object-contain mix-blend-lighten"
-        style={{ filter: `url(#${filterId.current})` }}
+        className="absolute inset-0 m-auto h-[80%] w-[80%] object-contain"
+        style={!isMobile ? { filter: `url(#${filterId.current})` } : {}}
+        loading="eager"
+        onError={(e) => console.log('Image failed to load:', src)}
       />
     </>
   )
@@ -418,15 +429,17 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.6, ease: 'easeOut' }}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden"
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-100"
           >
             <video
               autoPlay
               loop
               muted
               playsInline
+              preload="auto"
               className="h-full w-full object-cover"
               src={DINO_VIDEO}
+              onError={(e) => console.log('Video failed to load:', DINO_VIDEO)}
             />
           </motion.div>
         )}
