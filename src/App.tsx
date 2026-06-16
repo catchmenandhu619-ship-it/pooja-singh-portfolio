@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, AnimatePresence, usePresence } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import {
   ArrowUpRight,
   Award,
@@ -29,119 +29,38 @@ const SKILL_PILLS = [
   { icon: Megaphone, label: 'Social Content' },
 ]
 
+// CloudFront-hosted ambient videos (same reliable host as the hero/contact videos).
+const CF = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P'
+
 const CHAPTERS = [
   {
     name: 'YouTube Edits',
     desc: 'High-retention edits for education and startup channels',
-    image: '/assets/dinosaurs/chapter-01.jpg',
+    video: `${CF}/hf_20260331_045634_e1c98c76-1265-4f5c-882a-4276f2080894.mp4`,
   },
   {
     name: 'Motion Graphics',
     desc: 'Dynamic text animations and visual storytelling',
-    image: '/assets/dinosaurs/chapter-02.jpg',
+    video: `${CF}/hf_20260331_053923_22c0a6a5-313c-474c-85ff-3b50d25e944a.mp4`,
   },
   {
     name: 'Thumbnail Design',
     desc: 'High-CTR thumbnails and social media carousels',
-    image: '/assets/dinosaurs/chapter-03.jpg',
+    video: `${CF}/hf_20260331_054411_511c1b7a-fb2f-42ef-bf6c-32c0b1a06e79.mp4`,
   },
   {
     name: 'Brand Decks',
     desc: 'Presentation decks and visual aids with strict brand consistency',
-    image: '/assets/dinosaurs/chapter-04.jpg',
+    video: `${CF}/hf_20260331_055427_ac7035b5-9f3b-4289-86fc-941b2432317d.mp4`,
   },
   {
     name: 'AI Content',
     desc: 'Generative AI workflows — Midjourney, HeyGen, Sora and beyond',
-    image: '/assets/dinosaurs/chapter-05.jpg',
+    video: `${CF}/hf_20260331_055729_72d66327-b59e-4ae9-bb70-de6ccb5ecdb0.mp4`,
   },
 ]
 
-const PTERODACTYL_IMG = '/assets/dinosaurs/pterodactyl.png'
-
-const DINO_VIDEO = '/assets/dinosaurs/walking-dino.mp4'
-
-/**
- * Sand/particle dissolve transition driven by an SVG filter chain
- * (turbulence -> displacement -> offset -> blur -> alpha fade).
- * Works inside AnimatePresence via usePresence.
- */
-function SandTransitionImage({ src, alt }: { src: string; alt: string }) {
-  const [isPresent, safeToRemove] = usePresence()
-  const filterId = useRef(`sand-${Math.random().toString(36).slice(2, 9)}`)
-  const dispRef = useRef<SVGFEDisplacementMapElement>(null)
-  const offsetRef = useRef<SVGFEOffsetElement>(null)
-  const blurRef = useRef<SVGFEGaussianBlurElement>(null)
-  const matrixRef = useRef<SVGFEColorMatrixElement>(null)
-  const [isMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768)
-
-  useEffect(() => {
-    // Skip complex SVG animations on mobile for better performance
-    if (isMobile) {
-      if (!isPresent) safeToRemove?.()
-      return
-    }
-
-    const DURATION = 900
-    const entering = isPresent
-    const start = performance.now()
-    let raf: number
-
-    const tick = (now: number) => {
-      const t = Math.min((now - start) / DURATION, 1)
-      const eased = entering ? 1 - Math.pow(1 - t, 4) : Math.pow(t, 3)
-      // p = how dissolved the image is (0 = fully visible)
-      const p = entering ? 1 - eased : eased
-      dispRef.current?.setAttribute('scale', String(150 * p))
-      offsetRef.current?.setAttribute('dy', String(entering ? -80 * p : 120 * p))
-      offsetRef.current?.setAttribute('dx', String(entering ? -30 * p : 30 * p))
-      blurRef.current?.setAttribute('stdDeviation', String(6 * p))
-      const alpha = Math.max(0, 1 - p * 1.2)
-      matrixRef.current?.setAttribute(
-        'values',
-        `1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ${alpha} 0`,
-      )
-      if (t < 1) {
-        raf = requestAnimationFrame(tick)
-      } else if (!isPresent) {
-        safeToRemove?.()
-      }
-    }
-
-    raf = requestAnimationFrame(tick)
-    return () => cancelAnimationFrame(raf)
-  }, [isPresent, safeToRemove, isMobile])
-
-  return (
-    <>
-      {!isMobile && (
-        <svg className="absolute h-0 w-0" aria-hidden="true">
-          <filter id={filterId.current} x="-50%" y="-50%" width="200%" height="200%">
-            <feTurbulence type="fractalNoise" baseFrequency="1.8" numOctaves="4" result="noise" />
-            <feDisplacementMap ref={dispRef} in="SourceGraphic" in2="noise" scale="0" />
-            <feOffset ref={offsetRef} dx="0" dy="0" />
-            <feGaussianBlur ref={blurRef} stdDeviation="0" />
-            <feColorMatrix
-              ref={matrixRef}
-              type="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 1 0"
-            />
-          </filter>
-        </svg>
-      )}
-      <img
-        src={src}
-        alt={alt}
-        crossOrigin="anonymous"
-        referrerPolicy="no-referrer"
-        className="absolute inset-0 m-auto h-[80%] w-[80%] object-contain"
-        style={!isMobile ? { filter: `url(#${filterId.current})` } : {}}
-        loading="eager"
-        onError={(e) => console.log('Image failed to load:', src)}
-      />
-    </>
-  )
-}
+const DINO_VIDEO = `${CF}/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f411.mp4`
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -437,7 +356,6 @@ export default function App() {
               preload="auto"
               className="h-full w-full object-cover"
               src={DINO_VIDEO}
-              onError={(e) => console.log('Video failed to load:', DINO_VIDEO)}
             />
           </motion.div>
         )}
@@ -620,19 +538,7 @@ export default function App() {
       </section>
 
       {/* ============ SECTION 3: SELECTED WORK ============ */}
-      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900 min-h-screen sm:min-h-auto">
-        {/* Pterodactyl flying overlap into the section above */}
-        <motion.img
-          src={PTERODACTYL_IMG}
-          alt="pterodactyl"
-          initial={{ x: '-50%', y: '-55%', opacity: 0 }}
-          whileInView={{ x: '-50%', y: '-60%', opacity: 1 }}
-          viewport={{ once: true, margin: '100px' }}
-          transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[140vw] max-w-none opacity-25 sm:w-[140vw] md:w-[1100px]"
-          style={{ minHeight: '300px' }}
-        />
-
+      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900">
         {/* Heading area */}
         <div className="relative z-10 flex flex-col justify-between gap-10 px-6 pb-14 pt-24 sm:px-10 md:pt-32 lg:px-16 xl:flex-row xl:items-end">
           <motion.h2
@@ -682,14 +588,23 @@ export default function App() {
 
         {/* AGGRESSIVE NEW DESIGN - Skills Showcase */}
         <div className="relative z-10 px-6 py-20 sm:px-10 md:py-32 lg:px-16">
-          {/* Chapter Gallery - Integrated */}
+          {/* Chapter Gallery - Integrated (CloudFront ambient videos) */}
           <div className="mb-24 flex flex-col items-center gap-8">
-            <div className="relative h-48 w-full max-w-sm sm:max-w-md md:max-w-lg md:h-56 lg:max-w-2xl">
+            <div className="relative aspect-video w-full max-w-sm overflow-hidden rounded-2xl bg-gray-100 shadow-xl sm:max-w-md md:max-w-lg lg:max-w-2xl">
               <AnimatePresence mode="wait">
-                <SandTransitionImage
+                <motion.video
                   key={activeChapter}
-                  src={CHAPTERS[activeChapter].image}
-                  alt={CHAPTERS[activeChapter].name}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  preload="auto"
+                  className="absolute inset-0 h-full w-full object-cover"
+                  src={CHAPTERS[activeChapter].video}
                 />
               </AnimatePresence>
             </div>
@@ -731,7 +646,7 @@ export default function App() {
                 transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
                 className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
               >
-                {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill, idx) => (
+                {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
                   <motion.div
                     key={skill}
                     variants={{
