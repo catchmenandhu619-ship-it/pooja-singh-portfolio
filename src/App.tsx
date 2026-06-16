@@ -609,16 +609,17 @@ export default function App() {
       </section>
 
       {/* ============ SECTION 3: SELECTED WORK ============ */}
-      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900">
+      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900 min-h-screen sm:min-h-auto">
         {/* Pterodactyl flying overlap into the section above */}
         <motion.img
           src={PTERODACTYL_IMG}
           alt="pterodactyl"
-          initial={{ x: '-50%', y: '-65%', opacity: 0 }}
-          whileInView={{ x: '-50%', y: '-78%', opacity: 1 }}
+          initial={{ x: '-50%', y: '-55%', opacity: 0 }}
+          whileInView={{ x: '-50%', y: '-60%', opacity: 1 }}
           viewport={{ once: true, margin: '100px' }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[120vw] max-w-none opacity-25 sm:w-[140vw] md:w-[1100px]"
+          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[140vw] max-w-none opacity-25 sm:w-[140vw] md:w-[1100px]"
+          style={{ minHeight: '300px' }}
         />
 
         {/* Heading area */}
