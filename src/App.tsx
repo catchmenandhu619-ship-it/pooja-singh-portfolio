@@ -1,8 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
-  ArrowLeft,
-  ArrowRight,
   ArrowUpRight,
   Award,
   Clapperboard,
@@ -67,234 +65,6 @@ const DINO_VIDEO = `${CF}/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f41
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
-}
-
-// 3D character figurines — colour-changing rotating carousel
-const FIGURINES = [
-  { src: '/assets/figurines/fig-1.png', bg: '#F4845F' },
-  { src: '/assets/figurines/fig-2.png', bg: '#6BBF7A' },
-  { src: '/assets/figurines/fig-3.png', bg: '#E882B4' },
-  { src: '/assets/figurines/fig-4.png', bg: '#6EB5FF' },
-]
-
-function FigurineCarousel() {
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 640,
-  )
-
-  useEffect(() => {
-    FIGURINES.forEach((f) => {
-      const img = new Image()
-      img.src = f.src
-    })
-  }, [])
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 640)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  const navigate = (dir: 'next' | 'prev') => {
-    if (isAnimating) return
-    setIsAnimating(true)
-    setActiveIndex((prev) =>
-      dir === 'next' ? (prev + 1) % 4 : (prev + 3) % 4,
-    )
-    setTimeout(() => setIsAnimating(false), 650)
-  }
-
-  const center = activeIndex
-  const left = (activeIndex + 3) % 4
-  const right = (activeIndex + 1) % 4
-
-  const roleStyle = (i: number): CSSProperties => {
-    const base: CSSProperties = {
-      position: 'absolute',
-      aspectRatio: '0.6 / 1',
-      transition:
-        'transform 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), left 650ms cubic-bezier(0.4,0,0.2,1), bottom 650ms cubic-bezier(0.4,0,0.2,1), height 650ms cubic-bezier(0.4,0,0.2,1)',
-      willChange: 'transform, filter, opacity',
-    }
-    if (i === center)
-      return {
-        ...base,
-        left: '50%',
-        bottom: isMobile ? '22%' : 0,
-        height: isMobile ? '60%' : '92%',
-        transform: `translateX(-50%) scale(${isMobile ? 1.25 : 1.68})`,
-        filter: 'blur(0px)',
-        opacity: 1,
-        zIndex: 20,
-      }
-    if (i === left)
-      return {
-        ...base,
-        left: isMobile ? '20%' : '30%',
-        bottom: isMobile ? '32%' : '12%',
-        height: isMobile ? '16%' : '28%',
-        transform: 'translateX(-50%) scale(1)',
-        filter: 'blur(2px)',
-        opacity: 0.85,
-        zIndex: 10,
-      }
-    if (i === right)
-      return {
-        ...base,
-        left: isMobile ? '80%' : '70%',
-        bottom: isMobile ? '32%' : '12%',
-        height: isMobile ? '16%' : '28%',
-        transform: 'translateX(-50%) scale(1)',
-        filter: 'blur(2px)',
-        opacity: 0.85,
-        zIndex: 10,
-      }
-    // back
-    return {
-      ...base,
-      left: '50%',
-      bottom: isMobile ? '32%' : '12%',
-      height: isMobile ? '13%' : '22%',
-      transform: 'translateX(-50%) scale(1)',
-      filter: 'blur(4px)',
-      opacity: 1,
-      zIndex: 5,
-    }
-  }
-
-  return (
-    <section
-      id="character"
-      className="relative w-full overflow-hidden"
-      style={{
-        backgroundColor: FIGURINES[activeIndex].bg,
-        transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
-        fontFamily: 'Inter, sans-serif',
-      }}
-    >
-      <div className="relative h-svh w-full overflow-hidden">
-        {/* Grain overlay */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 50,
-            opacity: 0.4,
-            backgroundSize: '200px 200px',
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
-          }}
-        />
-
-        {/* Giant ghost text */}
-        <div
-          className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
-          style={{ zIndex: 2, top: '18%' }}
-        >
-          <span
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(72px, 26vw, 360px)',
-              fontWeight: 900,
-              color: '#fff',
-              lineHeight: 1,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            Character
-          </span>
-        </div>
-
-        {/* Section tag (top-left) */}
-        <div
-          className="absolute left-4 top-6 text-[11px] font-semibold uppercase text-white sm:left-8"
-          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em' }}
-        >
-          [ 05 ] Character &amp; 3D
-        </div>
-
-        {/* Carousel */}
-        <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {FIGURINES.map((f, i) => (
-            <div key={i} style={roleStyle(i)}>
-              <img
-                src={f.src}
-                alt=""
-                draggable={false}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'bottom center',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom-left copy + nav */}
-        <div
-          className="absolute bottom-6 left-4 sm:bottom-20 sm:left-24"
-          style={{ zIndex: 60, maxWidth: 320 }}
-        >
-          <p
-            className="mb-2 text-base font-bold uppercase tracking-widest text-white sm:mb-3 sm:text-[22px]"
-            style={{ opacity: 0.95, letterSpacing: '0.02em' }}
-          >
-            3D Character Design
-          </p>
-          <p
-            className="mb-4 hidden text-xs text-white sm:mb-5 sm:block sm:text-sm"
-            style={{ opacity: 0.85, lineHeight: 1.6 }}
-          >
-            Stylized 3D characters and figurine concepts — modeled, lit and
-            rendered for brands, channels and campaigns. Designed to pop on any
-            feed.
-          </p>
-          <div className="flex gap-3">
-            <button
-              aria-label="Previous"
-              onClick={() => navigate('prev')}
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/10 sm:h-16 sm:w-16"
-            >
-              <ArrowLeft size={26} strokeWidth={2.25} />
-            </button>
-            <button
-              aria-label="Next"
-              onClick={() => navigate('next')}
-              className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/10 sm:h-16 sm:w-16"
-            >
-              <ArrowRight size={26} strokeWidth={2.25} />
-            </button>
-          </div>
-        </div>
-
-        {/* Bottom-right link */}
-        <a
-          href="#contact"
-          className="absolute bottom-6 right-4 flex items-center text-white sm:bottom-20 sm:right-10"
-          style={{ zIndex: 60 }}
-        >
-          <span
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(20px, 4vw, 56px)',
-              fontWeight: 400,
-              lineHeight: 1,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-            }}
-          >
-            Work with me
-          </span>
-          <ArrowRight className="ml-2 h-5 w-5 sm:h-8 sm:w-8" strokeWidth={2.25} />
-        </a>
-      </div>
-    </section>
-  )
 }
 
 export default function App() {
@@ -859,139 +629,205 @@ export default function App() {
 
           {/* Three Categories - Full Width Showcase */}
           <div className="space-y-20">
-            {/* Technical Skills - Bold Red Theme */}
+            {/* Technical Skills - Bold Red Theme + orange figurine (left) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12"
             >
-              <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/50" />
-                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-crimson md:text-3xl">Technical Skills</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-crimson/30 to-transparent" />
-              </div>
+              {/* Figurine */}
               <motion.div
-                initial="initial"
-                whileInView="whileInView"
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
+                initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
               >
-                {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
-                  <motion.div
-                    key={skill}
-                    variants={{
-                      initial: { opacity: 0, rotateX: -20, y: 20 },
-                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                    }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="group relative h-32 cursor-pointer"
-                    style={{ perspective: '1000px' }}
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05, rotateZ: 2 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-crimson/30 bg-gradient-to-br from-crimson/5 to-white p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.2)]"
-                    >
-                      <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-crimson/10 group-hover:bg-crimson/20 transition-colors" />
-                        <p className="text-sm font-bold text-gray-900 md:text-base">{skill}</p>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ))}
+                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#F4845F', opacity: 0.4 }} />
+                <motion.img
+                  src="/assets/figurines/fig-1.png"
+                  alt="3D character"
+                  animate={{ y: [0, -14, 0] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
+                />
               </motion.div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/50" />
+                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-crimson md:text-3xl">Technical Skills</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-crimson/30 to-transparent" />
+                </div>
+                <motion.div
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
+                    <motion.div
+                      key={skill}
+                      variants={{
+                        initial: { opacity: 0, rotateX: -20, y: 20 },
+                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="group relative h-32 cursor-pointer"
+                      style={{ perspective: '1000px' }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.05, rotateZ: 2 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative h-full w-full rounded-xl border-2 border-crimson/30 bg-gradient-to-br from-crimson/5 to-white p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.2)]"
+                      >
+                        <div className="flex h-full flex-col justify-between">
+                          <div className="h-8 w-8 rounded-full bg-crimson/10 group-hover:bg-crimson/20 transition-colors" />
+                          <p className="text-sm font-bold text-gray-900 md:text-base">{skill}</p>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
             </motion.div>
 
-            {/* AI Toolset - Bold Purple Theme */}
+            {/* AI Toolset - Bold Purple Theme + blue figurine (right) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="flex flex-col gap-8 lg:flex-row-reverse lg:items-center lg:gap-12"
             >
-              <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-purple-600 to-purple-600/50" />
-                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-600 md:text-3xl">AI Toolset</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent" />
-              </div>
+              {/* Figurine */}
               <motion.div
-                initial="initial"
-                whileInView="whileInView"
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.06, delayChildren: 0.15 }}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
               >
-                {['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'].map((tool) => (
-                  <motion.div
-                    key={tool}
-                    variants={{
-                      initial: { opacity: 0, rotateX: -20, y: 20 },
-                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                    }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="group relative h-32 cursor-pointer"
-                    style={{ perspective: '1000px' }}
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05, rotateZ: -2 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-white p-4 transition-all duration-300 hover:border-purple-600 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
-                    >
-                      <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors" />
-                        <p className="text-sm font-bold text-gray-900 md:text-base">{tool}</p>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ))}
+                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#6EB5FF', opacity: 0.45 }} />
+                <motion.img
+                  src="/assets/figurines/fig-4.png"
+                  alt="3D character"
+                  animate={{ y: [0, -14, 0] }}
+                  transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
+                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
+                />
               </motion.div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="h-1 w-12 bg-gradient-to-r from-purple-600 to-purple-600/50" />
+                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-600 md:text-3xl">AI Toolset</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent" />
+                </div>
+                <motion.div
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ staggerChildren: 0.06, delayChildren: 0.15 }}
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'].map((tool) => (
+                    <motion.div
+                      key={tool}
+                      variants={{
+                        initial: { opacity: 0, rotateX: -20, y: 20 },
+                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="group relative h-32 cursor-pointer"
+                      style={{ perspective: '1000px' }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.05, rotateZ: -2 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative h-full w-full rounded-xl border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-white p-4 transition-all duration-300 hover:border-purple-600 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
+                      >
+                        <div className="flex h-full flex-col justify-between">
+                          <div className="h-8 w-8 rounded-full bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors" />
+                          <p className="text-sm font-bold text-gray-900 md:text-base">{tool}</p>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
             </motion.div>
 
-            {/* Specializations - Bold Amber Theme */}
+            {/* Specializations - Bold Amber Theme + green figurine (left) */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-100px' }}
               transition={{ duration: 0.8, ease: 'easeOut' }}
+              className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12"
             >
-              <div className="mb-8 flex items-center gap-4">
-                <div className="h-1 w-12 bg-gradient-to-r from-amber-600 to-amber-600/50" />
-                <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-600 md:text-3xl">Specializations</h3>
-                <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
-              </div>
+              {/* Figurine */}
               <motion.div
-                initial="initial"
-                whileInView="whileInView"
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ staggerChildren: 0.06, delayChildren: 0.2 }}
-                className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                initial={{ opacity: 0, scale: 0.85, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                viewport={{ once: true, margin: '-80px' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
+                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
               >
-                {['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'].map((spec) => (
-                  <motion.div
-                    key={spec}
-                    variants={{
-                      initial: { opacity: 0, rotateX: -20, y: 20 },
-                      whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                    }}
-                    transition={{ duration: 0.5, ease: 'easeOut' }}
-                    className="group relative h-32 cursor-pointer"
-                    style={{ perspective: '1000px' }}
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05, rotateZ: 2 }}
-                      transition={{ duration: 0.3 }}
-                      className="relative h-full w-full rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-white p-4 transition-all duration-300 hover:border-amber-600 hover:shadow-[0_0_30px_rgba(217,119,6,0.2)]"
-                    >
-                      <div className="flex h-full flex-col justify-between">
-                        <div className="h-8 w-8 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors" />
-                        <p className="text-sm font-bold text-gray-900 md:text-base">{spec}</p>
-                      </div>
-                    </motion.div>
-                  </motion.div>
-                ))}
+                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#6BBF7A', opacity: 0.45 }} />
+                <motion.img
+                  src="/assets/figurines/fig-2.png"
+                  alt="3D character"
+                  animate={{ y: [0, -14, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
+                />
               </motion.div>
+
+              {/* Content */}
+              <div className="flex-1">
+                <div className="mb-8 flex items-center gap-4">
+                  <div className="h-1 w-12 bg-gradient-to-r from-amber-600 to-amber-600/50" />
+                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-600 md:text-3xl">Specializations</h3>
+                  <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
+                </div>
+                <motion.div
+                  initial="initial"
+                  whileInView="whileInView"
+                  viewport={{ once: true, margin: '-50px' }}
+                  transition={{ staggerChildren: 0.06, delayChildren: 0.2 }}
+                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
+                >
+                  {['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'].map((spec) => (
+                    <motion.div
+                      key={spec}
+                      variants={{
+                        initial: { opacity: 0, rotateX: -20, y: 20 },
+                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
+                      }}
+                      transition={{ duration: 0.5, ease: 'easeOut' }}
+                      className="group relative h-32 cursor-pointer"
+                      style={{ perspective: '1000px' }}
+                    >
+                      <motion.div
+                        whileHover={{ scale: 1.05, rotateZ: 2 }}
+                        transition={{ duration: 0.3 }}
+                        className="relative h-full w-full rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-white p-4 transition-all duration-300 hover:border-amber-600 hover:shadow-[0_0_30px_rgba(217,119,6,0.2)]"
+                      >
+                        <div className="flex h-full flex-col justify-between">
+                          <div className="h-8 w-8 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors" />
+                          <p className="text-sm font-bold text-gray-900 md:text-base">{spec}</p>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  ))}
+                </motion.div>
+              </div>
             </motion.div>
           </div>
         </div>
@@ -1001,9 +837,6 @@ export default function App() {
           CUT. GRADE. SHIP. REPEAT.
         </div>
       </section>
-
-      {/* ============ SECTION 3.5: CHARACTER & 3D CAROUSEL ============ */}
-      <FigurineCarousel />
 
       {/* ============ SECTION 4: CONTACT (fullscreen hero video) ============ */}
       <section id="contact" className="relative min-h-screen overflow-hidden bg-[#f0f0ee]">
