@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
+  ArrowLeft,
+  ArrowRight,
   ArrowUpRight,
   Award,
   Clapperboard,
@@ -65,6 +67,243 @@ const DINO_VIDEO = `${CF}/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f41
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
+}
+
+// TOONHUB-style skills carousel: intro slide + 3 category slides, each with its
+// own 3D figurine, colour-changing background, giant ghost title and skill list.
+const SKILL_SLIDES = [
+  {
+    fig: '/assets/figurines/fig-1.png',
+    bg: '#F4845F',
+    ghost: 'SKILLS',
+    title: 'My Skill Set',
+    intro: 'The toolkit behind every scroll-stopping edit. Hit the arrow to explore each craft.',
+    items: [] as string[],
+  },
+  {
+    fig: '/assets/figurines/fig-4.png',
+    bg: '#6EB5FF',
+    ghost: 'TECHNICAL',
+    title: 'Technical Skills',
+    intro: '',
+    items: ['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'],
+  },
+  {
+    fig: '/assets/figurines/fig-3.png',
+    bg: '#E882B4',
+    ghost: 'AI TOOLS',
+    title: 'AI Toolset',
+    intro: '',
+    items: ['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'],
+  },
+  {
+    fig: '/assets/figurines/fig-2.png',
+    bg: '#6BBF7A',
+    ghost: 'CRAFT',
+    title: 'Specializations',
+    intro: '',
+    items: ['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'],
+  },
+]
+
+function SkillsCarousel() {
+  const [[active, dir], setActive] = useState<[number, number]>([0, 1])
+
+  useEffect(() => {
+    SKILL_SLIDES.forEach((s) => {
+      const img = new Image()
+      img.src = s.fig
+    })
+  }, [])
+
+  const paginate = (d: number) =>
+    setActive(([prev]) => [(prev + d + SKILL_SLIDES.length) % SKILL_SLIDES.length, d])
+
+  const slide = SKILL_SLIDES[active]
+  const ease = [0.4, 0, 0.2, 1] as const
+
+  const figVariants = {
+    enter: (d: number) => ({ x: d > 0 ? 120 : -120, opacity: 0, scale: 0.85 }),
+    center: { x: 0, opacity: 1, scale: 1 },
+    exit: (d: number) => ({ x: d > 0 ? -120 : 120, opacity: 0, scale: 0.85 }),
+  }
+
+  return (
+    <section
+      id="skills"
+      className="relative w-full overflow-hidden"
+      style={{
+        backgroundColor: slide.bg,
+        transition: `background-color 650ms cubic-bezier(0.4,0,0.2,1)`,
+        fontFamily: 'Inter, sans-serif',
+      }}
+    >
+      <div className="relative flex h-svh min-h-[640px] w-full flex-col overflow-hidden">
+        {/* Grain overlay */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 50,
+            opacity: 0.4,
+            backgroundSize: '200px 200px',
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+          }}
+        />
+
+        {/* Top-left label + counter */}
+        <div
+          className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
+          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em' }}
+        >
+          <span>[ 04 ] Skills</span>
+          <span className="opacity-60">
+            0{active + 1} / 0{SKILL_SLIDES.length}
+          </span>
+        </div>
+
+        {/* Giant ghost title */}
+        <AnimatePresence mode="popLayout">
+          <motion.div
+            key={`ghost-${active}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.65, ease }}
+            className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
+            style={{ zIndex: 2, top: '14%' }}
+          >
+            <span
+              style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: 'clamp(72px, 24vw, 340px)',
+                color: '#fff',
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.02em',
+                whiteSpace: 'nowrap',
+                opacity: 0.18,
+              }}
+            >
+              {slide.ghost}
+            </span>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Main content: figurine + skills */}
+        <div
+          className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col items-center justify-end gap-2 px-6 pb-40 pt-24 sm:px-10 lg:flex-row lg:items-center lg:justify-center lg:gap-10 lg:pb-32 lg:pl-16"
+          style={{ zIndex: 10 }}
+        >
+          {/* Figurine */}
+          <div className="relative flex flex-1 items-end justify-center lg:h-full">
+            <AnimatePresence custom={dir} mode="popLayout">
+              <motion.img
+                key={`fig-${active}`}
+                src={slide.fig}
+                alt={slide.title}
+                custom={dir}
+                variants={figVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{ duration: 0.65, ease }}
+                draggable={false}
+                className="relative z-10 h-[42vh] w-auto max-w-full object-contain drop-shadow-2xl lg:h-[80vh]"
+              />
+            </AnimatePresence>
+          </div>
+
+          {/* Title + skills list */}
+          <div className="flex w-full flex-col items-center text-center lg:w-[42%] lg:items-start lg:text-left">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`text-${active}`}
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -24 }}
+                transition={{ duration: 0.5, ease }}
+                className="w-full"
+              >
+                <h3
+                  className="text-white"
+                  style={{
+                    fontFamily: 'Anton, sans-serif',
+                    fontSize: 'clamp(34px, 6vw, 72px)',
+                    lineHeight: 1.02,
+                    textTransform: 'uppercase',
+                    letterSpacing: '-0.01em',
+                  }}
+                >
+                  {slide.title}
+                </h3>
+
+                {slide.intro ? (
+                  <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/85 sm:text-base lg:mx-0">
+                    {slide.intro}
+                  </p>
+                ) : (
+                  <ul className="mt-5 grid w-full grid-cols-2 gap-x-6 gap-y-1 sm:max-w-md lg:max-w-none">
+                    {slide.items.map((item, i) => (
+                      <motion.li
+                        key={item}
+                        initial={{ opacity: 0, x: -12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.4, ease, delay: 0.15 + i * 0.05 }}
+                        className="flex items-center gap-2 border-b border-white/20 py-2 text-left text-white"
+                      >
+                        <span className="text-[10px] font-semibold tabular-nums text-white/50">
+                          0{i + 1}
+                        </span>
+                        <span className="text-sm font-medium sm:text-base">{item}</span>
+                      </motion.li>
+                    ))}
+                  </ul>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </div>
+
+        {/* Nav arrows (bottom-left) */}
+        <div
+          className="absolute bottom-8 left-4 flex gap-3 sm:left-10 lg:left-16"
+          style={{ zIndex: 60 }}
+        >
+          <button
+            aria-label="Previous skill"
+            onClick={() => paginate(-1)}
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-16 sm:w-16"
+          >
+            <ArrowLeft size={26} strokeWidth={2.25} />
+          </button>
+          <button
+            aria-label="Next skill"
+            onClick={() => paginate(1)}
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-16 sm:w-16"
+          >
+            <ArrowRight size={26} strokeWidth={2.25} />
+          </button>
+        </div>
+
+        {/* Progress dots (bottom-right) */}
+        <div
+          className="absolute bottom-12 right-4 flex gap-2 sm:right-10 lg:right-16"
+          style={{ zIndex: 60 }}
+        >
+          {SKILL_SLIDES.map((_, i) => (
+            <button
+              key={i}
+              aria-label={`Go to slide ${i + 1}`}
+              onClick={() => setActive([i, i > active ? 1 : -1])}
+              className="h-2.5 rounded-full bg-white transition-all duration-300"
+              style={{ width: i === active ? 28 : 10, opacity: i === active ? 1 : 0.45 }}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
 }
 
 export default function App() {
@@ -387,7 +626,6 @@ export default function App() {
 
         {/* Skill pills */}
         <motion.div
-          id="skills"
           initial="initial"
           whileInView="whileInView"
           viewport={{ once: true, margin: '-80px' }}
@@ -627,209 +865,6 @@ export default function App() {
             </motion.div>
           </div>
 
-          {/* Three Categories - Full Width Showcase */}
-          <div className="space-y-20">
-            {/* Technical Skills - Bold Red Theme + orange figurine (left) */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12"
-            >
-              {/* Figurine */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
-              >
-                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#F4845F', opacity: 0.4 }} />
-                <motion.img
-                  src="/assets/figurines/fig-1.png"
-                  alt="3D character"
-                  animate={{ y: [0, -14, 0] }}
-                  transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
-                />
-              </motion.div>
-
-              {/* Content */}
-              <div className="flex-1">
-                <div className="mb-8 flex items-center gap-4">
-                  <div className="h-1 w-12 bg-gradient-to-r from-crimson to-crimson/50" />
-                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-crimson md:text-3xl">Technical Skills</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-crimson/30 to-transparent" />
-                </div>
-                <motion.div
-                  initial="initial"
-                  whileInView="whileInView"
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ staggerChildren: 0.06, delayChildren: 0.1 }}
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                  {['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'].map((skill) => (
-                    <motion.div
-                      key={skill}
-                      variants={{
-                        initial: { opacity: 0, rotateX: -20, y: 20 },
-                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                      }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className="group relative h-32 cursor-pointer"
-                      style={{ perspective: '1000px' }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.05, rotateZ: 2 }}
-                        transition={{ duration: 0.3 }}
-                        className="relative h-full w-full rounded-xl border-2 border-crimson/30 bg-gradient-to-br from-crimson/5 to-white p-4 transition-all duration-300 hover:border-crimson hover:shadow-[0_0_30px_rgba(255,61,46,0.2)]"
-                      >
-                        <div className="flex h-full flex-col justify-between">
-                          <div className="h-8 w-8 rounded-full bg-crimson/10 group-hover:bg-crimson/20 transition-colors" />
-                          <p className="text-sm font-bold text-gray-900 md:text-base">{skill}</p>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* AI Toolset - Bold Purple Theme + blue figurine (right) */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="flex flex-col gap-8 lg:flex-row-reverse lg:items-center lg:gap-12"
-            >
-              {/* Figurine */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
-              >
-                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#6EB5FF', opacity: 0.45 }} />
-                <motion.img
-                  src="/assets/figurines/fig-4.png"
-                  alt="3D character"
-                  animate={{ y: [0, -14, 0] }}
-                  transition={{ duration: 5.5, repeat: Infinity, ease: 'easeInOut' }}
-                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
-                />
-              </motion.div>
-
-              {/* Content */}
-              <div className="flex-1">
-                <div className="mb-8 flex items-center gap-4">
-                  <div className="h-1 w-12 bg-gradient-to-r from-purple-600 to-purple-600/50" />
-                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-purple-600 md:text-3xl">AI Toolset</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-purple-500/30 to-transparent" />
-                </div>
-                <motion.div
-                  initial="initial"
-                  whileInView="whileInView"
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ staggerChildren: 0.06, delayChildren: 0.15 }}
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                  {['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'].map((tool) => (
-                    <motion.div
-                      key={tool}
-                      variants={{
-                        initial: { opacity: 0, rotateX: -20, y: 20 },
-                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                      }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className="group relative h-32 cursor-pointer"
-                      style={{ perspective: '1000px' }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.05, rotateZ: -2 }}
-                        transition={{ duration: 0.3 }}
-                        className="relative h-full w-full rounded-xl border-2 border-purple-500/30 bg-gradient-to-br from-purple-500/5 to-white p-4 transition-all duration-300 hover:border-purple-600 hover:shadow-[0_0_30px_rgba(147,51,234,0.2)]"
-                      >
-                        <div className="flex h-full flex-col justify-between">
-                          <div className="h-8 w-8 rounded-full bg-purple-500/10 group-hover:bg-purple-500/20 transition-colors" />
-                          <p className="text-sm font-bold text-gray-900 md:text-base">{tool}</p>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-
-            {/* Specializations - Bold Amber Theme + green figurine (left) */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-100px' }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="flex flex-col gap-8 lg:flex-row lg:items-center lg:gap-12"
-            >
-              {/* Figurine */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.85, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                viewport={{ once: true, margin: '-80px' }}
-                transition={{ duration: 0.8, ease: 'easeOut' }}
-                className="relative flex shrink-0 items-end justify-center lg:w-[280px]"
-              >
-                <div className="absolute bottom-6 h-48 w-48 rounded-full blur-3xl" style={{ backgroundColor: '#6BBF7A', opacity: 0.45 }} />
-                <motion.img
-                  src="/assets/figurines/fig-2.png"
-                  alt="3D character"
-                  animate={{ y: [0, -14, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-                  className="relative z-10 h-60 w-auto object-contain drop-shadow-2xl md:h-72"
-                />
-              </motion.div>
-
-              {/* Content */}
-              <div className="flex-1">
-                <div className="mb-8 flex items-center gap-4">
-                  <div className="h-1 w-12 bg-gradient-to-r from-amber-600 to-amber-600/50" />
-                  <h3 className="text-2xl font-black uppercase tracking-[0.2em] text-amber-600 md:text-3xl">Specializations</h3>
-                  <div className="flex-1 h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
-                </div>
-                <motion.div
-                  initial="initial"
-                  whileInView="whileInView"
-                  viewport={{ once: true, margin: '-50px' }}
-                  transition={{ staggerChildren: 0.06, delayChildren: 0.2 }}
-                  className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3"
-                >
-                  {['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'].map((spec) => (
-                    <motion.div
-                      key={spec}
-                      variants={{
-                        initial: { opacity: 0, rotateX: -20, y: 20 },
-                        whileInView: { opacity: 1, rotateX: 0, y: 0 },
-                      }}
-                      transition={{ duration: 0.5, ease: 'easeOut' }}
-                      className="group relative h-32 cursor-pointer"
-                      style={{ perspective: '1000px' }}
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.05, rotateZ: 2 }}
-                        transition={{ duration: 0.3 }}
-                        className="relative h-full w-full rounded-xl border-2 border-amber-500/30 bg-gradient-to-br from-amber-500/5 to-white p-4 transition-all duration-300 hover:border-amber-600 hover:shadow-[0_0_30px_rgba(217,119,6,0.2)]"
-                      >
-                        <div className="flex h-full flex-col justify-between">
-                          <div className="h-8 w-8 rounded-full bg-amber-500/10 group-hover:bg-amber-500/20 transition-colors" />
-                          <p className="text-sm font-bold text-gray-900 md:text-base">{spec}</p>
-                        </div>
-                      </motion.div>
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
         </div>
 
         {/* Section footer line */}
@@ -837,6 +872,9 @@ export default function App() {
           CUT. GRADE. SHIP. REPEAT.
         </div>
       </section>
+
+      {/* ============ SECTION 3.5: SKILLS CAROUSEL (figurines) ============ */}
+      <SkillsCarousel />
 
       {/* ============ SECTION 4: CONTACT (fullscreen hero video) ============ */}
       <section id="contact" className="relative min-h-screen overflow-hidden bg-[#f0f0ee]">
