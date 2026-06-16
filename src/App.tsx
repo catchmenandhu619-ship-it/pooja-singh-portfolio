@@ -618,7 +618,7 @@ export default function App() {
           whileInView={{ x: '-50%', y: '-78%', opacity: 1 }}
           viewport={{ once: true, margin: '100px' }}
           transition={{ duration: 1.4, ease: 'easeOut' }}
-          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[160vw] max-w-none opacity-15 md:w-[1100px]"
+          className="pointer-events-none absolute left-1/2 top-0 z-0 w-[160vw] max-w-none opacity-25 md:w-[1100px]"
         />
 
         {/* Heading area */}
