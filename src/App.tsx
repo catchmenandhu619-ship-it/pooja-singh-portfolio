@@ -357,6 +357,8 @@ export default function App() {
               className="h-full w-full object-cover"
               src={DINO_VIDEO}
             />
+            {/* Dark contrast overlay so the headline text reads clearly */}
+            <div className="absolute inset-0 bg-black/55 md:bg-black/45" />
           </motion.div>
         )}
 
@@ -365,10 +367,10 @@ export default function App() {
           {...fadeUp}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="relative z-10 mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.3)] md:mb-12 md:text-[11px]"
+          className="relative z-10 mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] md:mb-12 md:text-[11px]"
         >
           <span className="text-crimson">[ 02 ]</span>{' '}
-          <span className="font-semibold text-gray-900">What I Do</span>
+          <span className="font-semibold text-white">What I Do</span>
         </motion.div>
 
         {/* Main statement */}
@@ -376,7 +378,7 @@ export default function App() {
           {...fadeUp}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.9, ease: 'easeOut' }}
-          className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight drop-shadow-[0_2px_6px_rgba(0,0,0,0.25)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]"
+          className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]"
         >
           Raw footage in. Scroll-stopping stories out — editing, motion and
           design built to make brands{' '}
