@@ -1003,7 +1003,8 @@ export default function App() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.6, ease: 'easeOut' }}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-white"
+            className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden bg-white"
+            style={{ height: 'min(75vw, 100%)' }}
           >
             <video
               autoPlay
@@ -1011,7 +1012,7 @@ export default function App() {
               muted
               playsInline
               preload="auto"
-              className="absolute inset-0 h-full w-full object-contain object-top"
+              className="absolute inset-0 h-full w-full object-cover"
               src={TREX_VIDEO}
             />
           </motion.div>
