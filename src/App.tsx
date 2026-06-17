@@ -1014,7 +1014,7 @@ export default function App() {
               playsInline
               preload="auto"
               className="absolute inset-0 h-full w-full object-cover"
-              src="/assets/videos/Flow_202606172104.mp4"
+              src={DINO_VIDEO}
             />
             {/* Foreground layer - T-rex video (3D effect) */}
             <video
@@ -1024,7 +1024,7 @@ export default function App() {
               playsInline
               preload="auto"
               className="absolute inset-0 h-full w-full object-cover"
-              src="/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4"
+              src={TREX_VIDEO}
               style={{ opacity: 0.95 }}
             />
             {/* Dark contrast overlay so the headline text reads clearly */}
