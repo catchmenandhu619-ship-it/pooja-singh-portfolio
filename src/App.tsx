@@ -1,3 +1,4 @@
+﻿// Updated: 2026-06-17 23:43:56
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
 import Lenis from 'lenis'
@@ -76,7 +77,8 @@ const CHAPTERS = [
   },
 ]
 
-const DINO_VIDEO = `${CF}/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f411.mp4`
+const DINO_VIDEO = '/assets/videos/Flow_202606172104.mp4'
+const TREX_VIDEO = '/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4'
 
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
@@ -996,7 +998,7 @@ export default function App() {
         id="about"
         className="relative z-20 flex w-full flex-col items-center bg-[#fcfcfc] px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16"
       >
-        {/* Walking-dinosaur video playing behind the text (delayed reveal) */}
+        {/* Layered videos - Flow video background + T-rex video foreground (3D effect) */}
         {showVideo && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -1004,14 +1006,26 @@ export default function App() {
             transition={{ duration: 1.6, ease: 'easeOut' }}
             className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-100"
           >
+            {/* Background layer - Flow video */}
             <video
               autoPlay
               loop
               muted
               playsInline
               preload="auto"
-              className="h-full w-full object-cover"
-              src={DINO_VIDEO}
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/assets/videos/Flow_202606172104.mp4"
+            />
+            {/* Foreground layer - T-rex video (3D effect) */}
+            <video
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              className="absolute inset-0 h-full w-full object-cover"
+              src="/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4"
+              style={{ opacity: 0.95 }}
             />
             {/* Dark contrast overlay so the headline text reads clearly */}
             <div className="absolute inset-0 bg-black/55 md:bg-black/45" />
