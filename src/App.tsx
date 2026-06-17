@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'motion/react'
 import {
   ArrowLeft,
@@ -107,7 +107,11 @@ const SKILL_SLIDES = [
 ]
 
 function SkillsCarousel() {
-  const [[active, dir], setActive] = useState<[number, number]>([0, 1])
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== 'undefined' && window.innerWidth < 640,
+  )
 
   useEffect(() => {
     SKILL_SLIDES.forEach((s) => {
@@ -116,17 +120,81 @@ function SkillsCarousel() {
     })
   }, [])
 
-  const paginate = (d: number) =>
-    setActive(([prev]) => [(prev + d + SKILL_SLIDES.length) % SKILL_SLIDES.length, d])
+  useEffect(() => {
+    const onResize = () => setIsMobile(window.innerWidth < 640)
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
-  const slide = SKILL_SLIDES[active]
-  const ease = [0.4, 0, 0.2, 1] as const
-
-  const figVariants = {
-    enter: (d: number) => ({ x: d > 0 ? 120 : -120, opacity: 0, scale: 0.85 }),
-    center: { x: 0, opacity: 1, scale: 1 },
-    exit: (d: number) => ({ x: d > 0 ? -120 : 120, opacity: 0, scale: 0.85 }),
+  const navigate = (dir: 'next' | 'prev') => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setActiveIndex((prev) =>
+      dir === 'next' ? (prev + 1) % 4 : (prev + 3) % 4,
+    )
+    setTimeout(() => setIsAnimating(false), 650)
   }
+
+  const center = activeIndex
+  const left = (activeIndex + 3) % 4
+  const right = (activeIndex + 1) % 4
+
+  // Original TOONHUB depth animation: center large, sides small + blurred, back deepest.
+  const roleStyle = (i: number): CSSProperties => {
+    const base: CSSProperties = {
+      position: 'absolute',
+      aspectRatio: '0.6 / 1',
+      transition:
+        'transform 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), left 650ms cubic-bezier(0.4,0,0.2,1), bottom 650ms cubic-bezier(0.4,0,0.2,1), height 650ms cubic-bezier(0.4,0,0.2,1)',
+      willChange: 'transform, filter, opacity',
+    }
+    if (i === center)
+      return {
+        ...base,
+        left: '50%',
+        bottom: isMobile ? '30%' : 0,
+        height: isMobile ? '46%' : '92%',
+        transform: `translateX(-50%) scale(${isMobile ? 1.1 : 1.55})`,
+        filter: 'blur(0px)',
+        opacity: 1,
+        zIndex: 20,
+      }
+    if (i === left)
+      return {
+        ...base,
+        left: isMobile ? '16%' : '24%',
+        bottom: isMobile ? '40%' : '14%',
+        height: isMobile ? '15%' : '28%',
+        transform: 'translateX(-50%) scale(1)',
+        filter: 'blur(2px)',
+        opacity: 0.85,
+        zIndex: 10,
+      }
+    if (i === right)
+      return {
+        ...base,
+        left: isMobile ? '84%' : '76%',
+        bottom: isMobile ? '40%' : '14%',
+        height: isMobile ? '15%' : '28%',
+        transform: 'translateX(-50%) scale(1)',
+        filter: 'blur(2px)',
+        opacity: 0.85,
+        zIndex: 10,
+      }
+    // back
+    return {
+      ...base,
+      left: '50%',
+      bottom: isMobile ? '40%' : '14%',
+      height: isMobile ? '12%' : '22%',
+      transform: 'translateX(-50%) scale(1)',
+      filter: 'blur(4px)',
+      opacity: 1,
+      zIndex: 5,
+    }
+  }
+
+  const slide = SKILL_SLIDES[activeIndex]
 
   return (
     <section
@@ -134,11 +202,11 @@ function SkillsCarousel() {
       className="relative w-full overflow-hidden"
       style={{
         backgroundColor: slide.bg,
-        transition: `background-color 650ms cubic-bezier(0.4,0,0.2,1)`,
+        transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      <div className="relative flex h-svh min-h-[640px] w-full flex-col overflow-hidden">
+      <div className="relative h-svh min-h-[640px] w-full overflow-hidden">
         {/* Grain overlay */}
         <div
           className="pointer-events-none absolute inset-0"
@@ -151,6 +219,26 @@ function SkillsCarousel() {
           }}
         />
 
+        {/* Giant ghost title */}
+        <div
+          className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
+          style={{ zIndex: 2, top: '14%' }}
+        >
+          <span
+            style={{
+              fontFamily: 'Anton, sans-serif',
+              fontSize: 'clamp(64px, 24vw, 340px)',
+              color: '#fff',
+              lineHeight: 1,
+              textTransform: 'uppercase',
+              letterSpacing: '-0.02em',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {slide.ghost}
+          </span>
+        </div>
+
         {/* Top-left label + counter */}
         <div
           className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
@@ -158,146 +246,116 @@ function SkillsCarousel() {
         >
           <span>[ 04 ] Skills</span>
           <span className="opacity-60">
-            0{active + 1} / 0{SKILL_SLIDES.length}
+            0{activeIndex + 1} / 0{SKILL_SLIDES.length}
           </span>
         </div>
 
-        {/* Giant ghost title */}
-        <AnimatePresence mode="popLayout">
-          <motion.div
-            key={`ghost-${active}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.65, ease }}
-            className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
-            style={{ zIndex: 2, top: '14%' }}
-          >
-            <span
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(72px, 24vw, 340px)',
-                color: '#fff',
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.02em',
-                whiteSpace: 'nowrap',
-                opacity: 0.18,
-              }}
-            >
-              {slide.ghost}
-            </span>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* Main content: figurine + skills */}
-        <div
-          className="relative mx-auto flex w-full max-w-[1400px] flex-1 flex-col items-center justify-end gap-2 px-6 pb-40 pt-24 sm:px-10 lg:flex-row lg:items-center lg:justify-center lg:gap-10 lg:pb-32 lg:pl-16"
-          style={{ zIndex: 10 }}
-        >
-          {/* Figurine */}
-          <div className="relative flex flex-1 items-end justify-center lg:h-full">
-            <AnimatePresence custom={dir} mode="popLayout">
-              <motion.img
-                key={`fig-${active}`}
-                src={slide.fig}
-                alt={slide.title}
-                custom={dir}
-                variants={figVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{ duration: 0.65, ease }}
+        {/* Carousel — all four figurines with depth (original animation) */}
+        <div className="absolute inset-0" style={{ zIndex: 3 }}>
+          {SKILL_SLIDES.map((s, i) => (
+            <div key={i} style={roleStyle(i)}>
+              <img
+                src={s.fig}
+                alt={s.title}
                 draggable={false}
-                className="relative z-10 h-[42vh] w-auto max-w-full object-contain drop-shadow-2xl lg:h-[80vh]"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'contain',
+                  objectPosition: 'bottom center',
+                }}
               />
-            </AnimatePresence>
-          </div>
-
-          {/* Title + skills list */}
-          <div className="flex w-full flex-col items-center text-center lg:w-[42%] lg:items-start lg:text-left">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={`text-${active}`}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -24 }}
-                transition={{ duration: 0.5, ease }}
-                className="w-full"
-              >
-                <h3
-                  className="text-white"
-                  style={{
-                    fontFamily: 'Anton, sans-serif',
-                    fontSize: 'clamp(34px, 6vw, 72px)',
-                    lineHeight: 1.02,
-                    textTransform: 'uppercase',
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  {slide.title}
-                </h3>
-
-                {slide.intro ? (
-                  <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-white/85 sm:text-base lg:mx-0">
-                    {slide.intro}
-                  </p>
-                ) : (
-                  <ul className="mt-5 grid w-full grid-cols-2 gap-x-6 gap-y-1 sm:max-w-md lg:max-w-none">
-                    {slide.items.map((item, i) => (
-                      <motion.li
-                        key={item}
-                        initial={{ opacity: 0, x: -12 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.4, ease, delay: 0.15 + i * 0.05 }}
-                        className="flex items-center gap-2 border-b border-white/20 py-2 text-left text-white"
-                      >
-                        <span className="text-[10px] font-semibold tabular-nums text-white/50">
-                          0{i + 1}
-                        </span>
-                        <span className="text-sm font-medium sm:text-base">{item}</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                )}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+            </div>
+          ))}
         </div>
 
-        {/* Nav arrows (bottom-left) */}
+        {/* Active category title + skills list (bottom-left) */}
         <div
-          className="absolute bottom-8 left-4 flex gap-3 sm:left-10 lg:left-16"
+          className="absolute bottom-24 left-4 right-4 sm:bottom-28 sm:left-10 sm:right-auto sm:max-w-md lg:left-16"
+          style={{ zIndex: 60 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeIndex}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            >
+              <h3
+                className="text-white"
+                style={{
+                  fontFamily: 'Anton, sans-serif',
+                  fontSize: 'clamp(30px, 5vw, 60px)',
+                  lineHeight: 1.02,
+                  textTransform: 'uppercase',
+                  letterSpacing: '-0.01em',
+                }}
+              >
+                {slide.title}
+              </h3>
+
+              {slide.intro ? (
+                <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/85 sm:text-base">
+                  {slide.intro}
+                </p>
+              ) : (
+                <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-0.5">
+                  {slide.items.map((item, i) => (
+                    <li
+                      key={item}
+                      className="flex items-center gap-2 border-b border-white/20 py-1.5 text-white"
+                    >
+                      <span className="text-[10px] font-semibold tabular-nums text-white/50">
+                        0{i + 1}
+                      </span>
+                      <span className="text-[13px] font-medium sm:text-sm">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Nav arrows (bottom-left under content on mobile, bottom on desktop) */}
+        <div
+          className="absolute bottom-6 left-4 flex gap-3 sm:left-10 lg:left-16"
           style={{ zIndex: 60 }}
         >
           <button
             aria-label="Previous skill"
-            onClick={() => paginate(-1)}
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-16 sm:w-16"
+            onClick={() => navigate('prev')}
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-14 sm:w-14"
           >
-            <ArrowLeft size={26} strokeWidth={2.25} />
+            <ArrowLeft size={24} strokeWidth={2.25} />
           </button>
           <button
             aria-label="Next skill"
-            onClick={() => paginate(1)}
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-16 sm:w-16"
+            onClick={() => navigate('next')}
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-14 sm:w-14"
           >
-            <ArrowRight size={26} strokeWidth={2.25} />
+            <ArrowRight size={24} strokeWidth={2.25} />
           </button>
         </div>
 
         {/* Progress dots (bottom-right) */}
         <div
-          className="absolute bottom-12 right-4 flex gap-2 sm:right-10 lg:right-16"
+          className="absolute bottom-9 right-4 flex gap-2 sm:right-10 lg:right-16"
           style={{ zIndex: 60 }}
         >
           {SKILL_SLIDES.map((_, i) => (
             <button
               key={i}
               aria-label={`Go to slide ${i + 1}`}
-              onClick={() => setActive([i, i > active ? 1 : -1])}
+              onClick={() => {
+                if (isAnimating) return
+                setIsAnimating(true)
+                setActiveIndex(i)
+                setTimeout(() => setIsAnimating(false), 650)
+              }}
               className="h-2.5 rounded-full bg-white transition-all duration-300"
-              style={{ width: i === active ? 28 : 10, opacity: i === active ? 1 : 0.45 }}
+              style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45 }}
             />
           ))}
         </div>
