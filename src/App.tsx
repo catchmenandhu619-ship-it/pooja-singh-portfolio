@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react'
-import { motion, AnimatePresence } from 'motion/react'
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
 import {
-  ArrowLeft,
-  ArrowRight,
   ArrowUpRight,
   Award,
   Clapperboard,
@@ -107,11 +105,26 @@ const SKILL_SLIDES = [
 ]
 
 function SkillsCarousel() {
+  const sectionRef = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isAnimating, setIsAnimating] = useState(false)
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' && window.innerWidth < 640,
   )
+
+  // Scroll drives the carousel: the section is tall and the visual is pinned,
+  // so scrolling through it rotates the figurines between categories.
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end end'],
+  })
+
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    const idx = Math.min(
+      SKILL_SLIDES.length - 1,
+      Math.max(0, Math.floor(p * SKILL_SLIDES.length)),
+    )
+    setActiveIndex((cur) => (cur === idx ? cur : idx))
+  })
 
   useEffect(() => {
     SKILL_SLIDES.forEach((s) => {
@@ -126,13 +139,12 @@ function SkillsCarousel() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  const navigate = (dir: 'next' | 'prev') => {
-    if (isAnimating) return
-    setIsAnimating(true)
-    setActiveIndex((prev) =>
-      dir === 'next' ? (prev + 1) % 4 : (prev + 3) % 4,
-    )
-    setTimeout(() => setIsAnimating(false), 650)
+  const scrollToSlide = (i: number) => {
+    const sec = sectionRef.current
+    if (!sec) return
+    const travel = sec.offsetHeight - window.innerHeight
+    const top = sec.offsetTop + travel * ((i + 0.5) / SKILL_SLIDES.length)
+    window.scrollTo({ top, behavior: 'smooth' })
   }
 
   const center = activeIndex
@@ -198,15 +210,21 @@ function SkillsCarousel() {
 
   return (
     <section
+      ref={sectionRef}
       id="skills"
-      className="relative w-full overflow-hidden"
+      className="relative w-full"
       style={{
-        backgroundColor: slide.bg,
-        transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
+        height: `${SKILL_SLIDES.length * 100}svh`,
         fontFamily: 'Inter, sans-serif',
       }}
     >
-      <div className="relative h-svh min-h-[640px] w-full overflow-hidden">
+      <div
+        className="sticky top-0 h-svh min-h-[640px] w-full overflow-hidden"
+        style={{
+          backgroundColor: slide.bg,
+          transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
+        }}
+      >
         {/* Grain overlay */}
         <div
           className="pointer-events-none absolute inset-0"
@@ -318,25 +336,19 @@ function SkillsCarousel() {
           </AnimatePresence>
         </div>
 
-        {/* Nav arrows (bottom-left under content on mobile, bottom on desktop) */}
+        {/* Scroll hint (bottom-left) */}
         <div
-          className="absolute bottom-6 left-4 flex gap-3 sm:left-10 lg:left-16"
-          style={{ zIndex: 60 }}
+          className="absolute bottom-7 left-4 flex items-center gap-2 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
+          style={{ zIndex: 60, opacity: 0.85, letterSpacing: '0.18em' }}
         >
-          <button
-            aria-label="Previous skill"
-            onClick={() => navigate('prev')}
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-14 sm:w-14"
+          <motion.span
+            animate={{ y: [0, 6, 0] }}
+            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+            className="inline-block text-base"
           >
-            <ArrowLeft size={24} strokeWidth={2.25} />
-          </button>
-          <button
-            aria-label="Next skill"
-            onClick={() => navigate('next')}
-            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white text-white transition-all duration-150 hover:scale-105 hover:bg-white/15 sm:h-14 sm:w-14"
-          >
-            <ArrowRight size={24} strokeWidth={2.25} />
-          </button>
+            ↓
+          </motion.span>
+          {activeIndex < SKILL_SLIDES.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
         </div>
 
         {/* Progress dots (bottom-right) */}
@@ -347,13 +359,8 @@ function SkillsCarousel() {
           {SKILL_SLIDES.map((_, i) => (
             <button
               key={i}
-              aria-label={`Go to slide ${i + 1}`}
-              onClick={() => {
-                if (isAnimating) return
-                setIsAnimating(true)
-                setActiveIndex(i)
-                setTimeout(() => setIsAnimating(false), 650)
-              }}
+              aria-label={`Go to ${SKILL_SLIDES[i].title}`}
+              onClick={() => scrollToSlide(i)}
               className="h-2.5 rounded-full bg-white transition-all duration-300"
               style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45 }}
             />
