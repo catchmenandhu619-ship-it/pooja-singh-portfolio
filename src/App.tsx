@@ -77,7 +77,6 @@ const CHAPTERS = [
   },
 ]
 
-const DINO_VIDEO = '/assets/videos/Flow_202606172104.mp4'
 const TREX_VIDEO = '/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4'
 
 const fadeUp = {
@@ -998,25 +997,14 @@ export default function App() {
         id="about"
         className="relative z-20 flex w-full flex-col items-center bg-[#fcfcfc] px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16"
       >
-        {/* Layered videos - Flow video background + T-rex video foreground (3D effect) */}
+        {/* Walking T-rex video background — single bright layer, no dark overlay */}
         {showVideo && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1.6, ease: 'easeOut' }}
-            className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-gray-100"
+            className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-white"
           >
-            {/* Background layer - Flow video */}
-            <video
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              className="absolute inset-0 h-full w-full object-cover"
-              src={DINO_VIDEO}
-            />
-            {/* Foreground layer - T-rex video (3D effect) */}
             <video
               autoPlay
               loop
@@ -1025,10 +1013,7 @@ export default function App() {
               preload="auto"
               className="absolute inset-0 h-full w-full object-cover"
               src={TREX_VIDEO}
-              style={{ opacity: 0.95 }}
             />
-            {/* Dark contrast overlay so the headline text reads clearly */}
-            <div className="absolute inset-0 bg-black/55 md:bg-black/45" />
           </motion.div>
         )}
 
@@ -1037,14 +1022,14 @@ export default function App() {
           {...fadeUp}
           viewport={{ once: true, margin: '-100px' }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
-          className="relative z-10 mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)] md:mb-12 md:text-[11px]"
+          className="relative z-10 mb-10 text-[10px] uppercase tracking-[0.2em] drop-shadow-[0_1px_2px_rgba(255,255,255,0.9)] md:mb-12 md:text-[11px]"
         >
           <span className="text-crimson">[ 02 ]</span>{' '}
-          <span className="font-semibold text-white">What I Do</span>
+          <span className="font-semibold text-[#111]">What I Do</span>
         </motion.div>
 
         {/* Main statement */}
-        <h2 className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]">
+        <h2 className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight text-[#111] drop-shadow-[0_1px_2px_rgba(255,255,255,0.95)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]">
           <MaskReveal>
             Raw footage in. Scroll-stopping stories out — editing, motion and
             design built to make brands{' '}
