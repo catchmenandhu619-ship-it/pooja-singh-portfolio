@@ -130,20 +130,21 @@ function MaskReveal({
   delay?: number
 }) {
   return (
-    <span
+    <motion.span
       className={className}
       style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.12em' }}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-80px' }}
     >
       <motion.span
         style={{ display: 'block' }}
-        initial={{ y: '115%' }}
-        whileInView={{ y: 0 }}
-        viewport={{ once: true, margin: '-80px' }}
+        variants={{ hidden: { y: '115%' }, visible: { y: 0 } }}
         transition={{ duration: 0.9, ease: REVEAL_EASE, delay }}
       >
         {children}
       </motion.span>
-    </span>
+    </motion.span>
   )
 }
 
@@ -679,15 +680,21 @@ export default function App() {
           </div>
 
           {/* Main heading */}
-          <h1 className="animate-fade-up-delay-1 font-display uppercase leading-[0.9] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]">
+          <h1 className="font-display uppercase leading-[0.9] text-white drop-shadow-[0_2px_16px_rgba(0,0,0,0.45)]">
             <span className="block text-[clamp(2.75rem,min(7.5vw,10.5vh),6.75rem)]">
-              Create<span className="text-crimson">.</span>
+              <MaskReveal delay={0.1}>
+                Create<span className="text-crimson">.</span>
+              </MaskReveal>
             </span>
             <span className="block text-[clamp(2.75rem,min(7.5vw,10.5vh),6.75rem)]">
-              Captivate<span className="text-crimson">.</span>
+              <MaskReveal delay={0.22}>
+                Captivate<span className="text-crimson">.</span>
+              </MaskReveal>
             </span>
             <span className="block text-[clamp(2.75rem,min(7.5vw,10.5vh),6.75rem)]">
-              Convert<span className="text-crimson">.</span>
+              <MaskReveal delay={0.34}>
+                Convert<span className="text-crimson">.</span>
+              </MaskReveal>
             </span>
           </h1>
 
@@ -888,18 +895,24 @@ export default function App() {
             <motion.div
               key={idx + 1}
               variants={{
-                initial: { opacity: 0, y: 30 },
-                whileInView: { opacity: 1, y: 0 },
+                initial: { opacity: 0, clipPath: 'inset(100% 0% 0% 0%)' },
+                whileInView: { opacity: 1, clipPath: 'inset(0% 0% 0% 0%)' },
               }}
-              transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="group relative aspect-video overflow-hidden rounded-lg bg-gray-900 shadow-lg transition-all duration-300 hover:shadow-2xl cursor-pointer"
+              transition={{ duration: 0.8, ease: REVEAL_EASE }}
+              className="group relative aspect-video overflow-hidden rounded-lg bg-gray-900 shadow-lg transition-shadow duration-300 hover:shadow-2xl cursor-pointer"
               onClick={() => setSelectedVideo(videoId)}
-              style={{
-                backgroundImage: videoThumbnails[videoId] ? `url('${videoThumbnails[videoId]}')` : `url('https://res.cloudinary.com/dxh4m2kyv/video/upload/so_2/${['Project1_jlclkr', 'Project2_rs2hyp', 'Project3_txa12o', 'Project4_qdgp7e', 'Project5_nk5klx', 'Project6_dfg7yu', 'Project7_np6piy', 'Project8_nlwa4s'][idx]}.jpg')`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center',
-              }}
             >
+              {/* Thumbnail layer — scales in for a reveal, zooms on hover */}
+              <motion.div
+                variants={{ initial: { scale: 1.25 }, whileInView: { scale: 1 } }}
+                transition={{ duration: 1, ease: REVEAL_EASE }}
+                className="absolute inset-0 transition-transform duration-500 group-hover:scale-105"
+                style={{
+                  backgroundImage: videoThumbnails[videoId] ? `url('${videoThumbnails[videoId]}')` : `url('https://res.cloudinary.com/dxh4m2kyv/video/upload/so_2/${['Project1_jlclkr', 'Project2_rs2hyp', 'Project3_txa12o', 'Project4_qdgp7e', 'Project5_nk5klx', 'Project6_dfg7yu', 'Project7_np6piy', 'Project8_nlwa4s'][idx]}.jpg')`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                }}
+              />
               {/* Hover overlay */}
               <div className="absolute inset-0 bg-black/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-2">
