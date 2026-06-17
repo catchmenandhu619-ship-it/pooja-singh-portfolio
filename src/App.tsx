@@ -1012,6 +1012,7 @@ export default function App() {
               playsInline
               preload="auto"
               className="absolute inset-0 h-full w-full object-cover"
+              style={{ filter: 'brightness(1.1) contrast(2)' }}
               src={TREX_VIDEO}
             />
           </motion.div>
