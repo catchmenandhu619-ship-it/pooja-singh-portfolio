@@ -38,35 +38,40 @@ const CHAPTERS = [
     name: 'YouTube Edits',
     desc: 'High-retention edits for education and startup channels',
     ghost: 'EDITS',
-    bg: '#E8553D',
+    bg: '#0E0E0E',
+    light: false,
     video: `${CF}/hf_20260331_045634_e1c98c76-1265-4f5c-882a-4276f2080894.mp4`,
   },
   {
     name: 'Motion Graphics',
     desc: 'Dynamic text animations and visual storytelling',
     ghost: 'MOTION',
-    bg: '#6C5CE7',
+    bg: '#FF3D2E',
+    light: false,
     video: `${CF}/hf_20260331_053923_22c0a6a5-313c-474c-85ff-3b50d25e944a.mp4`,
   },
   {
     name: 'Thumbnail Design',
     desc: 'High-CTR thumbnails and social media carousels',
     ghost: 'THUMBS',
-    bg: '#2D9CDB',
+    bg: '#FCFCFC',
+    light: true,
     video: `${CF}/hf_20260331_054411_511c1b7a-fb2f-42ef-bf6c-32c0b1a06e79.mp4`,
   },
   {
     name: 'Brand Decks',
     desc: 'Presentation decks and visual aids with strict brand consistency',
     ghost: 'BRAND',
-    bg: '#15A07E',
+    bg: '#0E0E0E',
+    light: false,
     video: `${CF}/hf_20260331_055427_ac7035b5-9f3b-4289-86fc-941b2432317d.mp4`,
   },
   {
     name: 'AI Content',
     desc: 'Generative AI workflows — Midjourney, HeyGen, Sora and beyond',
     ghost: 'AI',
-    bg: '#E84393',
+    bg: '#FF3D2E',
+    light: false,
     video: `${CF}/hf_20260331_055729_72d66327-b59e-4ae9-bb70-de6ccb5ecdb0.mp4`,
   },
 ]
@@ -553,6 +558,7 @@ function WorkCarousel() {
   }
 
   const slide = CHAPTERS[activeIndex]
+  const fg = slide.light ? '#0E0E0E' : '#ffffff'
 
   return (
     <section
@@ -592,12 +598,13 @@ function WorkCarousel() {
             style={{
               fontFamily: 'Anton, sans-serif',
               fontSize: 'clamp(64px, 22vw, 320px)',
-              color: '#fff',
+              color: fg,
               lineHeight: 1,
               textTransform: 'uppercase',
               letterSpacing: '-0.02em',
               whiteSpace: 'nowrap',
               opacity: 0.9,
+              transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)',
             }}
           >
             {slide.ghost}
@@ -606,8 +613,8 @@ function WorkCarousel() {
 
         {/* Top-left label + counter */}
         <div
-          className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em' }}
+          className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase sm:left-10 lg:left-16"
+          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em', color: fg, transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)' }}
         >
           <span>[ 03 ] Selected Work</span>
           <span className="opacity-60">
@@ -646,18 +653,21 @@ function WorkCarousel() {
               transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
             >
               <h3
-                className="text-white"
                 style={{
                   fontFamily: 'Anton, sans-serif',
                   fontSize: 'clamp(30px, 5vw, 60px)',
                   lineHeight: 1.02,
                   textTransform: 'uppercase',
                   letterSpacing: '-0.01em',
+                  color: fg,
                 }}
               >
                 {slide.name}
               </h3>
-              <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/85 sm:text-base">
+              <p
+                className="mt-3 max-w-sm text-sm leading-relaxed sm:text-base"
+                style={{ color: fg, opacity: 0.85 }}
+              >
                 {slide.desc}
               </p>
             </motion.div>
@@ -666,8 +676,8 @@ function WorkCarousel() {
 
         {/* Scroll hint (bottom-left) */}
         <div
-          className="absolute bottom-7 left-4 flex items-center gap-2 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.85, letterSpacing: '0.18em' }}
+          className="absolute bottom-7 left-4 flex items-center gap-2 text-[11px] font-semibold uppercase sm:left-10 lg:left-16"
+          style={{ zIndex: 60, opacity: 0.85, letterSpacing: '0.18em', color: fg, transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)' }}
         >
           <motion.span
             animate={{ y: [0, 6, 0] }}
@@ -689,8 +699,8 @@ function WorkCarousel() {
               key={i}
               aria-label={`Go to ${CHAPTERS[i].name}`}
               onClick={() => scrollToSlide(i)}
-              className="h-2.5 rounded-full bg-white transition-all duration-300"
-              style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45 }}
+              className="h-2.5 rounded-full transition-all duration-300"
+              style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45, backgroundColor: fg }}
             />
           ))}
         </div>
