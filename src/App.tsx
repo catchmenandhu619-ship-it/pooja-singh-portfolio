@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react'
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
+import Lenis from 'lenis'
 import {
   ArrowUpRight,
   Award,
@@ -65,6 +66,85 @@ const DINO_VIDEO = `${CF}/hf_20260331_151551_992053d1-3d3e-4b8c-abac-45f22158f41
 const fadeUp = {
   initial: { opacity: 0, y: 40 },
   whileInView: { opacity: 1, y: 0 },
+}
+
+const REVEAL_EASE = [0.22, 1, 0.36, 1] as const
+
+// Word-by-word mask reveal (Artego-style): each word slides up out of a clip,
+// staggered, when scrolled into view.
+function RevealText({
+  text,
+  className,
+  delay = 0,
+}: {
+  text: string
+  className?: string
+  delay?: number
+}) {
+  const words = text.split(' ')
+  return (
+    <motion.span
+      className={className}
+      aria-label={text}
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ staggerChildren: 0.055, delayChildren: delay }}
+      style={{ display: 'inline' }}
+    >
+      {words.map((w, i) => (
+        <span
+          key={i}
+          aria-hidden
+          style={{
+            display: 'inline-block',
+            overflow: 'hidden',
+            verticalAlign: 'bottom',
+            paddingBottom: '0.12em',
+            marginBottom: '-0.12em',
+          }}
+        >
+          <motion.span
+            style={{ display: 'inline-block' }}
+            variants={{ hidden: { y: '120%' }, visible: { y: 0 } }}
+            transition={{ duration: 0.7, ease: REVEAL_EASE }}
+          >
+            {w}
+            {i < words.length - 1 ? ' ' : ''}
+          </motion.span>
+        </span>
+      ))}
+    </motion.span>
+  )
+}
+
+// Single-line clip reveal: slides arbitrary children (keeps accent spans / icons)
+// up out of a mask when scrolled into view.
+function MaskReveal({
+  children,
+  className,
+  delay = 0,
+}: {
+  children: ReactNode
+  className?: string
+  delay?: number
+}) {
+  return (
+    <span
+      className={className}
+      style={{ display: 'block', overflow: 'hidden', paddingBottom: '0.12em' }}
+    >
+      <motion.span
+        style={{ display: 'block' }}
+        initial={{ y: '115%' }}
+        whileInView={{ y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.9, ease: REVEAL_EASE, delay }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
 }
 
 // TOONHUB-style skills carousel: intro slide + 3 category slides, each with its
@@ -381,6 +461,22 @@ export default function App() {
   const [videoThumbnails, setVideoThumbnails] = useState<{ [key: string]: string }>({})
   const contactVideoRef = useRef<HTMLVideoElement>(null)
 
+  // Lenis smooth/inertia scrolling (Artego-style premium scroll feel)
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const lenis = new Lenis({ duration: 1.1, smoothWheel: true })
+    let raf = 0
+    const loop = (time: number) => {
+      lenis.raf(time)
+      raf = requestAnimationFrame(loop)
+    }
+    raf = requestAnimationFrame(loop)
+    return () => {
+      cancelAnimationFrame(raf)
+      lenis.destroy()
+    }
+  }, [])
+
   useEffect(() => {
     const interval = setInterval(() => {
       setActiveChapter((prev) => (prev + 1) % CHAPTERS.length)
@@ -678,16 +774,13 @@ export default function App() {
         </motion.div>
 
         {/* Main statement */}
-        <motion.h2
-          {...fadeUp}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-          className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]"
-        >
-          Raw footage in. Scroll-stopping stories out — editing, motion and
-          design built to make brands{' '}
-          <span className="text-crimson">impossible to ignore.</span>
-        </motion.h2>
+        <h2 className="relative z-10 mb-12 max-w-[1000px] text-center text-[2rem] font-medium leading-[1.12] tracking-tight text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] md:mb-16 md:text-[3.2rem] lg:text-[3.8rem]">
+          <MaskReveal>
+            Raw footage in. Scroll-stopping stories out — editing, motion and
+            design built to make brands{' '}
+            <span className="text-crimson">impossible to ignore.</span>
+          </MaskReveal>
+        </h2>
 
         {/* Skill pills */}
         <motion.div
@@ -770,14 +863,9 @@ export default function App() {
         </motion.div>
 
         {/* Heading */}
-        <motion.h2
-          {...fadeUp}
-          viewport={{ once: true, margin: '-100px' }}
-          transition={{ duration: 0.9, ease: 'easeOut' }}
-          className="mb-16 text-center font-display text-[2.5rem] font-medium leading-tight tracking-tight text-gray-900 md:mb-20 md:text-[3.5rem]"
-        >
-          Recent Works & Productions
-        </motion.h2>
+        <h2 className="mb-16 text-center font-display text-[2.5rem] font-medium leading-tight tracking-tight text-gray-900 md:mb-20 md:text-[3.5rem]">
+          <RevealText text="Recent Works & Productions" />
+        </h2>
 
         {/* 8 Video Grid - Vimeo Streaming */}
         <motion.div
@@ -846,25 +934,22 @@ export default function App() {
       <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900">
         {/* Heading area */}
         <div className="relative z-10 flex flex-col justify-between gap-10 px-6 pb-14 pt-24 sm:px-10 md:pt-32 lg:px-16 xl:flex-row xl:items-end">
-          <motion.h2
-            {...fadeUp}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
-            className="max-w-3xl text-[1.8rem] font-medium leading-[1.15] tracking-tight text-gray-900 md:text-[3rem] lg:text-[3.4rem]"
-          >
-            Work that doesn't just{' '}
-            <span className="mx-2 inline-flex translate-y-[-4px] gap-2 align-middle md:mx-3 md:gap-3">
-              {[Clapperboard, Sparkles, ImageIcon].map((Icon, i) => (
-                <span
-                  key={i}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-400 transition-colors duration-300 hover:border-crimson hover:bg-crimson hover:text-white md:h-14 md:w-14"
-                >
-                  <Icon size={20} strokeWidth={1.5} />
-                </span>
-              ))}
-            </span>
-            look good — <span className="text-crimson">it performs.</span>
-          </motion.h2>
+          <h2 className="max-w-3xl text-[1.8rem] font-medium leading-[1.15] tracking-tight text-gray-900 md:text-[3rem] lg:text-[3.4rem]">
+            <MaskReveal>
+              Work that doesn't just{' '}
+              <span className="mx-2 inline-flex translate-y-[-4px] gap-2 align-middle md:mx-3 md:gap-3">
+                {[Clapperboard, Sparkles, ImageIcon].map((Icon, i) => (
+                  <span
+                    key={i}
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-400 transition-colors duration-300 hover:border-crimson hover:bg-crimson hover:text-white md:h-14 md:w-14"
+                  >
+                    <Icon size={20} strokeWidth={1.5} />
+                  </span>
+                ))}
+              </span>
+              look good — <span className="text-crimson">it performs.</span>
+            </MaskReveal>
+          </h2>
 
           <motion.div
             {...fadeUp}
