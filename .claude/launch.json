@@ -6,7 +6,7 @@
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5173,
-      "cwd": "C:\\Users\\nandh\\Downloads\\files\\pooja-portfolio"
+      "cwd": "C:\\Users\\nandh\\Downloads\\pooja-portfolio"
     }
   ]
 }
