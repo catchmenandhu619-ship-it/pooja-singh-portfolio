@@ -1,282 +1,310 @@
-﻿# Pooja Singh Portfolio - Complete Handover Documentation
+# Pooja Singh Portfolio — Complete Handover Documentation
 
-**Document Created:** June 18, 2026  
-**Project:** Pooja Singh Creative Portfolio Website  
-**Status:** Production Ready ✅
+**Document Updated:** June 20, 2026
+**Project:** Pooja Singh Creative Portfolio Website
+**Status:** Live in Production ✅
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
-1. [Project Overview](#project-overview)
-2. [Technology Stack](#technology-stack)
-3. [Skills & Tools Used](#skills--tools-used)
+1. [Important Links](#important-links)
+2. [Project Overview](#project-overview)
+3. [Technology Stack](#technology-stack)
 4. [Project Structure](#project-structure)
-5. [Key Changes & Modifications](#key-changes--modifications)
-6. [Features Implemented](#features-implemented)
-7. [Installation & Setup](#installation--setup)
-8. [Deployment Instructions](#deployment-instructions)
-9. [Repository & Links](#repository--links)
-10. [Troubleshooting](#troubleshooting)
-11. [Future Enhancements](#future-enhancements)
-12. [Contact & Support](#contact--support)
+5. [All Changes Made](#all-changes-made)
+6. [Current Video Setup](#current-video-setup)
+7. [Local Development](#local-development)
+8. [Deployment](#deployment)
+9. [Troubleshooting](#troubleshooting)
+10. [Contact](#contact)
 
 ---
 
-## 🎯 Project Overview
+## Important Links
 
-**Pooja Singh Portfolio** is a modern, high-performance creative portfolio website showcasing video editing, motion graphics, thumbnail design, and AI content creation work.
-
-### Website Purpose
-- **Primary Goal:** Showcase creative video production and design services
-- **Target Audience:** Brands, startups, and businesses seeking video content creation
-- **Key Sections:** Hero, What I Do, Skills Carousel, Projects, Work Showcase, Contact
-
-### Website Highlights
-- ✨ Smooth scroll animations with Lenis
-- 🎬 3D Layered video backgrounds (Flow + T-rex animation)
-- 🎨 Interactive skills carousel with figurines
-- 📱 Fully responsive design
-- 🚀 Fast performance with Vite + React
-- ♿ Accessible design practices
-- 🎭 Stunning animations using Framer Motion
+| Resource | URL |
+|---|---|
+| **Live Website** | https://pooja-singh-portfolio-11mc.vercel.app/ |
+| **GitHub Repository** | https://github.com/catchmenandhu619-ship-it/pooja-singh-portfolio |
+| **Vercel Dashboard** | https://vercel.com/dashboard (login with GitHub account) |
+| **Local Dev Server** | http://localhost:5173 (run `npm run dev`) |
 
 ---
 
-## 🛠️ Technology Stack
+## Project Overview
 
-### Frontend Framework
-- React 18.3.1 - UI component library
-- TypeScript 5.5.3 - Type-safe JavaScript
-- Vite 5.3.4 - Ultra-fast build tool
+Pooja Singh Portfolio is a modern, high-performance creative portfolio website showcasing video editing, motion graphics, thumbnail design, and AI-powered content creation work.
 
-### Styling & Animation
-- Tailwind CSS 3.4.6 - Utility-first CSS
-- Framer Motion 12.40.0 - Advanced animations
-- PostCSS 8.4.39 - CSS processing
-- Autoprefixer 10.4.19 - Browser compatibility
-
-### Utility Libraries
-- Lenis 1.3.23 - Smooth scroll library
-- Lucide React 0.452.0 - Icon library
-
-### Deployment
-- Vercel - Hosting & CI/CD
-- GitHub - Version control
+- **Framework:** React 18 + TypeScript + Vite
+- **Hosting:** Vercel (auto-deploys on every GitHub push to `main`)
+- **Branch:** `main`
+- **Build command:** `npm run build` → runs `tsc && vite build`
 
 ---
 
-## 💡 Skills & Tools Used
+## Technology Stack
 
-### Web Development Skills
-1. React Components & Hooks
-2. TypeScript for type safety
-3. Responsive Design with Tailwind
-4. Advanced Animations with Framer Motion
-5. Performance Optimization
-6. API Integration (Vimeo, CloudFront)
-7. Smooth scrolling with Lenis
-
-### Design & UX
-1. Color Psychology & Brand Consistency
-2. Typography & Font Loading
-3. Layout Design with Grid & Flexbox
-4. Animation Design & Reveal Effects
-5. Mobile-First Approach
-
-### DevOps & Deployment
-1. Git & GitHub Version Control
-2. Vercel CI/CD Pipeline
-3. Vite Build Optimization
-4. Production Build Configuration
+| Layer | Library / Tool | Version |
+|---|---|---|
+| UI Framework | React | 18.3.1 |
+| Language | TypeScript | 5.5.3 |
+| Build Tool | Vite | 5.3.4 |
+| Styling | Tailwind CSS | 3.4.6 |
+| Animation | Framer Motion (`motion/react`) | 12.40.0 |
+| Smooth Scroll | Lenis | 1.3.23 |
+| Icons | Lucide React | 0.452.0 |
+| Hosting | Vercel | — |
+| Video Processing | FFmpeg 8.1.1 | (local, not in repo) |
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-\\\
+```
 pooja-portfolio/
 ├── public/
-│   ├── assets/
-│   │   ├── figurines/ (4 PNG images)
-│   │   └── videos/
-│   │       ├── Flow_202606172104.mp4 (9.5 MB)
-│   │       └── Skeletal_T-rex_walking_white_void_202606172101.mp4 (11.3 MB)
-│   └── index.html
+│   └── assets/
+│       ├── figurines/           PNG images for skills carousel
+│       └── videos/
+│           ├── Glass_T-rex_walking_white_backgr._202606172104.mp4  (9.4 MB) ← ACTIVE
+│           ├── Flow_202606172104.mp4                                (9.1 MB) ← unused
+│           └── Skeletal_T-rex_original_grainy.mp4                 (10.8 MB) ← backup
 ├── src/
-│   ├── App.tsx (Main component, 1403 lines)
-│   ├── main.tsx (Entry point)
-│   ├── index.css (Tailwind + Custom styles)
+│   ├── App.tsx          Main component (~1403 lines)
+│   ├── main.tsx         Entry point
+│   ├── index.css        Tailwind + custom styles
 │   └── vite-env.d.ts
 ├── vite.config.ts
 ├── tailwind.config.js
-├── postcss.config.js
 ├── tsconfig.json
 ├── package.json
-└── HANDOVER.md (This file)
-\\\
+└── HANDOVER.md          This file
+```
 
 ---
 
-## 🔄 Key Changes Made (June 17-18, 2026)
+## All Changes Made
 
-### 1. 3D Layered Video Effect
-**Modified:** src/App.tsx (lines 1009-1028)
+### Session 1 — June 17–18, 2026
 
-Added two-layer video system in "What I Do" section:
-- Background: Flow animation (full opacity)
-- Foreground: T-rex walking animation (95% opacity)
-- Creates professional 3D depth effect
+#### 1. Replaced NFT Animation with T-Rex Videos
+- Removed the original cartoon NFT animation video from the "What I Do" section
+- Added `Flow_202606172104.mp4` as the base layer
+- Added `Skeletal_T-rex_walking_white_void_202606172101.mp4` as a top layer for a "3D" effect
 
-### 2. Video Assets Organization
-**Added:** public/assets/videos/
-- Flow_202606172104.mp4 (9.5 MB)
-- Skeletal_T-rex_walking_white_void_202606172101.mp4 (11.3 MB)
+#### 2. Fixed TypeScript Build Failure on Vercel
+- Root cause: `tsc && vite build` runs with `noUnusedLocals: true`
+- When video `src` was hardcoded as a string literal, the `DINO_VIDEO`/`TREX_VIDEO` constants became unused → TS6133 error → Vercel build failed silently, keeping the old video live
+- Fix: wire constants back into JSX (`src={TREX_VIDEO}`)
 
-### 3. Vite Configuration
-**Updated:** vite.config.ts
-- Explicit publicDir configuration
-- Build output directory setup
-- File watching for Windows compatibility
+#### 3. Fixed Wrong Preview Directory
+- The local preview server was pointing to `Downloads/files/pooja-portfolio` (stale copy) instead of `Downloads/pooja-portfolio` (edited copy)
+- Fixed `.claude/launch.json` to point to the correct path
 
----
+#### 4. Fixed Double Exposure Issue
+- Both `Flow` and `Skeletal_T-rex` videos turned out to be the same footage
+- Stacking them at 0.95 opacity created ghosting/double-exposure
+- Fix: removed the Flow video layer entirely — single T-rex video only
 
-## ✨ Key Features
-
-### 1. Hero Section
-- Full-screen video background
-- Animated headline with reveal animations
-- Stats display & CTA buttons
-- Responsive navigation with mobile menu
-
-### 2. What I Do Section (NEW!)
-- 3D Layered Video Background
-- Skill pills showcase
-- Experience timeline
-- Dark overlay for readability
-
-### 3. Skills Carousel
-- Scroll-driven depth animation
-- 4 interactive slides with figurines
-- Color-changing backgrounds
-- 3 skill categories
-
-### 4. Project Portfolio
-- 8-video grid with Vimeo integration
-- Hover effects & modal player
-- Responsive layout
-
-### 5. Work Showcase
-- Coverflow-style carousel
-- 5 work categories
-- Professional descriptions
-
-### 6. Contact Section
-- Full-screen background video
-- Contact information
-- Email & phone details
+#### 5. Removed Dark Overlay / Made Video Bright
+- Removed `<div className="absolute inset-0 bg-black/55 md:bg-black/45" />` overlay
+- Updated heading color from `text-white` → `text-[#111]`
+- Updated section label from `text-white` → `text-[#111]`
+- Container background changed to `bg-white`
 
 ---
 
-## 🚀 Deployment Instructions
+### Session 2 — June 20, 2026
 
-### Push to GitHub & Deploy to Vercel
+#### 6. Grain Removal Experiments
+- Attempted FFmpeg `hqdn3d=6:5:9:6.75` denoising on the original T-rex video
+- Attempted `curves` filter to push gray background to pure white → caused visible tonal quality loss
+- Attempted CSS `filter: brightness(1.1) contrast(2)` → too harsh, looked over-processed
+- **Final decision:** Restored original untouched source video (no processing artifacts)
 
-#### Step 1: Commit Changes
-\\\ash
-cd C:\Users\nandh\Downloads\pooja-portfolio
-git add .
-git commit -m "Add 3D layered video effect to What I Do section"
-git push origin main
-\\\
+#### 7. Switched to High-Detail Bone-Colored T-Rex
+- Replaced with `A_highly_detailed_skeletal_Tyr.mp4` — realistic bone texture, 720p, 2.8 MB
+- Better quality appearance and naturally lighter background
 
-#### Step 2: Vercel Auto-Deployment
-- Vercel automatically detects the push
-- Builds and deploys within 1-2 minutes
-- Status visible at: https://pooja-singh-portfolio-11mc.vercel.app
+#### 8. Switched to Glass Crystal T-Rex (Current)
+- Replaced with `Glass_T-rex_walking_white_backgr._202606172104.mp4` — glass/crystal translucent skeleton, 1920×1080, 9.4 MB
+- Near-white background, premium look, no processing needed
 
-### Manual Deployment (if needed)
-\\\ash
-npm install -g vercel
-vercel login
-vercel --prod
-\\\
-
----
-
-## 🔗 Important Links
-
-### GitHub Repository
-URL: https://github.com/catchmenandhu619-ship-it/pooja-singh-portfolio
-Branch: main
-
-### Live Website
-URL: https://pooja-singh-portfolio-11mc.vercel.app/
-Status: Active & Updated (June 18, 2026)
+#### 9. Fixed Zoom Level & Hidden Gemini Watermark
+- `object-cover` (default): too zoomed in, T-rex filled frame too close
+- `object-contain object-top`: too zoomed out, Gemini watermark visible in bottom-right corner
+- **Final solution:** 4:3 aspect ratio wrapper (`height: min(75vw, 100%)`) + `object-cover`
+  - At all viewport widths, `object-cover` crops the right side enough to push the watermark off-screen
+  - Zoom level sits between the two extremes — full skeleton visible, natural scale
 
 ---
 
-## 🎓 Local Development
+## Current Video Setup
 
-### Install Dependencies
-\\\ash
+**File in use:** `Skeletal_T-rex_walking_white_void_202606172101.mp4`
+*(This filename is kept for code compatibility — the actual content is the Glass T-rex video)*
+
+**Source file:** `D:\Glass_T-rex_walking_white_backgr._202606172104.mp4`
+
+**Code location:** `src/App.tsx`
+
+```tsx
+// Line ~80
+const TREX_VIDEO = '/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4'
+
+// "What I Do" section — video wrapper
+<motion.div
+  className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden bg-white"
+  style={{ height: 'min(75vw, 100%)' }}
+>
+  <video
+    autoPlay loop muted playsInline preload="auto"
+    className="absolute inset-0 h-full w-full object-cover"
+    src={TREX_VIDEO}
+  />
+</motion.div>
+```
+
+**Why `height: min(75vw, 100%)`:**
+The wrapper is capped to a 4:3 aspect ratio. Because this is taller than the video's native 16:9, `object-cover` must crop the left and right sides to fill the height. This right-side crop pushes the Gemini watermark (bottom-right corner of video) off-screen at every viewport width from mobile (375px) to desktop (1440px+).
+
+---
+
+## Local Development
+
+### Prerequisites
+- Node.js 18+
+- npm 9+
+
+### Setup
+
+```bash
+# Clone the repo
+git clone https://github.com/catchmenandhu619-ship-it/pooja-singh-portfolio.git
+cd pooja-singh-portfolio
+
+# Install dependencies
 npm install
-\\\
 
-### Run Development Server
-\\\ash
+# Start dev server (opens at http://localhost:5173)
 npm run dev
-# Opens at http://localhost:5173
-\\\
+```
 
-### Build for Production
-\\\ash
+### Build & Preview
+
+```bash
+# Production build
 npm run build
+
+# Preview production build locally
 npm run preview
-\\\
+```
+
+### Important: TypeScript Strictness
+`tsconfig.json` has `"noUnusedLocals": true`. Any declared variable that is unused will **fail the build**. If you declare a video constant, it must be used in JSX.
 
 ---
 
-## 📝 Maintenance Checklist
+## Deployment
 
-### Weekly
-- [ ] Check Vercel deployment status
-- [ ] Review error logs
+### Auto-Deploy (Normal Workflow)
 
-### Monthly
-- [ ] Update project case studies
-- [ ] Check dependency updates: npm outdated
-- [ ] Test all interactive features
+Every push to `main` triggers a Vercel deployment automatically:
 
-### Quarterly
-- [ ] Major feature implementations
-- [ ] Performance optimization audit
-- [ ] Security review
+```bash
+git add .
+git commit -m "Your change description"
+git push origin main
+# Vercel detects push, builds, and deploys in ~1-2 minutes
+```
+
+### Verify Deployment
+
+1. Go to https://vercel.com/dashboard
+2. Find `pooja-singh-portfolio` project
+3. Check latest deployment status — should say **Ready**
+4. Hard refresh the live site (Ctrl+Shift+R) to bypass browser cache
+
+### If Vercel Build Fails
+
+Vercel keeps the **last successful deployment** live. To diagnose:
+1. Check Vercel dashboard → deployment → Build Logs
+2. Most common cause: TypeScript error (`noUnusedLocals`)
+3. Fix locally: `npm run build` — if it passes locally, it will pass on Vercel
 
 ---
 
-## 📞 Contact
+## Complete Commit History (This Project)
 
-**Owner:** Pooja Singh  
-**Email:** Poojasingh10099@gmail.com  
-**Phone:** +91 62050 11981  
+| Commit | Description |
+|---|---|
+| `2fa6f35` | Sweet spot zoom: 4:3 wrapper + object-cover hides Gemini watermark ← **latest** |
+| `6e780d8` | Zoom out: object-contain object-top |
+| `ffeebaa` | Swap to glass crystal T-rex video |
+| `af64df4` | Replace with high-detail bone skeleton video |
+| `4121022` | Restore original video quality, remove CSS filter |
+| `b9aece3` | HQ denoise + CSS brightness/contrast filter |
+| `6b9b21a` | Curves filter for white background (later reverted) |
+| `14fcdae` | FFmpeg hqdn3d grain removal |
+| `18b6b40` | Fix: single T-rex, remove double exposure + dark overlay |
+| `e952f74` | Fix TS6133 build failure (unused constants) |
+| `33be2f4` | Add 3D layered video to What I Do section |
+| `eb5d42e` | Work carousel palette matches hero |
+| `a0fb5dd` | Coverflow scroll-driven work carousel |
+| `792ae37` | Reveal animations on hero + project thumbnails |
+| `aaa9b88` | Lenis smooth scroll + heading reveals |
+| `967dc34` | Scroll-driven skills carousel |
+
+---
+
+## Troubleshooting
+
+### Old video still showing on live site
+1. Check Vercel build logs — the build may have failed silently
+2. Most likely cause: unused TypeScript variable → run `npm run build` locally
+3. Hard refresh browser (Ctrl+Shift+R) to bypass cache
+
+### Video not playing
+- All videos must be in `public/assets/videos/`
+- Filename in `src={TREX_VIDEO}` constant must exactly match the file on disk (case-sensitive)
+- Check browser console for 404 errors
+
+### Gemini watermark reappears
+- The watermark is hidden by cropping, not removing
+- If you change the video wrapper CSS (especially height), recalculate whether the right-side crop still applies
+- Rule: wrapper must be taller than 16:9 aspect ratio so `object-cover` crops horizontally
+
+### Local dev server not reflecting changes
+- Ensure `vite.config.ts` has `server: { watch: { usePolling: true } }` (required on Windows)
+- Check that `.claude/launch.json` points to the correct project directory
+
+---
+
+## Video Assets on D: Drive (Source Files)
+
+These are the original source files used during development. Keep these as backup.
+
+| File | Size | Notes |
+|---|---|---|
+| `D:\Glass_T-rex_walking_white_backgr._202606172104.mp4` | 9.4 MB | **Current live video** |
+| `D:\Glass_T-rex_walking_white_backgr._202606172103.mp4` | 11.5 MB | Close-up head pan (not used) |
+| `D:\Glass_T-rex_walking_white_backgr._202606172102.mp4` | 10.7 MB | Alternative (not used) |
+| `D:\Skeletal_T-rex_walking_white_void_202606172101.mp4` | 10.8 MB | Original black skeleton |
+| `D:\Flow_202606172104.mp4` | 9.5 MB | Flow animation (not used) |
+| `D:\A_highly_detailed_skeletal_Tyr.mp4` | 2.8 MB | Bone-colored skeleton (not used) |
+
+---
+
+## Contact
+
+**Owner:** Pooja Singh
+**Email:** Poojasingh10099@gmail.com
+**Phone:** +91 62050 11981
 **Location:** Delhi, Shahdara
 
 ---
 
-## ✅ Current Status
-
-- [x] 3D Layered Video Effect Implemented
-- [x] Videos Added to Assets
-- [x] Code Updated & Ready
-- [x] Handover Documentation Complete
-- [ ] Pushed to GitHub (Next Step)
-- [ ] Deployed to Vercel (Auto-happens after push)
-
----
-
-**Document Version:** 1.0  
-**Created:** June 18, 2026  
-**Status:** Ready for Production Deployment ✅
-
-*For complete details and support, refer to the repository README and inline code comments.*
+**Document Version:** 2.0
+**Last Updated:** June 20, 2026
+**Latest Commit:** `2fa6f35`
