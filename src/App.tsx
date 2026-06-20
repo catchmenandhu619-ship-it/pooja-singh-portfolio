@@ -984,18 +984,15 @@ export default function App() {
 
       {/* ============ SECTION 2: WHAT I DO ============ */}
       <section id="about" className="relative z-20 flex w-full flex-col items-center overflow-hidden bg-white px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16">
-        {/* Dinosaur video background */}
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden bg-white"
-          style={{ height: 'min(75vw, 100%)' }}
-        >
+        {/* Dinosaur video background — covers full section including career cards */}
+        <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden bg-white">
           <video
             autoPlay
             loop
             muted
             playsInline
             preload="auto"
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             src={DINO_VIDEO}
           />
         </div>
