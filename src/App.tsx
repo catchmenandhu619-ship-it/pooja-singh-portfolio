@@ -1033,6 +1033,39 @@ export default function App() {
             </span>
           ))}
         </motion.div>
+
+        {/* Experience strip */}
+        <motion.div
+          {...fadeUp}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.1 }}
+          className="relative z-10 mt-16 grid w-full max-w-[1000px] gap-10 rounded-xl border-t border-gray-300 bg-black/85 px-8 py-12 sm:grid-cols-2 sm:px-12 sm:py-14"
+        >
+          <div>
+            <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson sm:text-[14px]">
+              2026 — Adda Education
+            </div>
+            <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white sm:text-4xl">
+              Video Editor
+            </div>
+            <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 sm:text-[15px]">
+              High-engagement educational video content with motion graphics —
+              100% on-time delivery across high-volume schedules.
+            </p>
+          </div>
+          <div>
+            <div className="text-[13px] font-bold uppercase tracking-[0.25em] text-crimson sm:text-[14px]">
+              2025 — 1to10X (Tech Startup)
+            </div>
+            <div className="mt-3 font-display text-3xl font-medium tracking-[0.03em] text-white sm:text-4xl">
+              Creative Content & Video Specialist
+            </div>
+            <p className="mt-3 max-w-sm text-[14px] leading-[1.7] text-white/85 sm:text-[15px]">
+              Owned the full production cycle — concept, shoot, edit. Pioneered
+              generative AI workflows, boosting production efficiency by 30%.
+            </p>
+          </div>
+        </motion.div>
       </section>
 
       {/* ============ SECTION 2.5: PROJECTS PORTFOLIO ============ */}
