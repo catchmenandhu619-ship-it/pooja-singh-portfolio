@@ -203,12 +203,13 @@ const SKILL_SLIDES = [
   },
 ]
 
-// Aggressive immersive skills showcase — full-screen video hero character,
-// scroll-driven category progression, interactive skill card grid, vignette + glows + cuts.
+// 3D scroll-driven character-centric skill reveal — character frozen center,
+// text orbits around as user scrolls, revealing skills left/right/top in sequence.
 function SkillsCarousel() {
   const sectionRef = useRef<HTMLElement>(null)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [lineKey, setLineKey] = useState(0)
+  const videoRef = useRef<HTMLVideoElement>(null)
+  const [categoryIdx, setCategoryIdx] = useState(0)
+  const [skillIdx, setSkillIdx] = useState(0)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -216,94 +217,93 @@ function SkillsCarousel() {
   })
 
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    const idx = Math.min(
-      SKILL_SLIDES.length - 1,
-      Math.max(0, Math.floor(p * SKILL_SLIDES.length)),
-    )
-    setActiveIndex((cur) => {
-      if (cur === idx) return cur
-      setLineKey((k) => k + 1)
-      return idx
-    })
+    const totalSkills = SKILL_SLIDES.reduce((sum, s) => sum + s.items.length, 0)
+    const currentSkill = Math.floor(p * (totalSkills + 1))
+    let cumulative = 0
+    let catIdx = 0
+    let skillIdx = 0
+
+    for (let i = 0; i < SKILL_SLIDES.length; i++) {
+      if (currentSkill <= cumulative + SKILL_SLIDES[i].items.length) {
+        catIdx = i
+        skillIdx = currentSkill - cumulative
+        break
+      }
+      cumulative += SKILL_SLIDES[i].items.length
+    }
+
+    setCategoryIdx(catIdx)
+    setSkillIdx(skillIdx)
+
+    if (videoRef.current) {
+      const videoDuration = videoRef.current.duration
+      videoRef.current.currentTime = (p * videoDuration * 0.7)
+    }
   })
 
-  const scrollToSlide = (i: number) => {
-    const sec = sectionRef.current
-    if (!sec) return
-    const travel = sec.offsetHeight - window.innerHeight
-    const top = sec.offsetTop + travel * ((i + 0.5) / SKILL_SLIDES.length)
-    window.scrollTo({ top, behavior: 'smooth' })
-  }
+  const category = SKILL_SLIDES[categoryIdx]
+  const accentColor = ['#6EB5FF', '#E882B4', '#6BBF7A'][categoryIdx % 3]
 
-  const slide = SKILL_SLIDES[activeIndex]
-  const accentColor = ['#6EB5FF', '#E882B4', '#6BBF7A'][activeIndex % 3]
+  const getSkillPosition = (idx: number) => {
+    const positions = [
+      { x: -35, y: 60, delay: 0 },
+      { x: 35, y: 55, delay: 0.15 },
+      { x: -42, y: 5, delay: 0.3 },
+      { x: 42, y: 8, delay: 0.45 },
+      { x: -28, y: -55, delay: 0.6 },
+      { x: 28, y: -52, delay: 0.75 },
+      { x: 0, y: -70, delay: 0.9 },
+      { x: -15, y: 75, delay: 1.05 },
+    ]
+    return positions[idx % positions.length]
+  }
 
   return (
     <section
       ref={sectionRef}
       id="skills"
       className="relative w-full"
-      style={{ height: `${SKILL_SLIDES.length * 100}svh` }}
+      style={{ height: '800svh' }}
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
 
-        {/* ── FULL-SCREEN CHARACTER VIDEO HERO ── */}
-        <motion.div
-          className="absolute inset-0"
-          animate={{ opacity: activeIndex === 0 ? 1 : 0.3 }}
-          transition={{ duration: 1, ease: 'easeInOut' }}
+        {/* ── CENTERED CHARACTER VIDEO (FROZEN) ── */}
+        <div
+          className="absolute inset-0 flex items-center justify-center"
           style={{ zIndex: 1 }}
         >
           <video
-            autoPlay loop muted playsInline
+            ref={videoRef}
+            muted playsInline
             preload="auto"
             className="h-full w-full object-cover"
-            style={{ objectPosition: 'center 15%' }}
+            style={{ objectPosition: 'center 20%' }}
             src="/assets/videos/skills_hero.mp4"
           />
-        </motion.div>
+        </div>
 
-        {/* ── ACCENT COLOR GLOW ── */}
+        {/* ── ACCENT GLOW BEHIND CHARACTER ── */}
         <motion.div
           className="pointer-events-none absolute"
           animate={{ backgroundColor: accentColor }}
           transition={{ duration: 1.2 }}
           style={{
             zIndex: 2,
-            left: '-8%', top: '10%',
-            width: '60%', height: '72%',
+            left: '50%', top: '35%',
+            transform: 'translate(-50%, -50%)',
+            width: '52%', height: '68%',
             borderRadius: '50%',
-            opacity: 0.08,
-            filter: 'blur(100px)',
+            opacity: 0.1,
+            filter: 'blur(110px)',
           }}
         />
 
-        {/* ── SPOTLIGHT VIGNETTE ── */}
+        {/* ── VIGNETTE ── */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             zIndex: 4,
-            background: 'radial-gradient(ellipse 52% 58% at 60% 32%, transparent 0%, rgba(0,0,0,0.45) 58%, rgba(0,0,0,0.95) 100%)',
-          }}
-        />
-
-        {/* ── BOTTOM GRADIENT ── */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0"
-          style={{
-            zIndex: 4,
-            height: '64%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.92) 16%, rgba(0,0,0,0.6) 44%, rgba(0,0,0,0.1) 68%, transparent 100%)',
-          }}
-        />
-
-        {/* ── LEFT VIGNETTE ── */}
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0"
-          style={{
-            zIndex: 4,
-            width: '48%',
-            background: 'linear-gradient(to right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.32) 62%, transparent 100%)',
+            background: 'radial-gradient(ellipse 50% 55% at 50% 35%, transparent 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.92) 100%)',
           }}
         />
 
@@ -311,9 +311,7 @@ function SkillsCarousel() {
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 5,
-            opacity: 0.26,
-            backgroundSize: '160px 160px',
+            zIndex: 5, opacity: 0.24, backgroundSize: '160px 160px',
             backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
           }}
         />
@@ -327,39 +325,156 @@ function SkillsCarousel() {
           }}
         />
 
-        {/* ── HORIZONTAL CUT-LINES ── */}
-        <motion.div
-          key={`sca-${lineKey}`}
-          className="pointer-events-none absolute inset-x-0"
-          initial={{ scaleX: 0, opacity: 1 }}
-          animate={{ scaleX: 1, opacity: 0 }}
-          transition={{ duration: 0.62, ease: [0.76, 0, 0.24, 1] }}
-          style={{ zIndex: 12, height: 1, backgroundColor: accentColor, top: '28%', transformOrigin: 'left center' }}
-        />
-        <motion.div
-          key={`scb-${lineKey}`}
-          className="pointer-events-none absolute inset-x-0"
-          initial={{ scaleX: 0, opacity: 1 }}
-          animate={{ scaleX: 1, opacity: 0 }}
-          transition={{ duration: 0.62, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
-          style={{ zIndex: 12, height: 1, backgroundColor: accentColor, top: '72%', transformOrigin: 'right center' }}
-        />
-
-        {/* ── GHOST CATEGORY NAME ── */}
+        {/* ── TOP LETTERBOX BAR ── */}
         <div
-          className="pointer-events-none absolute inset-x-0 flex select-none items-start justify-center overflow-hidden"
-          style={{ zIndex: 3, top: '8%' }}
+          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 30, height: '7vh', backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
+        >
+          <span style={{ color: 'rgba(255,255,255,0.34)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+            [ 04 ] My Skillset
+          </span>
+          <motion.span
+            animate={{ color: accentColor }}
+            transition={{ duration: 0.8 }}
+            style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}
+          >
+            {category.title.toUpperCase()}
+          </motion.span>
+          <span style={{ color: 'rgba(255,255,255,0.16)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>
+            {String(categoryIdx + 1).padStart(2, '0')} / {String(SKILL_SLIDES.length).padStart(2, '0')}
+          </span>
+        </div>
+
+        {/* ── ORBITING SKILL CARDS ── */}
+        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 20, pointerEvents: 'none' }}>
+          <AnimatePresence>
+            {category.items.map((item, idx) => {
+              const pos = getSkillPosition(idx)
+              const isActive = idx <= skillIdx
+              return (
+                <motion.div
+                  key={`${categoryIdx}-${idx}`}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.3,
+                    x: pos.x * 2,
+                    y: pos.y * 2,
+                  }}
+                  animate={
+                    isActive
+                      ? {
+                        opacity: 1,
+                        scale: 1,
+                        x: pos.x + '%',
+                        y: pos.y + '%',
+                      }
+                      : {
+                        opacity: 0,
+                        scale: 0.3,
+                        x: pos.x * 2,
+                        y: pos.y * 2,
+                      }
+                  }
+                  exit={{ opacity: 0, scale: 0 }}
+                  transition={{
+                    delay: pos.delay,
+                    duration: 0.72,
+                    ease: [0.22, 1, 0.36, 1],
+                  }}
+                  style={{
+                    position: 'absolute',
+                    transform: `translate(-50%, -50%)`,
+                  }}
+                >
+                  <motion.div
+                    whileHover={{ scale: 1.08 }}
+                    style={{
+                      border: `1.5px solid ${accentColor}`,
+                      backgroundColor: `${accentColor}08`,
+                      padding: '12px 18px',
+                      borderRadius: '6px',
+                      backdropFilter: 'blur(12px)',
+                      minWidth: '120px',
+                      textAlign: 'center',
+                      position: 'relative',
+                    }}
+                  >
+                    {/* Animated background pulse */}
+                    <motion.div
+                      animate={{
+                        boxShadow: [
+                          `0 0 12px ${accentColor}00`,
+                          `0 0 28px ${accentColor}44`,
+                          `0 0 12px ${accentColor}00`,
+                        ],
+                      }}
+                      transition={{ duration: 2.8, repeat: Infinity }}
+                      style={{
+                        position: 'absolute',
+                        inset: 0,
+                        borderRadius: 'inherit',
+                        pointerEvents: 'none',
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        fontSize: '11px',
+                        fontWeight: 700,
+                        color: accentColor,
+                        letterSpacing: '0.15em',
+                        textTransform: 'uppercase',
+                        fontFamily: 'Inter, sans-serif',
+                        position: 'relative',
+                        zIndex: 1,
+                      }}
+                    >
+                      {item}
+                    </div>
+
+                    {/* Index badge */}
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: '-6px',
+                        right: '-6px',
+                        width: '20px',
+                        height: '20px',
+                        borderRadius: '50%',
+                        backgroundColor: accentColor,
+                        color: '#000',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '9px',
+                        fontWeight: 700,
+                        fontFamily: 'Inter, sans-serif',
+                      }}
+                    >
+                      {idx + 1}
+                    </div>
+                  </motion.div>
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
+        </div>
+
+        {/* ── CENTER LABEL (category name) ── */}
+        <motion.div
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{ zIndex: 3 }}
         >
           <AnimatePresence mode="wait">
             <motion.span
-              key={`g-${activeIndex}`}
-              initial={{ opacity: 0, y: 36, scale: 1.08 }}
-              animate={{ opacity: 0.08, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -24, scale: 0.93 }}
-              transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1] }}
+              key={`cat-${categoryIdx}`}
+              initial={{ opacity: 0, scale: 0.6, y: 60 }}
+              animate={{ opacity: 0.08, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.8, y: -40 }}
+              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
               style={{
                 fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(110px, 38vw, 580px)',
+                fontSize: 'clamp(90px, 32vw, 480px)',
                 color: accentColor,
                 lineHeight: 1,
                 textTransform: 'uppercase',
@@ -367,225 +482,41 @@ function SkillsCarousel() {
                 whiteSpace: 'nowrap',
               }}
             >
-              {slide.ghost}
+              {category.ghost}
             </motion.span>
           </AnimatePresence>
-        </div>
-
-        {/* ── TOP LETTERBOX BAR ── */}
-        <div
-          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
-          style={{ zIndex: 30, height: '7vh', backgroundColor: '#000' }}
-        >
-          <span style={{ color: 'rgba(255,255,255,0.36)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
-            [ 04 ] My Skillset
-          </span>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {SKILL_SLIDES.map((_, i) => (
-              <motion.button
-                key={i}
-                onClick={() => scrollToSlide(i)}
-                animate={{
-                  width: i === activeIndex ? 32 : 8,
-                  backgroundColor: i === activeIndex ? accentColor : 'rgba(255,255,255,0.15)',
-                }}
-                transition={{ duration: 0.45 }}
-                style={{ height: 2, borderRadius: 1, cursor: 'pointer', border: 'none', padding: 0 }}
-              />
-            ))}
-          </div>
-          <span style={{ color: 'rgba(255,255,255,0.18)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>
-            0{activeIndex + 1} / 0{SKILL_SLIDES.length}
-          </span>
-        </div>
-
-        {/* ── CATEGORY BADGE ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`b-${activeIndex}`}
-            initial={{ opacity: 0, scale: 0.84, y: -14 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.48 }}
-            style={{ zIndex: 20, position: 'absolute', right: '6rem', top: 'calc(7vh + 1rem)' }}
-          >
-            <span style={{
-              color: accentColor,
-              fontSize: '10px',
-              fontWeight: 700,
-              letterSpacing: '0.3em',
-              textTransform: 'uppercase',
-              padding: '5px 18px',
-              border: `1px solid ${accentColor}55`,
-              backgroundColor: `${accentColor}14`,
-              backdropFilter: 'blur(12px)',
-              display: 'inline-block',
-              fontFamily: 'Inter, sans-serif',
-            }}>
-              {activeIndex === 0 ? 'Intro' : slide.title}
-            </span>
-          </motion.div>
-        </AnimatePresence>
-
-        {/* ── INTRO SLIDE (index 0) ── */}
-        {activeIndex === 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 48 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -32 }}
-            transition={{ duration: 0.68 }}
-            className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 lg:px-14 pb-20"
-            style={{ zIndex: 20 }}
-          >
-            <h3 style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(2.2rem, 7vw, 5.8rem)',
-              lineHeight: 0.92,
-              color: 'white',
-              textTransform: 'uppercase',
-              letterSpacing: '-0.025em',
-              marginBottom: '1rem',
-              maxWidth: '800px',
-            }}>
-              The Toolkit Behind Every
-              <span style={{ color: '#6EB5FF' }}> Scroll-Stopping Edit</span>
-            </h3>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.28, duration: 0.55 }}
-              style={{
-                fontSize: '14px',
-                lineHeight: 1.8,
-                color: 'rgba(255,255,255,0.54)',
-                maxWidth: '420px',
-                fontFamily: 'Inter, sans-serif',
-              }}
-            >
-              Hit the arrow to explore each craft — technical stack, AI tools, and specializations that power production.
-            </motion.p>
-          </motion.div>
-        )}
-
-        {/* ── SKILL CARDS GRID (index > 0) ── */}
-        {activeIndex > 0 && (
-          <motion.div
-            key={`cards-${activeIndex}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.55 }}
-            className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 lg:px-14 pb-24"
-            style={{ zIndex: 20 }}
-          >
-            <h3 style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(2.4rem, 7.2vw, 6rem)',
-              lineHeight: 0.93,
-              color: 'white',
-              textTransform: 'uppercase',
-              letterSpacing: '-0.025em',
-              marginBottom: '2rem',
-              maxWidth: '100%',
-            }}>
-              {slide.title.split(' ').map((word, wi) => (
-                <motion.span
-                  key={wi}
-                  initial={{ opacity: 0, y: 38 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: wi * 0.08 + 0.12, duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
-                  style={{ display: 'inline-block', marginRight: '0.15em' }}
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </h3>
-
-            {/* Skills as interactive cards */}
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
-              gap: '1rem',
-              maxWidth: '680px',
-              marginBottom: '1.2rem',
-            }}>
-              {slide.items.map((item, si) => (
-                <motion.div
-                  key={si}
-                  initial={{ opacity: 0, y: 18, scale: 0.92 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: si * 0.06 + 0.32, duration: 0.44, ease: [0.22, 1, 0.36, 1] }}
-                  style={{
-                    border: `1px solid ${accentColor}52`,
-                    backgroundColor: `${accentColor}12`,
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    backdropFilter: 'blur(8px)',
-                    textAlign: 'center',
-                  }}
-                >
-                  <div style={{
-                    fontSize: '12px',
-                    fontWeight: 700,
-                    color: accentColor,
-                    letterSpacing: '0.15em',
-                    textTransform: 'uppercase',
-                    fontFamily: 'Inter, sans-serif',
-                  }}>
-                    {item}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* ── RIGHT SIDE CATEGORY TIMELINE ── */}
-        <div
-          className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-3 sm:flex"
-          style={{ zIndex: 20, right: '2rem' }}
-        >
-          {SKILL_SLIDES.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => scrollToSlide(i)}
-              style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
-            >
-              <motion.div
-                animate={{
-                  height: i === activeIndex ? 52 : 10,
-                  backgroundColor: i === activeIndex ? accentColor : 'rgba(255,255,255,0.12)',
-                }}
-                transition={{ duration: 0.55 }}
-                style={{ width: 2, borderRadius: 1 }}
-              />
-            </button>
-          ))}
-        </div>
+        </motion.div>
 
         {/* ── BOTTOM LETTERBOX BAR ── */}
-        <div
+        <motion.div
           className="absolute inset-x-0 bottom-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
-          style={{ zIndex: 30, height: '7vh', backgroundColor: '#000', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+          animate={{ backgroundColor: `${accentColor}08` }}
+          transition={{ duration: 0.9 }}
+          style={{ zIndex: 30, height: '7vh', backdropFilter: 'blur(10px)', borderTop: `1px solid ${accentColor}22` }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
             <motion.span
-              animate={{ y: [0, 5, 0] }}
+              animate={{ y: [0, 6, 0] }}
               transition={{ duration: 1.8, repeat: Infinity }}
-              style={{ color: 'rgba(255,255,255,0.26)', fontSize: '14px' }}
+              style={{ color: accentColor, fontSize: '14px', flexShrink: 0 }}
             >
               ↓
             </motion.span>
-            <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
-              {activeIndex < SKILL_SLIDES.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
+            <span style={{ color: 'rgba(255,255,255,0.32)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+              Scroll to reveal skills around the character
             </span>
           </div>
-          <motion.div
-            animate={{ backgroundColor: accentColor }}
-            transition={{ duration: 0.8 }}
-            style={{ width: 48, height: 2, borderRadius: 1 }}
-          />
-        </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
+            <div style={{ width: 1, height: '40%', backgroundColor: `${accentColor}44` }} />
+            <motion.span
+              animate={{ x: [0, 4, 0] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              style={{ color: accentColor, fontSize: '13px', fontWeight: 700 }}
+            >
+              •••
+            </motion.span>
+          </div>
+        </motion.div>
 
       </div>
     </section>
