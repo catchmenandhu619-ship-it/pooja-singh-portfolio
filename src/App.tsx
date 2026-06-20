@@ -1,5 +1,4 @@
 // Updated: 2026-06-19
-import TRexScrollHero from './TRexScrollHero'
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
 import Lenis from 'lenis'
@@ -23,6 +22,8 @@ const STATS: [string, string, string][] = [
 ]
 
 
+
+const DINO_VIDEO = '/assets/videos/dino_whatido.mp4'
 
 // CloudFront-hosted ambient videos (same reliable host as the hero/contact videos).
 const CF = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P'
@@ -981,9 +982,58 @@ export default function App() {
         </main>
       </section>
 
-      {/* ============ SECTION 2: WHAT I DO — T-Rex Scroll Hero ============ */}
-      {/* Full 560 vh scroll-driven cinematic section with 5 camera keyframes */}
-      <TRexScrollHero />
+      {/* ============ SECTION 2: WHAT I DO ============ */}
+      <section id="about" className="relative z-20 flex w-full flex-col items-center overflow-hidden bg-white px-6 pb-16 pt-24 text-[#111] sm:px-10 md:pb-24 md:pt-32 lg:px-16">
+        {/* Dinosaur video background */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden bg-white"
+          style={{ height: 'min(75vw, 100%)' }}
+        >
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover"
+            src={DINO_VIDEO}
+          />
+        </div>
+
+        {/* Section label */}
+        <motion.div
+          {...fadeUp}
+          viewport={{ once: true, margin: '-100px' }}
+          transition={{ duration: 0.8, ease: 'easeOut' }}
+          className="relative z-10 mb-6 text-center text-[10px] uppercase tracking-[0.2em] text-[#111] md:mb-8 md:text-[11px]"
+        >
+          <span className="text-crimson">[ 02 ]</span>{' '}
+          <span className="font-semibold">What I Do</span>
+        </motion.div>
+
+        {/* Main heading */}
+        <h2 className="relative z-10 mb-10 max-w-4xl text-center font-display text-[2.2rem] font-medium leading-tight tracking-tight text-[#111] drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)] md:mb-14 md:text-[3.5rem]">
+          <RevealText text="Raw footage in. Scroll-stopping stories out — editing, motion and design built to make brands" />
+          {' '}<span className="text-crimson"><RevealText text="impossible to ignore." delay={0.3} /></span>
+        </h2>
+
+        {/* Skill pills */}
+        <motion.div
+          {...fadeUp}
+          viewport={{ once: true, margin: '-80px' }}
+          transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
+          className="relative z-10 flex flex-wrap justify-center gap-3 md:gap-4"
+        >
+          {['Video Editing', 'Motion Graphics', 'Thumbnail Design', 'AI Workflows', 'Social Content'].map((skill) => (
+            <span
+              key={skill}
+              className="rounded-full border border-[#111]/20 bg-white/80 px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#111] backdrop-blur-sm md:px-5 md:text-[12px]"
+            >
+              {skill}
+            </span>
+          ))}
+        </motion.div>
+      </section>
 
       {/* ============ SECTION 2.5: PROJECTS PORTFOLIO ============ */}
       <section id="projects" className="relative z-25 w-full bg-white px-6 pb-20 pt-24 sm:px-10 md:pb-32 md:pt-36 lg:px-16">
