@@ -1,8 +1,8 @@
 # Pooja Singh Portfolio — Complete Handover Documentation
 
-**Document Updated:** June 20, 2026
+**Document Updated:** June 21, 2026
 **Project:** Pooja Singh Creative Portfolio Website
-**Status:** Live in Production ✅
+**Status:** Live in Production ✅ (Major VFX Section Redesigns Complete)
 
 ---
 
@@ -65,13 +65,18 @@ Pooja Singh Portfolio is a modern, high-performance creative portfolio website s
 pooja-portfolio/
 ├── public/
 │   └── assets/
-│       ├── figurines/           PNG images for skills carousel
+│       ├── figurines/           PNG images (legacy, removed from main flow)
 │       └── videos/
-│           ├── Glass_T-rex_walking_white_backgr._202606172104.mp4  (9.4 MB) ← ACTIVE
-│           ├── Flow_202606172104.mp4                                (9.1 MB) ← unused
-│           └── Skeletal_T-rex_original_grainy.mp4                 (10.8 MB) ← backup
+│           ├── hero_main.mp4                              (14.9 MB) — Hero section
+│           ├── dino_whatido.mp4                           (21.3 MB) — "What I Do" dinosaur
+│           ├── char_running.mp4                           (18.7 MB) — Work chapter 1
+│           ├── char_combat.mp4                            (10.6 MB) — Work chapter 2
+│           ├── char_standing.mp4                          (11.1 MB) — Work chapter 3
+│           ├── char_leaning.mp4                           (8.8 MB)  — Work chapter 4
+│           ├── char_jumping.mp4                           (15.2 MB) — Work chapter 5
+│           └── skills_hero.mp4                            (25.1 MB) — Skills section hero
 ├── src/
-│   ├── App.tsx          Main component (~1403 lines)
+│   ├── App.tsx          Main component (~1620 lines, 2 major sections redesigned)
 │   ├── main.tsx         Entry point
 │   ├── index.css        Tailwind + custom styles
 │   └── vite-env.d.ts
@@ -140,34 +145,105 @@ pooja-portfolio/
 
 ---
 
+### Session 3 — June 21, 2026
+
+#### 10. Extended "What I Do" Video to Cover Full Section
+- Changed video wrapper from `inset-x-0 top-0` with `height: min(75vw, 100%)` to full `inset-0`
+- Dinosaur background now covers entire section including career history cards
+- Removed CSS `object-position` constraint, using `object-center` for balanced crop
+- **Result:** Unified cinematic experience with dino playing behind heading, pills, and career cards
+
+#### 11. Reimagined "Selected Work" Section as Hollywood VFX Showcase
+- **Replaced coverflow carousel** (figurines-based) with **full-screen immersive cinematic layout**
+- **5 character hero videos** instead of CloudFront edits — running, combat, standing, leaning, jumping poses
+- **Aggressive VFX stack:**
+  - Letterbox bars (top/bottom, black, 7vh) with progress dots and section counter
+  - Horizontal cut-lines that sweep on chapter change (like film splice effect)
+  - Accent color bloom glow (radial gradient behind character, per-chapter color)
+  - Spotlight vignette + bottom gradient + left vignette
+  - Film grain (0.28 opacity) + scanlines overlay
+  - Ghost word (accent-tinted, 34vw, 9% opacity) sliding in/out with scale animation
+  - **Giant chapter number** (50vw+, 11% opacity) positioned bottom-right as typographic backdrop
+  - Vertical category name (rotated, ghostly) on right side
+
+- **New bottom letterbox bar system:**
+  - `↓ SCROLL TO EXPLORE` hint
+  - Animated skills ticker showing chapter-specific tools (stagger-animated)
+  - Accent-colored progress line (right side)
+
+- **Content animations:**
+  - Chapter number + rule + category with sequential reveals
+  - Skill tags (4 per chapter) with scale + y stagger entrance
+  - Title: word-by-word stagger reveal (70ms between words)
+  - Description: fade-in on slight delay
+
+- **Right-side vertical timeline:** bars that grow/shrink for active chapter (clickable to jump)
+
+**New constant `CHAPTER_SKILLS`:** 4 editorial metadata items per work category
+- YouTube Edits: Premiere Pro, Reels & Shorts, Color Grading, Retention Hooks
+- Motion Graphics: After Effects, Kinetic Text, Lower Thirds, Motion Design
+- Thumbnail Design: Photoshop, Canva Pro, CTR-First Design, Social Cards
+- Brand Decks: Illustrator, Pitch Decks, Brand Guides, Visual Identity
+- AI Content: Midjourney, HeyGen Avatar, Sora AI, Minimax
+
+#### 12. Reimagined "Skills" Section with Full-Screen Character Hero
+- **Replaced figurine carousel** with **immersive video-driven skill showcase**
+- **Hero character video:** Sai fighter with red bandana, full-screen centered
+- **Same VFX treatment as work section:**
+  - Letterbox bars (7vh top/bottom, black)
+  - Horizontal cut-lines on category change
+  - Accent bloom glow (cycles blue → pink → green per category)
+  - Spotlight vignette + gradients
+  - Film grain + scanlines
+  - Ghost category name (38vw, accent-tinted, 8% opacity)
+
+- **Two-slide design:**
+  1. **Intro slide (index 0):** "The Toolkit Behind Every SCROLL-STOPPING EDIT" with category badge
+  2. **Category slides (indices 1-3):** Title + responsive skill card grid
+     - Cards: bordered boxes with accent border + subtle fill, uppercase centered text
+     - Stagger animation: 6-layer entrance (scale + y)
+     - Grid: auto-fit responsive (140px min width per card)
+
+- **Color rotation per category:**
+  - Technical Skills: #6EB5FF (blue)
+  - AI Toolset: #E882B4 (pink)
+  - Specializations: #6BBF7A (green)
+
+- **Interactive elements:**
+  - Right-side category timeline (bars animate height/color)
+  - Top letterbox progress dots (animated width on active)
+  - Bottom letterbox with scroll hint + accent-colored rule
+
+---
+
 ## Current Video Setup
 
-**File in use:** `Skeletal_T-rex_walking_white_void_202606172101.mp4`
-*(This filename is kept for code compatibility — the actual content is the Glass T-rex video)*
+### Section 2: "What I Do" (Dinosaur)
+- **File in use:** `/assets/videos/dino_whatido.mp4` (21.3 MB)
+- **Layout:** Full-screen background, covers entire section including career cards
+- **Wrapper:** `absolute inset-0` (fills section edge-to-edge)
+- **Video styling:** `object-cover object-center` with spotlight vignette + bottom gradient
+- **Watermark hiding:** Gemini logo buried under bottom gradient (58% height fade-to-black)
 
-**Source file:** `D:\Glass_T-rex_walking_white_backgr._202606172104.mp4`
+### Section 3: "Selected Work" (5 Character Videos)
+- **Files in use:**
+  - `/assets/videos/char_running.mp4` (18.7 MB) — Chapter 1: YouTube Edits
+  - `/assets/videos/char_combat.mp4` (10.6 MB) — Chapter 2: Motion Graphics
+  - `/assets/videos/char_standing.mp4` (11.1 MB) — Chapter 3: Thumbnail Design
+  - `/assets/videos/char_leaning.mp4` (8.8 MB) — Chapter 4: Brand Decks
+  - `/assets/videos/char_jumping.mp4` (15.2 MB) — Chapter 5: AI Content
+- **Layout:** Scroll-driven chapter progression (5 chapters × 100svh each)
+- **Crossfade:** Videos fade in/out at 0.88s easing
+- **Vignette:** Spotlight effect + bottom gradient + left vignette
+- **Accent color:** Per-chapter crimson or warm gold, with bloom glow behind character
+- **Watermark hiding:** Bottom gradient + vignette bury any Gemini watermarks
 
-**Code location:** `src/App.tsx`
-
-```tsx
-// Line ~80
-const TREX_VIDEO = '/assets/videos/Skeletal_T-rex_walking_white_void_202606172101.mp4'
-
-// "What I Do" section — video wrapper
-<motion.div
-  className="pointer-events-none absolute inset-x-0 top-0 z-0 overflow-hidden bg-white"
-  style={{ height: 'min(75vw, 100%)' }}
->
-  <video
-    autoPlay loop muted playsInline preload="auto"
-    className="absolute inset-0 h-full w-full object-cover"
-    src={TREX_VIDEO}
-  />
-</motion.div>
-```
-
-**Why `height: min(75vw, 100%)`:**
-The wrapper is capped to a 4:3 aspect ratio. Because this is taller than the video's native 16:9, `object-cover` must crop the left and right sides to fill the height. This right-side crop pushes the Gemini watermark (bottom-right corner of video) off-screen at every viewport width from mobile (375px) to desktop (1440px+).
+### Section 4: "Skills" (Character Hero)
+- **File in use:** `/assets/videos/skills_hero.mp4` (25.1 MB) — Sai fighter with red bandana
+- **Layout:** Scroll-driven 4-slide progression (1 intro + 3 category slides)
+- **Video styling:** `object-cover object-center` with spotlight vignette
+- **Accent colors:** Blue (#6EB5FF) for Tech → Pink (#E882B4) for AI → Green (#6BBF7A) for Craft
+- **Watermark hiding:** Bottom gradient + side vignettes push watermark below fold
 
 ---
 
@@ -239,7 +315,11 @@ Vercel keeps the **last successful deployment** live. To diagnose:
 
 | Commit | Description |
 |---|---|
-| `2fa6f35` | Sweet spot zoom: 4:3 wrapper + object-cover hides Gemini watermark ← **latest** |
+| `3c213d3` | Reimagine Skills section: full-screen character hero, skill card grid, letterbox bars, cut-lines, accent glow ← **latest** |
+| `84f0f7f` | Enhance work section: letterbox bars, cut-lines, skill tags, ghost number, word-stagger reveal, skills ticker |
+| `ebc4989` | Reimagine Selected Work as immersive cinematic chapter showcase with 5 character videos |
+| `5717ddc` | Extend dino video to cover full What I Do section including career cards |
+| `2fa6f35` | Sweet spot zoom: 4:3 wrapper + object-cover hides Gemini watermark |
 | `6e780d8` | Zoom out: object-contain object-top |
 | `ffeebaa` | Swap to glass crystal T-rex video |
 | `af64df4` | Replace with high-detail bone skeleton video |
@@ -285,9 +365,21 @@ Vercel keeps the **last successful deployment** live. To diagnose:
 
 These are the original source files used during development. Keep these as backup.
 
+### Section Videos (Now in Production)
+| File | Size | Status |
+|---|---|---|
+| `D:\hf_20260606_154941_df1a96e1-a06f-450c-bd02-d863414cc1a0_202606210318.mp4` | — | **Hero section video (copied to assets)** |
+| `D:\Character_running_forward_holdin…_202606210218.mp4` | 18.7 MB | **Work chapter 1 (copied to assets)** |
+| `D:\Character_in_combat_stance_202606210205.mp4` | 10.6 MB | **Work chapter 2 (copied to assets)** |
+| `D:\Character_standing_in_white_envi…_202606210213.mp4` | 11.1 MB | **Work chapter 3 (copied to assets)** |
+| `D:\Character_leaning_against_wall_202606210217.mp4` | 8.8 MB | **Work chapter 4 (copied to assets)** |
+| `D:\Character_jumping_and_landing_wi…_202606210209.mp4` | 15.2 MB | **Work chapter 5 (copied to assets)** |
+| `D:\Character_with_red_bandana_sai_202606210450.mp4` | 25.1 MB | **Skills section hero (copied to assets, use up to 7.15sec)** |
+
+### Legacy Videos (Dinosaur & Dinosaur Variants)
 | File | Size | Notes |
 |---|---|---|
-| `D:\Glass_T-rex_walking_white_backgr._202606172104.mp4` | 9.4 MB | **Current live video** |
+| `D:\Glass_T-rex_walking_white_backgr._202606172104.mp4` | 9.4 MB | **"What I Do" dino video (current)** |
 | `D:\Glass_T-rex_walking_white_backgr._202606172103.mp4` | 11.5 MB | Close-up head pan (not used) |
 | `D:\Glass_T-rex_walking_white_backgr._202606172102.mp4` | 10.7 MB | Alternative (not used) |
 | `D:\Skeletal_T-rex_walking_white_void_202606172101.mp4` | 10.8 MB | Original black skeleton |
@@ -305,6 +397,6 @@ These are the original source files used during development. Keep these as backu
 
 ---
 
-**Document Version:** 2.0
-**Last Updated:** June 20, 2026
-**Latest Commit:** `2fa6f35`
+**Document Version:** 3.0
+**Last Updated:** June 21, 2026
+**Latest Commit:** `3c213d3`
