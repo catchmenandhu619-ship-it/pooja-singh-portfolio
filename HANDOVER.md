@@ -186,33 +186,46 @@ pooja-portfolio/
 - Brand Decks: Illustrator, Pitch Decks, Brand Guides, Visual Identity
 - AI Content: Midjourney, HeyGen Avatar, Sora AI, Minimax
 
-#### 12. Reimagined "Skills" Section with Full-Screen Character Hero
-- **Replaced figurine carousel** with **immersive video-driven skill showcase**
-- **Hero character video:** Sai fighter with red bandana, full-screen centered
-- **Same VFX treatment as work section:**
-  - Letterbox bars (7vh top/bottom, black)
-  - Horizontal cut-lines on category change
-  - Accent bloom glow (cycles blue → pink → green per category)
-  - Spotlight vignette + gradients
-  - Film grain + scanlines
-  - Ghost category name (38vw, accent-tinted, 8% opacity)
+#### 12. Reimagined "Skills" Section — 3D Scroll-Driven Orbital Reveal
+- **Completely new mechanic:** Character becomes the **central anchor**, skills **orbit around** as user scrolls
+- **Hero character video:** Sai fighter with red bandana, **frozen center** (not playing, scrubbed via scroll progress)
+- **Scroll-driven reveals:** 8 total skills per category, each appears at different position around character
+  - Positions cycle: left (−35%, +60%) → right (+35%, +55%) → left-top → right-top → left-bottom → right-bottom → center-top → left-bottom
+  - Stagger delays: 0ms to 1.05s between each skill reveal
+  - Smooth scale + position animation (0.72s ease)
 
-- **Two-slide design:**
-  1. **Intro slide (index 0):** "The Toolkit Behind Every SCROLL-STOPPING EDIT" with category badge
-  2. **Category slides (indices 1-3):** Title + responsive skill card grid
-     - Cards: bordered boxes with accent border + subtle fill, uppercase centered text
-     - Stagger animation: 6-layer entrance (scale + y)
-     - Grid: auto-fit responsive (140px min width per card)
+- **Skill cards:**
+  - Pink/Blue/Green bordered boxes with accent-color fill (8% opacity)
+  - Numbered badges (1-8, positioned top-right)
+  - Glowing pulse animation (2.8s loop, box-shadow glow)
+  - Hover scale: 1 → 1.08
+
+- **Video scrubbing:** As user scrolls, `videoRef.currentTime` advances based on scroll progress
+  - Video plays through ~70% of duration across entire section
+  - Creates illusion of video playing while user scrolls through skills
+
+- **VFX stack:**
+  - Radial vignette (ellipse 50% × 55% centered)
+  - Accent bloom glow (110px blur, 10% opacity, behind character)
+  - Film grain (24% opacity) + scanlines
+  - Letterbox bars (7vh, frosted glass: `rgba(0,0,0,0.85)` + blur)
+
+- **Top letterbox bar:**
+  - Left: `[ 04 ] MY SKILLSET`
+  - Center: Animated category name (color = accentColor)
+  - Right: Progress counter `02 / 04`
+
+- **Bottom letterbox bar:**
+  - Left: `↓ SCROLL TO REVEAL SKILLS AROUND THE CHARACTER` + scroll hint
+  - Right: Animated pulse indicator (`•••` with bounce animation)
+  - Bar background: `${accentColor}08` + blur, top border `${accentColor}22`
 
 - **Color rotation per category:**
   - Technical Skills: #6EB5FF (blue)
   - AI Toolset: #E882B4 (pink)
   - Specializations: #6BBF7A (green)
 
-- **Interactive elements:**
-  - Right-side category timeline (bars animate height/color)
-  - Top letterbox progress dots (animated width on active)
-  - Bottom letterbox with scroll hint + accent-colored rule
+- **Total scroll height:** 800svh (8 viewport heights) to accommodate all skills across all 4 categories
 
 ---
 
@@ -315,7 +328,9 @@ Vercel keeps the **last successful deployment** live. To diagnose:
 
 | Commit | Description |
 |---|---|
-| `3c213d3` | Reimagine Skills section: full-screen character hero, skill card grid, letterbox bars, cut-lines, accent glow ← **latest** |
+| `74f2a97` | Reimagine Skills: scroll-driven 3D orbital reveal with character as center anchor, skills orbit around ← **latest** |
+| `945a10a` | Update HANDOVER.md: document Session 3 redesigns (work + skills sections), add latest video assets |
+| `3c213d3` | Reimagine Skills section: full-screen character hero, skill card grid, letterbox bars, cut-lines, accent glow |
 | `84f0f7f` | Enhance work section: letterbox bars, cut-lines, skill tags, ghost number, word-stagger reveal, skills ticker |
 | `ebc4989` | Reimagine Selected Work as immersive cinematic chapter showcase with 5 character videos |
 | `5717ddc` | Extend dino video to cover full What I Do section including career cards |
@@ -397,6 +412,6 @@ These are the original source files used during development. Keep these as backu
 
 ---
 
-**Document Version:** 3.0
-**Last Updated:** June 21, 2026
-**Latest Commit:** `3c213d3`
+**Document Version:** 3.1
+**Last Updated:** June 21, 2026 (Skills Section 3D Orbital Redesign)
+**Latest Commit:** `74f2a97`
