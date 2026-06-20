@@ -5,10 +5,7 @@ import Lenis from 'lenis'
 import {
   ArrowUpRight,
   Award,
-  Clapperboard,
   Crown,
-  Image as ImageIcon,
-  Sparkles,
   X,
 } from 'lucide-react'
 
@@ -25,49 +22,52 @@ const STATS: [string, string, string][] = [
 
 const DINO_VIDEO = '/assets/videos/dino_whatido.mp4'
 
-// CloudFront-hosted ambient videos (same reliable host as the hero/contact videos).
-const CF = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P'
 
-const CHAPTERS = [
+const WORK_CHAPTERS = [
   {
-    name: 'YouTube Edits',
-    desc: 'High-retention edits for education and startup channels',
+    num: '01',
+    category: 'YouTube Edits',
+    title: 'HIGH-RETENTION\nEDITS',
+    desc: 'Education & startup channels. High-energy hooks, zero dead frames — 100% on-time delivery.',
     ghost: 'EDITS',
-    bg: '#0E0E0E',
-    light: false,
-    video: `${CF}/hf_20260331_045634_e1c98c76-1265-4f5c-882a-4276f2080894.mp4`,
+    accent: '#FF3D2E',
+    video: '/assets/videos/char_running.mp4',
   },
   {
-    name: 'Motion Graphics',
-    desc: 'Dynamic text animations and visual storytelling',
+    num: '02',
+    category: 'Motion Graphics',
+    title: 'KINETIC\nVISUAL STORIES',
+    desc: 'Dynamic text, motion titles, animated storytelling — built to stop the scroll dead in its tracks.',
     ghost: 'MOTION',
-    bg: '#FF3D2E',
-    light: false,
-    video: `${CF}/hf_20260331_053923_22c0a6a5-313c-474c-85ff-3b50d25e944a.mp4`,
+    accent: '#FF3D2E',
+    video: '/assets/videos/char_combat.mp4',
   },
   {
-    name: 'Thumbnail Design',
-    desc: 'High-CTR thumbnails and social media carousels',
+    num: '03',
+    category: 'Thumbnail Design',
+    title: 'HIGH-CTR\nTHUMBNAILS',
+    desc: 'Click-bait done right. Social-first hooks that make audiences click before they know why.',
     ghost: 'THUMBS',
-    bg: '#FCFCFC',
-    light: true,
-    video: `${CF}/hf_20260331_054411_511c1b7a-fb2f-42ef-bf6c-32c0b1a06e79.mp4`,
+    accent: '#f0dfc4',
+    video: '/assets/videos/char_standing.mp4',
   },
   {
-    name: 'Brand Decks',
-    desc: 'Presentation decks and visual aids with strict brand consistency',
+    num: '04',
+    category: 'Brand Decks',
+    title: 'VISUAL BRAND\nLANGUAGE',
+    desc: 'Decks that don\'t just look good — they sell ideas. Brand-consistent, stakeholder-ready.',
     ghost: 'BRAND',
-    bg: '#0E0E0E',
-    light: false,
-    video: `${CF}/hf_20260331_055427_ac7035b5-9f3b-4289-86fc-941b2432317d.mp4`,
+    accent: '#FF3D2E',
+    video: '/assets/videos/char_leaning.mp4',
   },
   {
-    name: 'AI Content',
-    desc: 'Generative AI workflows — Midjourney, HeyGen, Sora and beyond',
+    num: '05',
+    category: 'AI Content',
+    title: 'GENERATIVE\nAI WORKFLOWS',
+    desc: 'Midjourney · HeyGen · Sora · Minimax — generative pipelines that cut production time by 30%.',
     ghost: 'AI',
-    bg: '#FF3D2E',
-    light: false,
-    video: `${CF}/hf_20260331_055729_72d66327-b59e-4ae9-bb70-de6ccb5ecdb0.mp4`,
+    accent: '#FF3D2E',
+    video: '/assets/videos/char_jumping.mp4',
   },
 ]
 
@@ -462,14 +462,12 @@ function SkillsCarousel() {
   )
 }
 
-// Scroll-driven coverflow carousel for the work chapters — same transition
-// language / fonts as the skills figurine carousel, adapted for video cards.
-function WorkCarousel() {
+// Immersive full-screen work showcase — 5 character videos as cinematic backdrops,
+// scroll-driven chapter progression with spotlight vignette and film overlays.
+function ImmersiveWorkSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 640,
-  )
+  const [flash, setFlash] = useState(false)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -477,228 +475,305 @@ function WorkCarousel() {
   })
 
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    const idx = Math.min(
-      CHAPTERS.length - 1,
-      Math.max(0, Math.floor(p * CHAPTERS.length)),
-    )
-    setActiveIndex((cur) => (cur === idx ? cur : idx))
+    const idx = Math.min(WORK_CHAPTERS.length - 1, Math.max(0, Math.floor(p * WORK_CHAPTERS.length)))
+    setActiveIndex((cur) => {
+      if (cur === idx) return cur
+      setFlash(true)
+      setTimeout(() => setFlash(false), 320)
+      return idx
+    })
   })
 
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 640)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
-
-  const scrollToSlide = (i: number) => {
+  const scrollToChapter = (i: number) => {
     const sec = sectionRef.current
     if (!sec) return
     const travel = sec.offsetHeight - window.innerHeight
-    const top = sec.offsetTop + travel * ((i + 0.5) / CHAPTERS.length)
+    const top = sec.offsetTop + travel * ((i + 0.5) / WORK_CHAPTERS.length)
     window.scrollTo({ top, behavior: 'smooth' })
   }
 
-  const prev = (activeIndex + CHAPTERS.length - 1) % CHAPTERS.length
-  const next = (activeIndex + 1) % CHAPTERS.length
-
-  // Coverflow depth: center card large + sharp, prev/next peek blurred, rest hidden.
-  const roleStyle = (i: number): CSSProperties => {
-    const base: CSSProperties = {
-      position: 'absolute',
-      top: '46%',
-      aspectRatio: '16 / 9',
-      borderRadius: 18,
-      overflow: 'hidden',
-      transition:
-        'transform 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), left 650ms cubic-bezier(0.4,0,0.2,1), width 650ms cubic-bezier(0.4,0,0.2,1)',
-      transform: 'translate(-50%, -50%)',
-      willChange: 'transform, filter, opacity',
-    }
-    if (i === activeIndex)
-      return {
-        ...base,
-        left: '50%',
-        width: isMobile ? '86vw' : 'min(56vw, 880px)',
-        filter: 'blur(0px)',
-        opacity: 1,
-        zIndex: 30,
-        boxShadow: '0 30px 80px rgba(0,0,0,0.45)',
-      }
-    if (i === prev)
-      return {
-        ...base,
-        left: isMobile ? '12%' : '24%',
-        width: isMobile ? '52vw' : 'min(32vw, 460px)',
-        filter: 'blur(4px)',
-        opacity: 0.5,
-        zIndex: 20,
-      }
-    if (i === next)
-      return {
-        ...base,
-        left: isMobile ? '88%' : '76%',
-        width: isMobile ? '52vw' : 'min(32vw, 460px)',
-        filter: 'blur(4px)',
-        opacity: 0.5,
-        zIndex: 20,
-      }
-    return {
-      ...base,
-      left: '50%',
-      width: isMobile ? '40vw' : 'min(22vw, 320px)',
-      filter: 'blur(8px)',
-      opacity: 0,
-      zIndex: 10,
-    }
-  }
-
-  const slide = CHAPTERS[activeIndex]
-  const fg = slide.light ? '#0E0E0E' : '#ffffff'
+  const ch = WORK_CHAPTERS[activeIndex]
 
   return (
     <section
       ref={sectionRef}
-      id="work-showcase"
+      id="work"
       className="relative w-full"
-      style={{
-        height: `${CHAPTERS.length * 100}svh`,
-        fontFamily: 'Inter, sans-serif',
-      }}
+      style={{ height: `${WORK_CHAPTERS.length * 100}svh` }}
     >
-      <div
-        className="sticky top-0 h-svh min-h-[640px] w-full overflow-hidden"
-        style={{
-          backgroundColor: slide.bg,
-          transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
-        }}
-      >
-        {/* Grain overlay */}
+      <div className="sticky top-0 h-svh overflow-hidden bg-black">
+
+        {/* ── VIDEO BACKGROUNDS — all mounted, crossfade on chapter change ── */}
+        {WORK_CHAPTERS.map((c, i) => (
+          <motion.div
+            key={i}
+            className="absolute inset-0"
+            animate={{ opacity: i === activeIndex ? 1 : 0 }}
+            transition={{ duration: 0.85, ease: 'easeInOut' }}
+            style={{ zIndex: 1 }}
+          >
+            <video
+              autoPlay loop muted playsInline
+              preload={i === 0 ? 'auto' : 'metadata'}
+              className="h-full w-full object-cover"
+              style={{ objectPosition: 'center 18%' }}
+              src={c.video}
+            />
+          </motion.div>
+        ))}
+
+        {/* ── CINEMATIC FLASH on chapter change ── */}
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          animate={{ opacity: flash ? 0.18 : 0 }}
+          transition={{ duration: flash ? 0.05 : 0.28 }}
+          style={{ zIndex: 8, backgroundColor: '#fff' }}
+        />
+
+        {/* ── SPOTLIGHT VIGNETTE (character lit from behind, darkness at edges) ── */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 50,
-            opacity: 0.4,
-            backgroundSize: '200px 200px',
+            zIndex: 4,
+            background:
+              'radial-gradient(ellipse 58% 62% at 64% 36%, transparent 0%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.95) 100%)',
+          }}
+        />
+
+        {/* ── BOTTOM GRADIENT (text readability + watermark burial) ── */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{
+            zIndex: 4,
+            height: '58%',
+            background:
+              'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.15) 72%, transparent 100%)',
+          }}
+        />
+
+        {/* ── LEFT VIGNETTE (text panel breathing room) ── */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0"
+          style={{
+            zIndex: 4,
+            width: '42%',
+            background:
+              'linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.22) 65%, transparent 100%)',
+          }}
+        />
+
+        {/* ── FILM GRAIN ── */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 5,
+            opacity: 0.28,
+            backgroundSize: '160px 160px',
             backgroundImage:
               "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
           }}
         />
 
-        {/* Giant ghost title */}
+        {/* ── SCANLINES ── */}
         <div
-          className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
-          style={{ zIndex: 2, top: '8%' }}
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 5,
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
+          }}
+        />
+
+        {/* ── GHOST WORD (faint massive background typography) ── */}
+        <div
+          className="pointer-events-none absolute inset-x-0 flex select-none items-start justify-center overflow-hidden"
+          style={{ zIndex: 3, top: '6%' }}
         >
-          <span
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(64px, 22vw, 320px)',
-              color: fg,
-              lineHeight: 1,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-              whiteSpace: 'nowrap',
-              opacity: 0.9,
-              transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)',
-            }}
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={ch.ghost}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 0.055, y: 0 }}
+              exit={{ opacity: 0, y: -16 }}
+              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: 'clamp(90px, 30vw, 460px)',
+                color: 'white',
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.02em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {ch.ghost}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        {/* ── LEFT EDGE PROGRESS BAR ── */}
+        <div
+          className="absolute left-0 top-0 h-full"
+          style={{ zIndex: 20, width: 3, backgroundColor: 'rgba(255,255,255,0.06)' }}
+        >
+          <motion.div
+            style={{ width: '100%', backgroundColor: ch.accent }}
+            animate={{ height: `${((activeIndex + 1) / WORK_CHAPTERS.length) * 100}%` }}
+            transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
+          />
+        </div>
+
+        {/* ── TOP-LEFT: SECTION LABEL + COUNTER ── */}
+        <div
+          className="absolute left-6 top-6 flex items-center gap-4 sm:left-10 lg:left-14"
+          style={{ zIndex: 20 }}
+        >
+          <span style={{ color: 'rgba(255,255,255,0.42)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+            [ 03 ] Selected Work
+          </span>
+          <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '10px', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>
+            {String(activeIndex + 1).padStart(2, '0')} / {String(WORK_CHAPTERS.length).padStart(2, '0')}
+          </span>
+        </div>
+
+        {/* ── TOP-RIGHT: CATEGORY BADGE ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={ch.category}
+            initial={{ opacity: 0, x: 18 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute right-6 top-6 sm:right-10 lg:right-20"
+            style={{ zIndex: 20 }}
           >
-            {slide.ghost}
-          </span>
-        </div>
+            <span style={{
+              color: ch.accent,
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              fontFamily: 'Inter, sans-serif',
+              padding: '5px 16px',
+              border: `1px solid ${ch.accent}55`,
+              backgroundColor: `${ch.accent}14`,
+              backdropFilter: 'blur(10px)',
+              display: 'inline-block',
+            }}>
+              {ch.category}
+            </span>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Top-left label + counter */}
+        {/* ── MAIN CHAPTER CONTENT (bottom-left) ── */}
         <div
-          className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em', color: fg, transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)' }}
-        >
-          <span>[ 03 ] Selected Work</span>
-          <span className="opacity-60">
-            0{activeIndex + 1} / 0{CHAPTERS.length}
-          </span>
-        </div>
-
-        {/* Coverflow video cards */}
-        <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {CHAPTERS.map((c, i) => (
-            <div key={i} style={roleStyle(i)}>
-              <video
-                autoPlay
-                loop
-                muted
-                playsInline
-                preload="auto"
-                className="h-full w-full object-cover"
-                src={c.video}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Active chapter title + description (bottom-left) */}
-        <div
-          className="absolute bottom-24 left-4 right-4 sm:bottom-28 sm:left-10 sm:right-auto sm:max-w-md lg:left-16"
-          style={{ zIndex: 60 }}
+          className="absolute bottom-0 left-0 right-0 px-6 pb-20 sm:px-10 sm:pb-24 lg:px-14 lg:pb-28"
+          style={{ zIndex: 20 }}
         >
           <AnimatePresence mode="wait">
             <motion.div
               key={activeIndex}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 52 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+              exit={{ opacity: 0, y: -28 }}
+              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h3
-                style={{
-                  fontFamily: 'Anton, sans-serif',
-                  fontSize: 'clamp(30px, 5vw, 60px)',
-                  lineHeight: 1.02,
-                  textTransform: 'uppercase',
-                  letterSpacing: '-0.01em',
-                  color: fg,
-                }}
-              >
-                {slide.name}
+              {/* Chapter num + line + category */}
+              <div style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '14px',
+                marginBottom: '1.1rem',
+                color: ch.accent,
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.32em',
+                textTransform: 'uppercase',
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                <span>{ch.num}</span>
+                <span style={{ width: 44, height: 1, backgroundColor: ch.accent, flexShrink: 0 }} />
+                <span>{ch.category}</span>
+              </div>
+
+              {/* Giant chapter title */}
+              <h3 style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: 'clamp(2.4rem, 7.5vw, 6.8rem)',
+                lineHeight: 0.94,
+                color: 'white',
+                textTransform: 'uppercase',
+                letterSpacing: '-0.025em',
+                whiteSpace: 'pre-line',
+                marginBottom: '1.4rem',
+                maxWidth: '800px',
+              }}>
+                {ch.title}
               </h3>
-              <p
-                className="mt-3 max-w-sm text-sm leading-relaxed sm:text-base"
-                style={{ color: fg, opacity: 0.85 }}
-              >
-                {slide.desc}
+
+              {/* Description */}
+              <p style={{
+                fontSize: '14px',
+                lineHeight: 1.82,
+                color: 'rgba(255,255,255,0.58)',
+                maxWidth: '390px',
+                fontFamily: 'Inter, sans-serif',
+              }}>
+                {ch.desc}
               </p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* Scroll hint (bottom-left) */}
+        {/* ── RIGHT SIDE VERTICAL CHAPTER TIMELINE ── */}
         <div
-          className="absolute bottom-7 left-4 flex items-center gap-2 text-[11px] font-semibold uppercase sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.85, letterSpacing: '0.18em', color: fg, transition: 'color 650ms cubic-bezier(0.4,0,0.2,1)' }}
+          className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-3 sm:flex"
+          style={{ zIndex: 20, right: '2rem' }}
+        >
+          {WORK_CHAPTERS.map((c, i) => (
+            <button
+              key={i}
+              aria-label={`Jump to ${c.category}`}
+              onClick={() => scrollToChapter(i)}
+              className="flex cursor-pointer items-center gap-2"
+            >
+              <motion.span
+                animate={{ opacity: i === activeIndex ? 0.72 : 0.2 }}
+                transition={{ duration: 0.4 }}
+                className="hidden lg:inline"
+                style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.16em', color: 'white', fontFamily: 'Inter, sans-serif' }}
+              >
+                {c.num}
+              </motion.span>
+              <motion.div
+                animate={{
+                  height: i === activeIndex ? 56 : 14,
+                  backgroundColor: i === activeIndex ? ch.accent : 'rgba(255,255,255,0.18)',
+                }}
+                transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                style={{ width: 2, borderRadius: 1 }}
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* ── SCROLL HINT ── */}
+        <div
+          className="absolute bottom-7 left-6 flex items-center gap-2 sm:left-10 lg:left-14"
+          style={{ zIndex: 20 }}
         >
           <motion.span
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-block text-base"
+            animate={{ y: [0, 7, 0] }}
+            transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut' }}
+            style={{ color: 'rgba(255,255,255,0.28)', fontSize: '15px' }}
           >
             ↓
           </motion.span>
-          {activeIndex < CHAPTERS.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
+          <span style={{ color: 'rgba(255,255,255,0.26)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+            {activeIndex < WORK_CHAPTERS.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
+          </span>
         </div>
 
-        {/* Progress dots (bottom-right) */}
-        <div
-          className="absolute bottom-9 right-4 flex gap-2 sm:right-10 lg:right-16"
-          style={{ zIndex: 60 }}
-        >
-          {CHAPTERS.map((_, i) => (
-            <button
-              key={i}
-              aria-label={`Go to ${CHAPTERS[i].name}`}
-              onClick={() => scrollToSlide(i)}
-              className="h-2.5 rounded-full transition-all duration-300"
-              style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45, backgroundColor: fg }}
-            />
-          ))}
-        </div>
       </div>
     </section>
   )
@@ -1152,60 +1227,8 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* ============ SECTION 3: SELECTED WORK ============ */}
-      <section id="work" className="relative z-30 flex w-full flex-col bg-white text-gray-900">
-        {/* Heading area */}
-        <div className="relative z-10 flex flex-col justify-between gap-10 px-6 pb-14 pt-24 sm:px-10 md:pt-32 lg:px-16 xl:flex-row xl:items-end">
-          <h2 className="max-w-3xl text-[1.8rem] font-medium leading-[1.15] tracking-tight text-gray-900 md:text-[3rem] lg:text-[3.4rem]">
-            <MaskReveal>
-              Work that doesn't just{' '}
-              <span className="mx-2 inline-flex translate-y-[-4px] gap-2 align-middle md:mx-3 md:gap-3">
-                {[Clapperboard, Sparkles, ImageIcon].map((Icon, i) => (
-                  <span
-                    key={i}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 bg-white text-gray-400 transition-colors duration-300 hover:border-crimson hover:bg-crimson hover:text-white md:h-14 md:w-14"
-                  >
-                    <Icon size={20} strokeWidth={1.5} />
-                  </span>
-                ))}
-              </span>
-              look good — <span className="text-crimson">it performs.</span>
-            </MaskReveal>
-          </h2>
-
-          <motion.div
-            {...fadeUp}
-            viewport={{ once: true, margin: '-100px' }}
-            transition={{ duration: 0.9, ease: 'easeOut', delay: 0.15 }}
-            className="shrink-0"
-          >
-            <p className="mb-6 text-[9px] uppercase leading-relaxed tracking-widest text-gray-500 md:text-[10px]">
-              I don't just make content
-              <br />I make content that converts
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {['Strategic', 'Brand-Aligned', 'High-Retention'].map((pill) => (
-                <span
-                  key={pill}
-                  className="rounded-full border border-gray-300 px-5 py-2 text-[9px] uppercase tracking-widest text-gray-600 transition-colors duration-300 hover:border-gray-900 hover:bg-gray-900 hover:text-white"
-                >
-                  {pill}
-                </span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-
-        <div className="relative z-10 h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent" />
-
-        {/* Section footer line */}
-        <div className="relative z-10 px-6 py-8 text-[10px] uppercase tracking-widest text-gray-400 sm:px-10 lg:px-16">
-          CUT. GRADE. SHIP. REPEAT.
-        </div>
-      </section>
-
-      {/* ============ SECTION 3.5: WORK SHOWCASE CAROUSEL ============ */}
-      <WorkCarousel />
+      {/* ============ SECTION 3: IMMERSIVE WORK SHOWCASE ============ */}
+      <ImmersiveWorkSection />
 
       {/* ============ SECTION 3.6: SKILLS CAROUSEL (figurines) ============ */}
       <SkillsCarousel />
