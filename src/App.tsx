@@ -1,5 +1,5 @@
 // Updated: 2026-06-19
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react'
+import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react'
 import Lenis from 'lenis'
 import {
@@ -203,15 +203,13 @@ const SKILL_SLIDES = [
   },
 ]
 
+// Aggressive immersive skills showcase — full-screen video hero character,
+// scroll-driven category progression, interactive skill card grid, vignette + glows + cuts.
 function SkillsCarousel() {
   const sectionRef = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== 'undefined' && window.innerWidth < 640,
-  )
+  const [lineKey, setLineKey] = useState(0)
 
-  // Scroll drives the carousel: the section is tall and the visual is pinned,
-  // so scrolling through it rotates the figurines between categories.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
@@ -222,21 +220,12 @@ function SkillsCarousel() {
       SKILL_SLIDES.length - 1,
       Math.max(0, Math.floor(p * SKILL_SLIDES.length)),
     )
-    setActiveIndex((cur) => (cur === idx ? cur : idx))
-  })
-
-  useEffect(() => {
-    SKILL_SLIDES.forEach((s) => {
-      const img = new Image()
-      img.src = s.fig
+    setActiveIndex((cur) => {
+      if (cur === idx) return cur
+      setLineKey((k) => k + 1)
+      return idx
     })
-  }, [])
-
-  useEffect(() => {
-    const onResize = () => setIsMobile(window.innerWidth < 640)
-    window.addEventListener('resize', onResize)
-    return () => window.removeEventListener('resize', onResize)
-  }, [])
+  })
 
   const scrollToSlide = (i: number) => {
     const sec = sectionRef.current
@@ -246,225 +235,358 @@ function SkillsCarousel() {
     window.scrollTo({ top, behavior: 'smooth' })
   }
 
-  const center = activeIndex
-  const left = (activeIndex + 3) % 4
-  const right = (activeIndex + 1) % 4
-
-  // Original TOONHUB depth animation: center large, sides small + blurred, back deepest.
-  const roleStyle = (i: number): CSSProperties => {
-    const base: CSSProperties = {
-      position: 'absolute',
-      aspectRatio: '0.6 / 1',
-      transition:
-        'transform 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), left 650ms cubic-bezier(0.4,0,0.2,1), bottom 650ms cubic-bezier(0.4,0,0.2,1), height 650ms cubic-bezier(0.4,0,0.2,1)',
-      willChange: 'transform, filter, opacity',
-    }
-    if (i === center)
-      return {
-        ...base,
-        left: '50%',
-        bottom: isMobile ? '30%' : 0,
-        height: isMobile ? '46%' : '92%',
-        transform: `translateX(-50%) scale(${isMobile ? 1.1 : 1.55})`,
-        filter: 'blur(0px)',
-        opacity: 1,
-        zIndex: 20,
-      }
-    if (i === left)
-      return {
-        ...base,
-        left: isMobile ? '16%' : '24%',
-        bottom: isMobile ? '40%' : '14%',
-        height: isMobile ? '15%' : '28%',
-        transform: 'translateX(-50%) scale(1)',
-        filter: 'blur(2px)',
-        opacity: 0.85,
-        zIndex: 10,
-      }
-    if (i === right)
-      return {
-        ...base,
-        left: isMobile ? '84%' : '76%',
-        bottom: isMobile ? '40%' : '14%',
-        height: isMobile ? '15%' : '28%',
-        transform: 'translateX(-50%) scale(1)',
-        filter: 'blur(2px)',
-        opacity: 0.85,
-        zIndex: 10,
-      }
-    // back
-    return {
-      ...base,
-      left: '50%',
-      bottom: isMobile ? '40%' : '14%',
-      height: isMobile ? '12%' : '22%',
-      transform: 'translateX(-50%) scale(1)',
-      filter: 'blur(4px)',
-      opacity: 1,
-      zIndex: 5,
-    }
-  }
-
   const slide = SKILL_SLIDES[activeIndex]
+  const accentColor = ['#6EB5FF', '#E882B4', '#6BBF7A'][activeIndex % 3]
 
   return (
     <section
       ref={sectionRef}
       id="skills"
       className="relative w-full"
-      style={{
-        height: `${SKILL_SLIDES.length * 100}svh`,
-        fontFamily: 'Inter, sans-serif',
-      }}
+      style={{ height: `${SKILL_SLIDES.length * 100}svh` }}
     >
-      <div
-        className="sticky top-0 h-svh min-h-[640px] w-full overflow-hidden"
-        style={{
-          backgroundColor: slide.bg,
-          transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
-        }}
-      >
-        {/* Grain overlay */}
-        <div
-          className="pointer-events-none absolute inset-0"
+      <div className="sticky top-0 h-svh overflow-hidden bg-black">
+
+        {/* ── FULL-SCREEN CHARACTER VIDEO HERO ── */}
+        <motion.div
+          className="absolute inset-0"
+          animate={{ opacity: activeIndex === 0 ? 1 : 0.3 }}
+          transition={{ duration: 1, ease: 'easeInOut' }}
+          style={{ zIndex: 1 }}
+        >
+          <video
+            autoPlay loop muted playsInline
+            preload="auto"
+            className="h-full w-full object-cover"
+            style={{ objectPosition: 'center 15%' }}
+            src="/assets/videos/skills_hero.mp4"
+          />
+        </motion.div>
+
+        {/* ── ACCENT COLOR GLOW ── */}
+        <motion.div
+          className="pointer-events-none absolute"
+          animate={{ backgroundColor: accentColor }}
+          transition={{ duration: 1.2 }}
           style={{
-            zIndex: 50,
-            opacity: 0.4,
-            backgroundSize: '200px 200px',
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+            zIndex: 2,
+            left: '-8%', top: '10%',
+            width: '60%', height: '72%',
+            borderRadius: '50%',
+            opacity: 0.08,
+            filter: 'blur(100px)',
           }}
         />
 
-        {/* Giant ghost title */}
+        {/* ── SPOTLIGHT VIGNETTE ── */}
         <div
-          className="pointer-events-none absolute inset-x-0 flex select-none items-center justify-center"
-          style={{ zIndex: 2, top: '14%' }}
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 4,
+            background: 'radial-gradient(ellipse 52% 58% at 60% 32%, transparent 0%, rgba(0,0,0,0.45) 58%, rgba(0,0,0,0.95) 100%)',
+          }}
+        />
+
+        {/* ── BOTTOM GRADIENT ── */}
+        <div
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{
+            zIndex: 4,
+            height: '64%',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.92) 16%, rgba(0,0,0,0.6) 44%, rgba(0,0,0,0.1) 68%, transparent 100%)',
+          }}
+        />
+
+        {/* ── LEFT VIGNETTE ── */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-0"
+          style={{
+            zIndex: 4,
+            width: '48%',
+            background: 'linear-gradient(to right, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.32) 62%, transparent 100%)',
+          }}
+        />
+
+        {/* ── FILM GRAIN ── */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 5,
+            opacity: 0.26,
+            backgroundSize: '160px 160px',
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+          }}
+        />
+
+        {/* ── SCANLINES ── */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            zIndex: 5,
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
+          }}
+        />
+
+        {/* ── HORIZONTAL CUT-LINES ── */}
+        <motion.div
+          key={`sca-${lineKey}`}
+          className="pointer-events-none absolute inset-x-0"
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: 1, opacity: 0 }}
+          transition={{ duration: 0.62, ease: [0.76, 0, 0.24, 1] }}
+          style={{ zIndex: 12, height: 1, backgroundColor: accentColor, top: '28%', transformOrigin: 'left center' }}
+        />
+        <motion.div
+          key={`scb-${lineKey}`}
+          className="pointer-events-none absolute inset-x-0"
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: 1, opacity: 0 }}
+          transition={{ duration: 0.62, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
+          style={{ zIndex: 12, height: 1, backgroundColor: accentColor, top: '72%', transformOrigin: 'right center' }}
+        />
+
+        {/* ── GHOST CATEGORY NAME ── */}
+        <div
+          className="pointer-events-none absolute inset-x-0 flex select-none items-start justify-center overflow-hidden"
+          style={{ zIndex: 3, top: '8%' }}
         >
-          <span
-            style={{
-              fontFamily: 'Anton, sans-serif',
-              fontSize: 'clamp(64px, 24vw, 340px)',
-              color: '#fff',
-              lineHeight: 1,
-              textTransform: 'uppercase',
-              letterSpacing: '-0.02em',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {slide.ghost}
-          </span>
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={`g-${activeIndex}`}
+              initial={{ opacity: 0, y: 36, scale: 1.08 }}
+              animate={{ opacity: 0.08, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -24, scale: 0.93 }}
+              transition={{ duration: 0.92, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: 'clamp(110px, 38vw, 580px)',
+                color: accentColor,
+                lineHeight: 1,
+                textTransform: 'uppercase',
+                letterSpacing: '-0.02em',
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {slide.ghost}
+            </motion.span>
+          </AnimatePresence>
         </div>
 
-        {/* Top-left label + counter */}
+        {/* ── TOP LETTERBOX BAR ── */}
         <div
-          className="absolute left-4 top-6 flex items-center gap-3 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.9, letterSpacing: '0.18em' }}
+          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 30, height: '7vh', backgroundColor: '#000' }}
         >
-          <span>[ 04 ] Skills</span>
-          <span className="opacity-60">
+          <span style={{ color: 'rgba(255,255,255,0.36)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+            [ 04 ] My Skillset
+          </span>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            {SKILL_SLIDES.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={() => scrollToSlide(i)}
+                animate={{
+                  width: i === activeIndex ? 32 : 8,
+                  backgroundColor: i === activeIndex ? accentColor : 'rgba(255,255,255,0.15)',
+                }}
+                transition={{ duration: 0.45 }}
+                style={{ height: 2, borderRadius: 1, cursor: 'pointer', border: 'none', padding: 0 }}
+              />
+            ))}
+          </div>
+          <span style={{ color: 'rgba(255,255,255,0.18)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>
             0{activeIndex + 1} / 0{SKILL_SLIDES.length}
           </span>
         </div>
 
-        {/* Carousel — all four figurines with depth (original animation) */}
-        <div className="absolute inset-0" style={{ zIndex: 3 }}>
-          {SKILL_SLIDES.map((s, i) => (
-            <div key={i} style={roleStyle(i)}>
-              <img
-                src={s.fig}
-                alt={s.title}
-                draggable={false}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'contain',
-                  objectPosition: 'bottom center',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Active category title + skills list (bottom-left) */}
-        <div
-          className="absolute bottom-24 left-4 right-4 sm:bottom-28 sm:left-10 sm:right-auto sm:max-w-md lg:left-16"
-          style={{ zIndex: 60 }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            >
-              <h3
-                className="text-white"
-                style={{
-                  fontFamily: 'Anton, sans-serif',
-                  fontSize: 'clamp(30px, 5vw, 60px)',
-                  lineHeight: 1.02,
-                  textTransform: 'uppercase',
-                  letterSpacing: '-0.01em',
-                }}
-              >
-                {slide.title}
-              </h3>
-
-              {slide.intro ? (
-                <p className="mt-3 max-w-sm text-sm leading-relaxed text-white/85 sm:text-base">
-                  {slide.intro}
-                </p>
-              ) : (
-                <ul className="mt-3 grid grid-cols-2 gap-x-6 gap-y-0.5">
-                  {slide.items.map((item, i) => (
-                    <li
-                      key={item}
-                      className="flex items-center gap-2 border-b border-white/20 py-1.5 text-white"
-                    >
-                      <span className="text-[10px] font-semibold tabular-nums text-white/50">
-                        0{i + 1}
-                      </span>
-                      <span className="text-[13px] font-medium sm:text-sm">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Scroll hint (bottom-left) */}
-        <div
-          className="absolute bottom-7 left-4 flex items-center gap-2 text-[11px] font-semibold uppercase text-white sm:left-10 lg:left-16"
-          style={{ zIndex: 60, opacity: 0.85, letterSpacing: '0.18em' }}
-        >
-          <motion.span
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
-            className="inline-block text-base"
+        {/* ── CATEGORY BADGE ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`b-${activeIndex}`}
+            initial={{ opacity: 0, scale: 0.84, y: -14 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.48 }}
+            style={{ zIndex: 20, position: 'absolute', right: '6rem', top: 'calc(7vh + 1rem)' }}
           >
-            ↓
-          </motion.span>
-          {activeIndex < SKILL_SLIDES.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
-        </div>
+            <span style={{
+              color: accentColor,
+              fontSize: '10px',
+              fontWeight: 700,
+              letterSpacing: '0.3em',
+              textTransform: 'uppercase',
+              padding: '5px 18px',
+              border: `1px solid ${accentColor}55`,
+              backgroundColor: `${accentColor}14`,
+              backdropFilter: 'blur(12px)',
+              display: 'inline-block',
+              fontFamily: 'Inter, sans-serif',
+            }}>
+              {activeIndex === 0 ? 'Intro' : slide.title}
+            </span>
+          </motion.div>
+        </AnimatePresence>
 
-        {/* Progress dots (bottom-right) */}
+        {/* ── INTRO SLIDE (index 0) ── */}
+        {activeIndex === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 48 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -32 }}
+            transition={{ duration: 0.68 }}
+            className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 lg:px-14 pb-20"
+            style={{ zIndex: 20 }}
+          >
+            <h3 style={{
+              fontFamily: 'Anton, sans-serif',
+              fontSize: 'clamp(2.2rem, 7vw, 5.8rem)',
+              lineHeight: 0.92,
+              color: 'white',
+              textTransform: 'uppercase',
+              letterSpacing: '-0.025em',
+              marginBottom: '1rem',
+              maxWidth: '800px',
+            }}>
+              The Toolkit Behind Every
+              <span style={{ color: '#6EB5FF' }}> Scroll-Stopping Edit</span>
+            </h3>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.28, duration: 0.55 }}
+              style={{
+                fontSize: '14px',
+                lineHeight: 1.8,
+                color: 'rgba(255,255,255,0.54)',
+                maxWidth: '420px',
+                fontFamily: 'Inter, sans-serif',
+              }}
+            >
+              Hit the arrow to explore each craft — technical stack, AI tools, and specializations that power production.
+            </motion.p>
+          </motion.div>
+        )}
+
+        {/* ── SKILL CARDS GRID (index > 0) ── */}
+        {activeIndex > 0 && (
+          <motion.div
+            key={`cards-${activeIndex}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.55 }}
+            className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 lg:px-14 pb-24"
+            style={{ zIndex: 20 }}
+          >
+            <h3 style={{
+              fontFamily: 'Anton, sans-serif',
+              fontSize: 'clamp(2.4rem, 7.2vw, 6rem)',
+              lineHeight: 0.93,
+              color: 'white',
+              textTransform: 'uppercase',
+              letterSpacing: '-0.025em',
+              marginBottom: '2rem',
+              maxWidth: '100%',
+            }}>
+              {slide.title.split(' ').map((word, wi) => (
+                <motion.span
+                  key={wi}
+                  initial={{ opacity: 0, y: 38 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: wi * 0.08 + 0.12, duration: 0.56, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ display: 'inline-block', marginRight: '0.15em' }}
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </h3>
+
+            {/* Skills as interactive cards */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+              gap: '1rem',
+              maxWidth: '680px',
+              marginBottom: '1.2rem',
+            }}>
+              {slide.items.map((item, si) => (
+                <motion.div
+                  key={si}
+                  initial={{ opacity: 0, y: 18, scale: 0.92 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ delay: si * 0.06 + 0.32, duration: 0.44, ease: [0.22, 1, 0.36, 1] }}
+                  style={{
+                    border: `1px solid ${accentColor}52`,
+                    backgroundColor: `${accentColor}12`,
+                    padding: '1rem',
+                    borderRadius: '8px',
+                    backdropFilter: 'blur(8px)',
+                    textAlign: 'center',
+                  }}
+                >
+                  <div style={{
+                    fontSize: '12px',
+                    fontWeight: 700,
+                    color: accentColor,
+                    letterSpacing: '0.15em',
+                    textTransform: 'uppercase',
+                    fontFamily: 'Inter, sans-serif',
+                  }}>
+                    {item}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── RIGHT SIDE CATEGORY TIMELINE ── */}
         <div
-          className="absolute bottom-9 right-4 flex gap-2 sm:right-10 lg:right-16"
-          style={{ zIndex: 60 }}
+          className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-3 sm:flex"
+          style={{ zIndex: 20, right: '2rem' }}
         >
           {SKILL_SLIDES.map((_, i) => (
             <button
               key={i}
-              aria-label={`Go to ${SKILL_SLIDES[i].title}`}
               onClick={() => scrollToSlide(i)}
-              className="h-2.5 rounded-full bg-white transition-all duration-300"
-              style={{ width: i === activeIndex ? 28 : 10, opacity: i === activeIndex ? 1 : 0.45 }}
-            />
+              style={{ cursor: 'pointer', border: 'none', background: 'none', padding: 0 }}
+            >
+              <motion.div
+                animate={{
+                  height: i === activeIndex ? 52 : 10,
+                  backgroundColor: i === activeIndex ? accentColor : 'rgba(255,255,255,0.12)',
+                }}
+                transition={{ duration: 0.55 }}
+                style={{ width: 2, borderRadius: 1 }}
+              />
+            </button>
           ))}
         </div>
+
+        {/* ── BOTTOM LETTERBOX BAR ── */}
+        <div
+          className="absolute inset-x-0 bottom-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 30, height: '7vh', backgroundColor: '#000', borderTop: '1px solid rgba(255,255,255,0.05)' }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <motion.span
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 1.8, repeat: Infinity }}
+              style={{ color: 'rgba(255,255,255,0.26)', fontSize: '14px' }}
+            >
+              ↓
+            </motion.span>
+            <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+              {activeIndex < SKILL_SLIDES.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
+            </span>
+          </div>
+          <motion.div
+            animate={{ backgroundColor: accentColor }}
+            transition={{ duration: 0.8 }}
+            style={{ width: 48, height: 2, borderRadius: 1 }}
+          />
+        </div>
+
       </div>
     </section>
   )
