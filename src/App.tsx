@@ -55,7 +55,7 @@ const WORK_CHAPTERS = [
     num: '04',
     category: 'Brand Decks',
     title: 'VISUAL BRAND\nLANGUAGE',
-    desc: 'Decks that don\'t just look good — they sell ideas. Brand-consistent, stakeholder-ready.',
+    desc: "Decks that don't just look good — they sell ideas. Brand-consistent, stakeholder-ready.",
     ghost: 'BRAND',
     accent: '#FF3D2E',
     video: '/assets/videos/char_leaning.mp4',
@@ -69,6 +69,14 @@ const WORK_CHAPTERS = [
     accent: '#FF3D2E',
     video: '/assets/videos/char_jumping.mp4',
   },
+]
+
+const CHAPTER_SKILLS: string[][] = [
+  ['Premiere Pro', 'Reels & Shorts', 'Color Grading', 'Retention Hooks'],
+  ['After Effects', 'Kinetic Text', 'Lower Thirds', 'Motion Design'],
+  ['Photoshop', 'Canva Pro', 'CTR-First Design', 'Social Cards'],
+  ['Illustrator', 'Pitch Decks', 'Brand Guides', 'Visual Identity'],
+  ['Midjourney', 'HeyGen Avatar', 'Sora AI', 'Minimax'],
 ]
 
 
@@ -462,12 +470,14 @@ function SkillsCarousel() {
   )
 }
 
-// Immersive full-screen work showcase — 5 character videos as cinematic backdrops,
-// scroll-driven chapter progression with spotlight vignette and film overlays.
+// Immersive cinematic work showcase — Hollywood VFX treatment with letterbox bars,
+// accent glow, cut-line transitions, ghost word + giant number typography,
+// skill tags, word-by-word reveal, and scroll-driven chapter progression.
 function ImmersiveWorkSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [flash, setFlash] = useState(false)
+  const [lineKey, setLineKey] = useState(0)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -479,7 +489,8 @@ function ImmersiveWorkSection() {
     setActiveIndex((cur) => {
       if (cur === idx) return cur
       setFlash(true)
-      setTimeout(() => setFlash(false), 320)
+      setLineKey((k) => k + 1)
+      setTimeout(() => setFlash(false), 280)
       return idx
     })
   })
@@ -493,6 +504,7 @@ function ImmersiveWorkSection() {
   }
 
   const ch = WORK_CHAPTERS[activeIndex]
+  const skills = CHAPTER_SKILLS[activeIndex]
 
   return (
     <section
@@ -503,13 +515,13 @@ function ImmersiveWorkSection() {
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
 
-        {/* ── VIDEO BACKGROUNDS — all mounted, crossfade on chapter change ── */}
+        {/* ── VIDEO BACKGROUNDS ── */}
         {WORK_CHAPTERS.map((c, i) => (
           <motion.div
             key={i}
             className="absolute inset-0"
             animate={{ opacity: i === activeIndex ? 1 : 0 }}
-            transition={{ duration: 0.85, ease: 'easeInOut' }}
+            transition={{ duration: 0.88, ease: 'easeInOut' }}
             style={{ zIndex: 1 }}
           >
             <video
@@ -522,43 +534,73 @@ function ImmersiveWorkSection() {
           </motion.div>
         ))}
 
-        {/* ── CINEMATIC FLASH on chapter change ── */}
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          animate={{ opacity: flash ? 0.18 : 0 }}
-          transition={{ duration: flash ? 0.05 : 0.28 }}
-          style={{ zIndex: 8, backgroundColor: '#fff' }}
+        {/* ── ACCENT COLOR GLOW behind character (soft bloom) ── */}
+        <div
+          className="pointer-events-none absolute"
+          style={{
+            zIndex: 2,
+            right: '-5%', top: '8%',
+            width: '65%', height: '75%',
+            borderRadius: '50%',
+            backgroundColor: ch.accent,
+            opacity: 0.07,
+            filter: 'blur(90px)',
+            transition: 'background-color 1.2s ease',
+          }}
         />
 
-        {/* ── SPOTLIGHT VIGNETTE (character lit from behind, darkness at edges) ── */}
+        {/* ── CINEMATIC FLASH ── */}
+        <motion.div
+          className="pointer-events-none absolute inset-0"
+          animate={{ opacity: flash ? 0.22 : 0 }}
+          transition={{ duration: flash ? 0.04 : 0.3 }}
+          style={{ zIndex: 9, backgroundColor: '#fff' }}
+        />
+
+        {/* ── HORIZONTAL CUT LINES on chapter change ── */}
+        <motion.div
+          key={`ca-${lineKey}`}
+          className="pointer-events-none absolute inset-x-0"
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: 1, opacity: 0 }}
+          transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
+          style={{ zIndex: 15, height: 1, backgroundColor: ch.accent, top: '31%', transformOrigin: 'left center' }}
+        />
+        <motion.div
+          key={`cb-${lineKey}`}
+          className="pointer-events-none absolute inset-x-0"
+          initial={{ scaleX: 0, opacity: 1 }}
+          animate={{ scaleX: 1, opacity: 0 }}
+          transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
+          style={{ zIndex: 15, height: 1, backgroundColor: ch.accent, top: '69%', transformOrigin: 'right center' }}
+        />
+
+        {/* ── SPOTLIGHT VIGNETTE ── */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
             zIndex: 4,
-            background:
-              'radial-gradient(ellipse 58% 62% at 64% 36%, transparent 0%, rgba(0,0,0,0.52) 62%, rgba(0,0,0,0.95) 100%)',
+            background: 'radial-gradient(ellipse 56% 60% at 64% 36%, transparent 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.96) 100%)',
           }}
         />
 
-        {/* ── BOTTOM GRADIENT (text readability + watermark burial) ── */}
+        {/* ── BOTTOM GRADIENT (text + watermark) ── */}
         <div
           className="pointer-events-none absolute inset-x-0 bottom-0"
           style={{
             zIndex: 4,
-            height: '58%',
-            background:
-              'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.88) 22%, rgba(0,0,0,0.55) 50%, rgba(0,0,0,0.15) 72%, transparent 100%)',
+            height: '62%',
+            background: 'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.9) 18%, rgba(0,0,0,0.55) 46%, rgba(0,0,0,0.08) 70%, transparent 100%)',
           }}
         />
 
-        {/* ── LEFT VIGNETTE (text panel breathing room) ── */}
+        {/* ── LEFT VIGNETTE ── */}
         <div
           className="pointer-events-none absolute inset-y-0 left-0"
           style={{
             zIndex: 4,
-            width: '42%',
-            background:
-              'linear-gradient(to right, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.22) 65%, transparent 100%)',
+            width: '46%',
+            background: 'linear-gradient(to right, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.28) 58%, transparent 100%)',
           }}
         />
 
@@ -566,11 +608,8 @@ function ImmersiveWorkSection() {
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 5,
-            opacity: 0.28,
-            backgroundSize: '160px 160px',
-            backgroundImage:
-              "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+            zIndex: 5, opacity: 0.28, backgroundSize: '160px 160px',
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
           }}
         />
 
@@ -579,27 +618,26 @@ function ImmersiveWorkSection() {
           className="pointer-events-none absolute inset-0"
           style={{
             zIndex: 5,
-            backgroundImage:
-              'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
+            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
           }}
         />
 
-        {/* ── GHOST WORD (faint massive background typography) ── */}
+        {/* ── GHOST WORD (accent-tinted, bigger, more presence) ── */}
         <div
           className="pointer-events-none absolute inset-x-0 flex select-none items-start justify-center overflow-hidden"
-          style={{ zIndex: 3, top: '6%' }}
+          style={{ zIndex: 3, top: '5%' }}
         >
           <AnimatePresence mode="wait">
             <motion.span
               key={ch.ghost}
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 0.055, y: 0 }}
-              exit={{ opacity: 0, y: -16 }}
-              transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 32, scale: 1.07 }}
+              animate={{ opacity: 0.09, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -22, scale: 0.94 }}
+              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
               style={{
                 fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(90px, 30vw, 460px)',
-                color: 'white',
+                fontSize: 'clamp(100px, 34vw, 520px)',
+                color: ch.accent,
                 lineHeight: 1,
                 textTransform: 'uppercase',
                 letterSpacing: '-0.02em',
@@ -611,41 +649,111 @@ function ImmersiveWorkSection() {
           </AnimatePresence>
         </div>
 
+        {/* ── GIANT CHAPTER NUMBER (mega typographic backdrop, bottom-right) ── */}
+        <div
+          className="pointer-events-none absolute select-none overflow-hidden"
+          style={{ zIndex: 3, bottom: '5%', right: '-5%' }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={`n-${ch.num}`}
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 0.11, y: 0 }}
+              exit={{ opacity: 0, y: -55 }}
+              transition={{ duration: 0.88, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: 'Anton, sans-serif',
+                fontSize: 'clamp(200px, 50vw, 760px)',
+                color: ch.accent,
+                lineHeight: 0.8,
+                letterSpacing: '-0.05em',
+                display: 'block',
+              }}
+            >
+              {ch.num}
+            </motion.span>
+          </AnimatePresence>
+        </div>
+
+        {/* ── VERTICAL CATEGORY TEXT (right side, rotated, ghostly) ── */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`vt-${activeIndex}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7 }}
+            className="pointer-events-none absolute hidden select-none lg:block"
+            style={{
+              zIndex: 20,
+              right: '3.5rem',
+              top: '50%',
+              writingMode: 'vertical-rl',
+              transform: 'translateY(-50%) rotate(180deg)',
+              color: 'rgba(255,255,255,0.1)',
+              fontSize: '9px',
+              fontWeight: 700,
+              letterSpacing: '0.55em',
+              textTransform: 'uppercase',
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {ch.category}
+          </motion.div>
+        </AnimatePresence>
+
         {/* ── LEFT EDGE PROGRESS BAR ── */}
         <div
           className="absolute left-0 top-0 h-full"
-          style={{ zIndex: 20, width: 3, backgroundColor: 'rgba(255,255,255,0.06)' }}
+          style={{ zIndex: 20, width: 3, backgroundColor: 'rgba(255,255,255,0.05)' }}
         >
           <motion.div
-            style={{ width: '100%', backgroundColor: ch.accent }}
-            animate={{ height: `${((activeIndex + 1) / WORK_CHAPTERS.length) * 100}%` }}
+            style={{ width: '100%' }}
+            animate={{ height: `${((activeIndex + 1) / WORK_CHAPTERS.length) * 100}%`, backgroundColor: ch.accent }}
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
           />
         </div>
 
-        {/* ── TOP-LEFT: SECTION LABEL + COUNTER ── */}
+        {/* ── TOP LETTERBOX BAR ── */}
         <div
-          className="absolute left-6 top-6 flex items-center gap-4 sm:left-10 lg:left-14"
-          style={{ zIndex: 20 }}
+          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 31, height: '7vh', backgroundColor: '#000' }}
         >
-          <span style={{ color: 'rgba(255,255,255,0.42)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+          <span style={{ color: 'rgba(255,255,255,0.38)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
             [ 03 ] Selected Work
           </span>
-          <span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '10px', letterSpacing: '0.12em', fontFamily: 'Inter, sans-serif' }}>
+          {/* Animated chapter progress dots */}
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            {WORK_CHAPTERS.map((_, i) => (
+              <motion.button
+                key={i}
+                onClick={() => scrollToChapter(i)}
+                animate={{
+                  width: i === activeIndex ? 28 : 8,
+                  backgroundColor: i === activeIndex ? ch.accent : 'rgba(255,255,255,0.18)',
+                }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                style={{ height: 2, borderRadius: 1, cursor: 'pointer', border: 'none', padding: 0, flexShrink: 0 }}
+                aria-label={`Jump to chapter ${i + 1}`}
+              />
+            ))}
+          </div>
+          <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
             {String(activeIndex + 1).padStart(2, '0')} / {String(WORK_CHAPTERS.length).padStart(2, '0')}
           </span>
         </div>
 
-        {/* ── TOP-RIGHT: CATEGORY BADGE ── */}
+        {/* ── CATEGORY BADGE (below top bar) ── */}
         <AnimatePresence mode="wait">
           <motion.div
-            key={ch.category}
-            initial={{ opacity: 0, x: 18 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -10 }}
+            key={`badge-${ch.category}`}
+            initial={{ opacity: 0, scale: 0.86, y: -12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.9, y: 10 }}
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-6 top-6 sm:right-10 lg:right-20"
-            style={{ zIndex: 20 }}
+            className="absolute right-6 sm:right-10 lg:right-14"
+            style={{ zIndex: 20, top: 'calc(7vh + 1.1rem)' }}
           >
             <span style={{
               color: ch.accent,
@@ -654,10 +762,10 @@ function ImmersiveWorkSection() {
               letterSpacing: '0.3em',
               textTransform: 'uppercase',
               fontFamily: 'Inter, sans-serif',
-              padding: '5px 16px',
+              padding: '5px 18px',
               border: `1px solid ${ch.accent}55`,
               backgroundColor: `${ch.accent}14`,
-              backdropFilter: 'blur(10px)',
+              backdropFilter: 'blur(12px)',
               display: 'inline-block',
             }}>
               {ch.category}
@@ -665,69 +773,101 @@ function ImmersiveWorkSection() {
           </motion.div>
         </AnimatePresence>
 
-        {/* ── MAIN CHAPTER CONTENT (bottom-left) ── */}
+        {/* ── MAIN CONTENT — above bottom letterbox ── */}
         <div
-          className="absolute bottom-0 left-0 right-0 px-6 pb-20 sm:px-10 sm:pb-24 lg:px-14 lg:pb-28"
-          style={{ zIndex: 20 }}
+          className="absolute bottom-0 left-0 right-0 px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 20, paddingBottom: 'calc(7vh + 2rem)' }}
         >
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeIndex}
-              initial={{ opacity: 0, y: 52 }}
+              key={`c-${activeIndex}`}
+              initial={{ opacity: 0, y: 58 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -28 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              exit={{ opacity: 0, y: -32 }}
+              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
             >
-              {/* Chapter num + line + category */}
+              {/* Chapter num + animated rule + category */}
               <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                marginBottom: '1.1rem',
-                color: ch.accent,
-                fontSize: '11px',
-                fontWeight: 700,
-                letterSpacing: '0.32em',
-                textTransform: 'uppercase',
+                display: 'flex', alignItems: 'center', gap: '14px',
+                marginBottom: '0.85rem', color: ch.accent,
+                fontSize: '11px', fontWeight: 700,
+                letterSpacing: '0.32em', textTransform: 'uppercase',
                 fontFamily: 'Inter, sans-serif',
               }}>
                 <span>{ch.num}</span>
-                <span style={{ width: 44, height: 1, backgroundColor: ch.accent, flexShrink: 0 }} />
+                <motion.span
+                  initial={{ width: 0 }}
+                  animate={{ width: 44 }}
+                  transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+                  style={{ height: 1, backgroundColor: ch.accent, display: 'inline-block', flexShrink: 0 }}
+                />
                 <span>{ch.category}</span>
               </div>
 
-              {/* Giant chapter title */}
+              {/* Skill tags — editorial metadata */}
+              <div style={{ display: 'flex', gap: '7px', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                {skills.map((skill, si) => (
+                  <motion.span
+                    key={`${activeIndex}-${skill}`}
+                    initial={{ opacity: 0, y: 10, scale: 0.88 }}
+                    animate={{ opacity: 0.6, y: 0, scale: 1 }}
+                    transition={{ duration: 0.38, delay: si * 0.07, ease: [0.22, 1, 0.36, 1] }}
+                    style={{
+                      border: `1px solid ${ch.accent}38`,
+                      backgroundColor: `${ch.accent}0d`,
+                      color: ch.accent,
+                      fontSize: '9px', fontWeight: 700,
+                      letterSpacing: '0.18em', textTransform: 'uppercase',
+                      padding: '3px 10px', fontFamily: 'Inter, sans-serif',
+                      backdropFilter: 'blur(4px)',
+                    }}
+                  >
+                    {skill}
+                  </motion.span>
+                ))}
+              </div>
+
+              {/* Giant title — word-by-word stagger reveal */}
               <h3 style={{
                 fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(2.4rem, 7.5vw, 6.8rem)',
-                lineHeight: 0.94,
-                color: 'white',
-                textTransform: 'uppercase',
-                letterSpacing: '-0.025em',
-                whiteSpace: 'pre-line',
-                marginBottom: '1.4rem',
-                maxWidth: '800px',
+                fontSize: 'clamp(2.5rem, 8.5vw, 7.2rem)',
+                lineHeight: 0.91, color: 'white',
+                textTransform: 'uppercase', letterSpacing: '-0.025em',
+                marginBottom: '1.2rem', maxWidth: '860px',
               }}>
-                {ch.title}
+                {ch.title.split('\n').map((line, li) => (
+                  <span key={li} style={{ display: 'block' }}>
+                    {line.split(' ').map((word, wi) => (
+                      <motion.span
+                        key={`${li}-${wi}`}
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.56, ease: [0.22, 1, 0.36, 1], delay: wi * 0.07 + li * 0.1 + 0.14 }}
+                        style={{ display: 'inline-block', marginRight: '0.2em' }}
+                      >
+                        {word}
+                      </motion.span>
+                    ))}
+                  </span>
+                ))}
               </h3>
 
               {/* Description */}
-              <p style={{
-                fontSize: '14px',
-                lineHeight: 1.82,
-                color: 'rgba(255,255,255,0.58)',
-                maxWidth: '390px',
-                fontFamily: 'Inter, sans-serif',
-              }}>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.55, delay: 0.38 }}
+                style={{ fontSize: '13px', lineHeight: 1.88, color: 'rgba(255,255,255,0.5)', maxWidth: '375px', fontFamily: 'Inter, sans-serif' }}
+              >
                 {ch.desc}
-              </p>
+              </motion.p>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* ── RIGHT SIDE VERTICAL CHAPTER TIMELINE ── */}
+        {/* ── RIGHT SIDE CHAPTER TIMELINE ── */}
         <div
-          className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-3 sm:flex"
+          className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-[14px] sm:flex"
           style={{ zIndex: 20, right: '2rem' }}
         >
           {WORK_CHAPTERS.map((c, i) => (
@@ -735,21 +875,18 @@ function ImmersiveWorkSection() {
               key={i}
               aria-label={`Jump to ${c.category}`}
               onClick={() => scrollToChapter(i)}
-              className="flex cursor-pointer items-center gap-2"
+              className="flex cursor-pointer items-center gap-[10px]"
             >
               <motion.span
-                animate={{ opacity: i === activeIndex ? 0.72 : 0.2 }}
+                animate={{ opacity: i === activeIndex ? 0.7 : 0.18 }}
                 transition={{ duration: 0.4 }}
-                className="hidden lg:inline"
+                className="hidden xl:inline"
                 style={{ fontSize: '9px', fontWeight: 700, letterSpacing: '0.16em', color: 'white', fontFamily: 'Inter, sans-serif' }}
               >
                 {c.num}
               </motion.span>
               <motion.div
-                animate={{
-                  height: i === activeIndex ? 56 : 14,
-                  backgroundColor: i === activeIndex ? ch.accent : 'rgba(255,255,255,0.18)',
-                }}
+                animate={{ height: i === activeIndex ? 58 : 12, backgroundColor: i === activeIndex ? ch.accent : 'rgba(255,255,255,0.15)' }}
                 transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
                 style={{ width: 2, borderRadius: 1 }}
               />
@@ -757,21 +894,51 @@ function ImmersiveWorkSection() {
           ))}
         </div>
 
-        {/* ── SCROLL HINT ── */}
+        {/* ── BOTTOM LETTERBOX BAR ── */}
         <div
-          className="absolute bottom-7 left-6 flex items-center gap-2 sm:left-10 lg:left-14"
-          style={{ zIndex: 20 }}
+          className="absolute inset-x-0 bottom-0 flex items-center gap-4 overflow-hidden px-6 sm:px-10 lg:px-14"
+          style={{ zIndex: 31, height: '7vh', backgroundColor: '#000', borderTop: '1px solid rgba(255,255,255,0.07)' }}
         >
-          <motion.span
-            animate={{ y: [0, 7, 0] }}
-            transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut' }}
-            style={{ color: 'rgba(255,255,255,0.28)', fontSize: '15px' }}
-          >
-            ↓
-          </motion.span>
-          <span style={{ color: 'rgba(255,255,255,0.26)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
-            {activeIndex < WORK_CHAPTERS.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
-          </span>
+          {/* Scroll hint */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexShrink: 0 }}>
+            <motion.span
+              animate={{ y: [0, 5, 0] }}
+              transition={{ duration: 1.9, repeat: Infinity, ease: 'easeInOut' }}
+              style={{ color: 'rgba(255,255,255,0.28)', fontSize: '14px' }}
+            >
+              ↓
+            </motion.span>
+            <span style={{ color: 'rgba(255,255,255,0.24)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
+              {activeIndex < WORK_CHAPTERS.length - 1 ? 'Scroll to explore' : 'Keep scrolling'}
+            </span>
+          </div>
+          <div style={{ width: 1, height: '38%', backgroundColor: 'rgba(255,255,255,0.1)', flexShrink: 0 }} />
+          {/* Skills ticker */}
+          <div style={{ flex: 1, overflow: 'hidden', minWidth: 0 }}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`tk-${activeIndex}`}
+                initial={{ x: 28, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                exit={{ x: -28, opacity: 0 }}
+                transition={{ duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
+                style={{ display: 'flex', alignItems: 'center', gap: '1.6rem', whiteSpace: 'nowrap' }}
+              >
+                {skills.map((s, si) => (
+                  <span key={si} style={{ color: si === 0 ? ch.accent : 'rgba(255,255,255,0.26)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
+                    {si > 0 && <span style={{ marginRight: '1.6rem', opacity: 0.22 }}>·</span>}
+                    {s}
+                  </span>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+          {/* Chapter accent line (right side of bottom bar) */}
+          <motion.div
+            animate={{ backgroundColor: ch.accent }}
+            transition={{ duration: 0.8 }}
+            style={{ width: 36, height: 2, borderRadius: 1, flexShrink: 0 }}
+          />
         </div>
 
       </div>
