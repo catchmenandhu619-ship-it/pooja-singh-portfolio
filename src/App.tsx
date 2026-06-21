@@ -1,6 +1,6 @@
 // Updated: 2026-06-19
 import { useEffect, useRef, useState, type ReactNode } from 'react'
-import { motion, AnimatePresence, useScroll } from 'motion/react'
+import { motion, AnimatePresence } from 'motion/react'
 import Lenis from 'lenis'
 import { SkillsShowcase } from './SkillsShowcase'
 import { WorkShowcase } from './WorkShowcase'
