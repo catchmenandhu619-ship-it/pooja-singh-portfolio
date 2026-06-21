@@ -87,7 +87,9 @@ const SKILL_CHAPTERS = [
     desc: 'Pixel-perfect UI, scroll animations, and interactive design systems built for performance.',
     ghost: 'FRONTEND',
     accent: '#00D9FF',
-    video: '/assets/videos/skills_hero.mp4',
+    pose: 'running',
+    media: '/assets/videos/char_running.mp4',
+    skillLayout: 'forward',
   },
   {
     num: '02',
@@ -96,7 +98,9 @@ const SKILL_CHAPTERS = [
     desc: 'Scroll-driven effects, gesture-based interactions, and cinematic transitions.',
     ghost: 'MOTION',
     accent: '#FF3D2E',
-    video: '/assets/videos/skills_hero.mp4',
+    pose: 'grounded',
+    media: '/assets/videos/char_standing.mp4',
+    skillLayout: 'vertical',
   },
   {
     num: '03',
@@ -105,7 +109,9 @@ const SKILL_CHAPTERS = [
     desc: 'Color grading, sound design, pacing—every frame engineered for maximum impact.',
     ghost: 'VIDEO',
     accent: '#FFD700',
-    video: '/assets/videos/skills_hero.mp4',
+    pose: 'confident',
+    media: '/assets/videos/char_combat.mp4',
+    skillLayout: 'shield',
   },
   {
     num: '04',
@@ -114,7 +120,9 @@ const SKILL_CHAPTERS = [
     desc: 'AI-first design: Midjourney, HeyGen, Sora—pushing the boundary of what\'s possible.',
     ghost: 'AI',
     accent: '#00FF88',
-    video: '/assets/videos/skills_hero.mp4',
+    pose: 'walking',
+    media: '/assets/videos/char_leaning.mp4',
+    skillLayout: 'trailing',
   },
 ]
 
@@ -319,14 +327,14 @@ function SkillsCarousel() {
   )
 }
 
-// Immersive cinematic skills showcase — Hollywood VFX treatment with letterbox bars,
-// accent glow, cut-line transitions, ghost word + giant number typography,
-// skill tags, word-by-word reveal, and scroll-driven chapter progression.
+// Character-driven Skills showcase — Four stances of mastery with smooth pose morphing,
+// micro-reactions, contextual skill placement, accent color resonance, and particle effects.
 function ImmersiveWorkSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
   const [flash, setFlash] = useState(false)
   const [lineKey, setLineKey] = useState(0)
+  const [energyPulse, setEnergyPulse] = useState(false)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -339,7 +347,9 @@ function ImmersiveWorkSection() {
       if (cur === idx) return cur
       setFlash(true)
       setLineKey((k) => k + 1)
+      setEnergyPulse(true)
       setTimeout(() => setFlash(false), 280)
+      setTimeout(() => setEnergyPulse(false), 600)
       return idx
     })
   })
@@ -364,37 +374,50 @@ function ImmersiveWorkSection() {
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
 
-        {/* ── VIDEO BACKGROUNDS ── */}
-        {SKILL_CHAPTERS.map((c, i) => (
-          <motion.div
-            key={i}
-            className="absolute inset-0"
-            animate={{ opacity: i === activeIndex ? 1 : 0 }}
-            transition={{ duration: 0.88, ease: 'easeInOut' }}
-            style={{ zIndex: 1 }}
-          >
-            <video
-              autoPlay loop muted playsInline
-              preload={i === 0 ? 'auto' : 'metadata'}
-              className="h-full w-full object-cover"
-              style={{ objectPosition: 'center 18%' }}
-              src={c.video}
-            />
-          </motion.div>
-        ))}
-
-        {/* ── ACCENT COLOR GLOW behind character (soft bloom) ── */}
+        {/* ── CHARACTER VIDEO (center, morphing between poses) ── */}
         <div
+          className="pointer-events-none absolute inset-0 flex items-center justify-center"
+          style={{ zIndex: 2 }}
+        >
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`char-${activeIndex}`}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
+              className="relative"
+            >
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="auto"
+                className="h-auto w-auto max-h-[85vh] max-w-[55vw]"
+                style={{ filter: 'drop-shadow(0 0 40px rgba(0,0,0,0.3))' }}
+                src={ch.media}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* ── ACCENT COLOR GLOW behind character (resonance effect) ── */}
+        <motion.div
           className="pointer-events-none absolute"
+          animate={{
+            opacity: energyPulse ? 0.18 : 0.05,
+            scale: energyPulse ? 1.12 : 1,
+          }}
+          transition={{ duration: energyPulse ? 0.3 : 0.6 }}
           style={{
             zIndex: 2,
-            right: '-5%', top: '8%',
-            width: '65%', height: '75%',
+            left: '50%', top: '50%',
+            width: '70%', height: '70%',
             borderRadius: '50%',
             backgroundColor: ch.accent,
-            opacity: 0.07,
-            filter: 'blur(90px)',
-            transition: 'background-color 1.2s ease',
+            filter: 'blur(80px)',
+            transform: 'translate(-50%, -50%)',
           }}
         />
 
@@ -559,7 +582,7 @@ function ImmersiveWorkSection() {
         >
           <motion.div
             style={{ width: '100%' }}
-            animate={{ height: `${((activeIndex + 1) / WORK_CHAPTERS.length) * 100}%`, backgroundColor: ch.accent }}
+            animate={{ height: `${((activeIndex + 1) / SKILL_CHAPTERS.length) * 100}%`, backgroundColor: ch.accent }}
             transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
           />
         </div>
