@@ -79,6 +79,52 @@ const CHAPTER_SKILLS: string[][] = [
   ['Midjourney', 'HeyGen Avatar', 'Sora AI', 'Minimax'],
 ]
 
+const SKILL_CHAPTERS = [
+  {
+    num: '01',
+    category: 'Frontend',
+    title: 'REACT &\nFRAMER MOTION',
+    desc: 'Pixel-perfect UI, scroll animations, and interactive design systems built for performance.',
+    ghost: 'FRONTEND',
+    accent: '#00D9FF',
+    video: '/assets/videos/skills_hero.mp4',
+  },
+  {
+    num: '02',
+    category: 'Motion Design',
+    title: 'ANIMATION\nARCHITECTURE',
+    desc: 'Scroll-driven effects, gesture-based interactions, and cinematic transitions.',
+    ghost: 'MOTION',
+    accent: '#FF3D2E',
+    video: '/assets/videos/skills_hero.mp4',
+  },
+  {
+    num: '03',
+    category: 'Video Editing',
+    title: 'CINEMATIC\nVIDEO CRAFT',
+    desc: 'Color grading, sound design, pacing—every frame engineered for maximum impact.',
+    ghost: 'VIDEO',
+    accent: '#FFD700',
+    video: '/assets/videos/skills_hero.mp4',
+  },
+  {
+    num: '04',
+    category: 'Creative Tools',
+    title: 'GENERATIVE\nWORKFLOWS',
+    desc: 'AI-first design: Midjourney, HeyGen, Sora—pushing the boundary of what\'s possible.',
+    ghost: 'AI',
+    accent: '#00FF88',
+    video: '/assets/videos/skills_hero.mp4',
+  },
+]
+
+const SKILL_TAGS: string[][] = [
+  ['React', 'TypeScript', 'Framer Motion', 'Tailwind'],
+  ['Gesture UI', 'Scroll Hooks', 'AnimatePresence', 'SVG Paths'],
+  ['Premiere Pro', 'DaVinci', 'Sound Design', 'Color Grade'],
+  ['Midjourney', 'HeyGen', 'Sora', 'ChatGPT'],
+]
+
 
 
 const fadeUp = {
@@ -166,27 +212,34 @@ function MaskReveal({
   )
 }
 
-// Scroll-driven video animation — video scrubs frame-by-frame as user scrolls,
-// smooth continuous playback mapped to scroll progress.
+// Scroll-driven work section — each of 5 character videos scrubs as user scrolls,
+// smooth continuous playback mapped to scroll progress within each video's section.
 function SkillsCarousel() {
   const sectionRef = useRef<HTMLElement>(null)
-  const videoRef = useRef<HTMLVideoElement>(null)
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   })
 
-  // Directly update video time on every scroll frame change
+  // Determine which video and update its time based on scroll progress
   useEffect(() => {
-    if (!videoRef.current) return
-
     const unsubscribe = scrollYProgress.on('change', (p: number) => {
-      if (videoRef.current) {
-        const duration = videoRef.current.duration
-        if (duration > 0 && isFinite(duration)) {
-          // Map scroll progress directly to video time
-          videoRef.current.currentTime = p * duration
+      const videoIndex = Math.floor(p * WORK_CHAPTERS.length)
+      const videoProgress = (p * WORK_CHAPTERS.length - videoIndex) % 1
+
+      for (let i = 0; i < videoRefs.current.length; i++) {
+        const video = videoRefs.current[i]
+        if (!video) continue
+
+        if (i === videoIndex) {
+          const duration = video.duration
+          if (duration > 0 && isFinite(duration)) {
+            video.currentTime = videoProgress * duration
+          }
+        } else {
+          video.currentTime = 0
         }
       }
     })
@@ -197,58 +250,76 @@ function SkillsCarousel() {
   return (
     <section
       ref={sectionRef}
-      id="skills"
+      id="work"
       className="relative w-full bg-black"
-      style={{ height: '600svh' }}
+      style={{ height: `${WORK_CHAPTERS.length * 100}svh` }}
     >
-      <div className="sticky top-0 h-svh overflow-hidden bg-black">
-
-        {/* ── FULL VIDEO BACKGROUND (SCROLL-DRIVEN SCRUBBING) ── */}
-        <video
-          ref={videoRef}
-          muted
-          playsInline
-          preload="auto"
-          className="absolute inset-0 h-full w-full object-cover"
-          style={{ objectPosition: 'center' }}
-          src="/assets/videos/skills_hero.mp4"
-        />
-
-        {/* ── VIGNETTE OVERLAY ── */}
+      {WORK_CHAPTERS.map((chapter, i) => (
         <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 10,
-            background: 'radial-gradient(ellipse 55% 60% at 50% 35%, transparent 0%, rgba(0,0,0,0.25) 58%, rgba(0,0,0,0.85) 100%)',
-          }}
-        />
+          key={i}
+          className="sticky top-0 h-svh overflow-hidden bg-black"
+        >
+          {/* ── FULL VIDEO BACKGROUND (SCROLL-DRIVEN SCRUBBING) ── */}
+          <video
+            ref={(el) => {
+              videoRefs.current[i] = el
+            }}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: 'center' }}
+            src={chapter.video}
+          />
 
-        {/* ── FILM GRAIN ── */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 11,
-            opacity: 0.22,
-            backgroundSize: '160px 160px',
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
-          }}
-        />
+          {/* ── VIGNETTE OVERLAY ── */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              zIndex: 10,
+              background: 'radial-gradient(ellipse 55% 60% at 50% 35%, transparent 0%, rgba(0,0,0,0.25) 58%, rgba(0,0,0,0.85) 100%)',
+            }}
+          />
 
-        {/* ── SCANLINES ── */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 11,
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
-          }}
-        />
+          {/* ── FILM GRAIN ── */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              zIndex: 11,
+              opacity: 0.22,
+              backgroundSize: '160px 160px',
+              backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+            }}
+          />
 
-      </div>
+          {/* ── SCANLINES ── */}
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              zIndex: 11,
+              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
+            }}
+          />
+
+          {/* ── CHAPTER INFO (bottom-left) ── */}
+          <div
+            className="pointer-events-none absolute bottom-8 left-8"
+            style={{ zIndex: 20 }}
+          >
+            <div style={{ color: chapter.accent, fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem', fontFamily: 'Inter, sans-serif' }}>
+              {chapter.num} — {chapter.category}
+            </div>
+            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(1.8rem, 5vw, 3.2rem)', color: 'white', lineHeight: 0.9, maxWidth: '350px', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
+              {chapter.title}
+            </h3>
+          </div>
+        </div>
+      ))}
     </section>
   )
 }
 
-// Immersive cinematic work showcase — Hollywood VFX treatment with letterbox bars,
+// Immersive cinematic skills showcase — Hollywood VFX treatment with letterbox bars,
 // accent glow, cut-line transitions, ghost word + giant number typography,
 // skill tags, word-by-word reveal, and scroll-driven chapter progression.
 function ImmersiveWorkSection() {
@@ -263,7 +334,7 @@ function ImmersiveWorkSection() {
   })
 
   useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    const idx = Math.min(WORK_CHAPTERS.length - 1, Math.max(0, Math.floor(p * WORK_CHAPTERS.length)))
+    const idx = Math.min(SKILL_CHAPTERS.length - 1, Math.max(0, Math.floor(p * SKILL_CHAPTERS.length)))
     setActiveIndex((cur) => {
       if (cur === idx) return cur
       setFlash(true)
@@ -277,24 +348,24 @@ function ImmersiveWorkSection() {
     const sec = sectionRef.current
     if (!sec) return
     const travel = sec.offsetHeight - window.innerHeight
-    const top = sec.offsetTop + travel * ((i + 0.5) / WORK_CHAPTERS.length)
+    const top = sec.offsetTop + travel * ((i + 0.5) / SKILL_CHAPTERS.length)
     window.scrollTo({ top, behavior: 'smooth' })
   }
 
-  const ch = WORK_CHAPTERS[activeIndex]
-  const skills = CHAPTER_SKILLS[activeIndex]
+  const ch = SKILL_CHAPTERS[activeIndex]
+  const skills = SKILL_TAGS[activeIndex]
 
   return (
     <section
       ref={sectionRef}
-      id="work"
+      id="skills"
       className="relative w-full"
-      style={{ height: `${WORK_CHAPTERS.length * 100}svh` }}
+      style={{ height: `${SKILL_CHAPTERS.length * 100}svh` }}
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
 
         {/* ── VIDEO BACKGROUNDS ── */}
-        {WORK_CHAPTERS.map((c, i) => (
+        {SKILL_CHAPTERS.map((c, i) => (
           <motion.div
             key={i}
             className="absolute inset-0"
@@ -499,11 +570,11 @@ function ImmersiveWorkSection() {
           style={{ zIndex: 31, height: '7vh', backgroundColor: '#000' }}
         >
           <span style={{ color: 'rgba(255,255,255,0.38)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
-            [ 03 ] Selected Work
+            [ 04 ] Skills
           </span>
           {/* Animated chapter progress dots */}
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-            {WORK_CHAPTERS.map((_, i) => (
+            {SKILL_CHAPTERS.map((_, i) => (
               <motion.button
                 key={i}
                 onClick={() => scrollToChapter(i)}
@@ -518,7 +589,7 @@ function ImmersiveWorkSection() {
             ))}
           </div>
           <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif', whiteSpace: 'nowrap' }}>
-            {String(activeIndex + 1).padStart(2, '0')} / {String(WORK_CHAPTERS.length).padStart(2, '0')}
+            {String(activeIndex + 1).padStart(2, '0')} / {String(SKILL_CHAPTERS.length).padStart(2, '0')}
           </span>
         </div>
 
@@ -648,7 +719,7 @@ function ImmersiveWorkSection() {
           className="absolute top-1/2 -translate-y-1/2 hidden flex-col items-end gap-[14px] sm:flex"
           style={{ zIndex: 20, right: '2rem' }}
         >
-          {WORK_CHAPTERS.map((c, i) => (
+          {SKILL_CHAPTERS.map((c, i) => (
             <button
               key={i}
               aria-label={`Jump to ${c.category}`}
