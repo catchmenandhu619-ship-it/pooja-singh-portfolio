@@ -166,144 +166,59 @@ function MaskReveal({
   )
 }
 
-// TOONHUB-style skills carousel: intro slide + 3 category slides, each with its
-// own 3D figurine, colour-changing background, giant ghost title and skill list.
-const SKILL_SLIDES = [
-  {
-    fig: '/assets/figurines/fig-1.png',
-    bg: '#F4845F',
-    ghost: 'SKILLS',
-    title: 'My Skill Set',
-    intro: 'The toolkit behind every scroll-stopping edit. Hit the arrow to explore each craft.',
-    items: [] as string[],
-  },
-  {
-    fig: '/assets/figurines/fig-4.png',
-    bg: '#6EB5FF',
-    ghost: 'TECHNICAL',
-    title: 'Technical Skills',
-    intro: '',
-    items: ['Adobe Premiere Pro', 'After Effects', 'Photoshop', 'Illustrator', 'Canva', 'CapCut', 'Descript', 'Motion Graphics'],
-  },
-  {
-    fig: '/assets/figurines/fig-3.png',
-    bg: '#E882B4',
-    ghost: 'AI TOOLS',
-    title: 'AI Toolset',
-    intro: '',
-    items: ['Midjourney', 'HeyGen', 'Sora', 'Gemini', 'Gamma', 'Minimax'],
-  },
-  {
-    fig: '/assets/figurines/fig-2.png',
-    bg: '#6BBF7A',
-    ghost: 'CRAFT',
-    title: 'Specializations',
-    intro: '',
-    items: ['Thumbnail Design', 'Video Editing', 'Social Content', 'Storyboarding', 'Color Grading', 'Brand Consistency'],
-  },
-]
-
-// 3D scroll-driven character-centric skill reveal — character frozen center,
-// text orbits around as user scrolls, revealing skills left/right/top in sequence.
+// Scroll-driven video animation — video plays frame-by-frame as user scrolls,
+// smooth continuous scrubbing through entire video duration.
 function SkillsCarousel() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [categoryIdx, setCategoryIdx] = useState(0)
-  const [skillIdx, setSkillIdx] = useState(0)
+  const [videoDuration, setVideoDuration] = useState(0)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   })
 
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    const totalSkills = SKILL_SLIDES.reduce((sum, s) => sum + s.items.length, 0)
-    const currentSkill = Math.floor(p * (totalSkills + 1))
-    let cumulative = 0
-    let catIdx = 0
-    let skillIdx = 0
-
-    for (let i = 0; i < SKILL_SLIDES.length; i++) {
-      if (currentSkill <= cumulative + SKILL_SLIDES[i].items.length) {
-        catIdx = i
-        skillIdx = currentSkill - cumulative
-        break
-      }
-      cumulative += SKILL_SLIDES[i].items.length
-    }
-
-    setCategoryIdx(catIdx)
-    setSkillIdx(skillIdx)
-
+  // When video loads, capture duration for accurate scrubbing
+  const handleVideoLoadedMetadata = () => {
     if (videoRef.current) {
-      const videoDuration = videoRef.current.duration
-      videoRef.current.currentTime = (p * videoDuration * 0.7)
+      setVideoDuration(videoRef.current.duration)
+    }
+  }
+
+  useMotionValueEvent(scrollYProgress, 'change', (p) => {
+    if (videoRef.current && videoDuration > 0) {
+      // Map scroll progress (0-1) directly to video time (0-duration)
+      // This ensures the entire video plays across the entire scroll height
+      videoRef.current.currentTime = p * videoDuration
     }
   })
-
-  const category = SKILL_SLIDES[categoryIdx]
-  const accentColor = ['#6EB5FF', '#E882B4', '#6BBF7A'][categoryIdx % 3]
-
-  const getSkillPosition = (idx: number) => {
-    const positions = [
-      { x: -35, y: 60, delay: 0 },
-      { x: 35, y: 55, delay: 0.15 },
-      { x: -42, y: 5, delay: 0.3 },
-      { x: 42, y: 8, delay: 0.45 },
-      { x: -28, y: -55, delay: 0.6 },
-      { x: 28, y: -52, delay: 0.75 },
-      { x: 0, y: -70, delay: 0.9 },
-      { x: -15, y: 75, delay: 1.05 },
-    ]
-    return positions[idx % positions.length]
-  }
 
   return (
     <section
       ref={sectionRef}
       id="skills"
-      className="relative w-full"
-      style={{ height: '800svh' }}
+      className="relative w-full bg-black"
+      style={{ height: '600svh' }}
     >
       <div className="sticky top-0 h-svh overflow-hidden bg-black">
 
-        {/* ── CENTERED CHARACTER VIDEO (FROZEN) ── */}
-        <div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{ zIndex: 1 }}
-        >
-          <video
-            ref={videoRef}
-            muted playsInline
-            preload="auto"
-            className="h-full w-full object-cover"
-            style={{ objectPosition: 'center 20%' }}
-            src="/assets/videos/skills_hero.mp4"
-          />
-        </div>
-
-        {/* ── ACCENT GLOW BEHIND CHARACTER ── */}
-        <motion.div
-          className="pointer-events-none absolute"
-          animate={{ backgroundColor: accentColor }}
-          transition={{ duration: 1.2 }}
-          style={{
-            zIndex: 2,
-            left: '50%', top: '35%',
-            transform: 'translate(-50%, -50%)',
-            width: '52%', height: '68%',
-            borderRadius: '50%',
-            opacity: 0.1,
-            filter: 'blur(110px)',
-          }}
+        {/* ── FULL VIDEO BACKGROUND (SCROLL-DRIVEN SCRUBBING) ── */}
+        <video
+          ref={videoRef}
+          muted playsInline
+          onLoadedMetadata={handleVideoLoadedMetadata}
+          preload="auto"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ objectPosition: 'center' }}
+          src="/assets/videos/skills_hero.mp4"
         />
 
-        {/* ── VIGNETTE ── */}
+        {/* ── VIGNETTE OVERLAY ── */}
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 4,
-            background: 'radial-gradient(ellipse 50% 55% at 50% 35%, transparent 0%, rgba(0,0,0,0.3) 55%, rgba(0,0,0,0.92) 100%)',
+            zIndex: 10,
+            background: 'radial-gradient(ellipse 55% 60% at 50% 35%, transparent 0%, rgba(0,0,0,0.25) 58%, rgba(0,0,0,0.85) 100%)',
           }}
         />
 
@@ -311,7 +226,9 @@ function SkillsCarousel() {
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 5, opacity: 0.24, backgroundSize: '160px 160px',
+            zIndex: 11,
+            opacity: 0.22,
+            backgroundSize: '160px 160px',
             backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
           }}
         />
@@ -320,203 +237,10 @@ function SkillsCarousel() {
         <div
           className="pointer-events-none absolute inset-0"
           style={{
-            zIndex: 5,
+            zIndex: 11,
             backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
           }}
         />
-
-        {/* ── TOP LETTERBOX BAR ── */}
-        <div
-          className="absolute inset-x-0 top-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
-          style={{ zIndex: 30, height: '7vh', backgroundColor: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(8px)' }}
-        >
-          <span style={{ color: 'rgba(255,255,255,0.34)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.26em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
-            [ 04 ] My Skillset
-          </span>
-          <motion.span
-            animate={{ color: accentColor }}
-            transition={{ duration: 0.8 }}
-            style={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.28em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}
-          >
-            {category.title.toUpperCase()}
-          </motion.span>
-          <span style={{ color: 'rgba(255,255,255,0.16)', fontSize: '10px', letterSpacing: '0.14em', fontFamily: 'Inter, sans-serif' }}>
-            {String(categoryIdx + 1).padStart(2, '0')} / {String(SKILL_SLIDES.length).padStart(2, '0')}
-          </span>
-        </div>
-
-        {/* ── ORBITING SKILL CARDS ── */}
-        <div className="absolute inset-0 flex items-center justify-center" style={{ zIndex: 20, pointerEvents: 'none' }}>
-          <AnimatePresence>
-            {category.items.map((item, idx) => {
-              const pos = getSkillPosition(idx)
-              const isActive = idx <= skillIdx
-              return (
-                <motion.div
-                  key={`${categoryIdx}-${idx}`}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.3,
-                    x: pos.x * 2,
-                    y: pos.y * 2,
-                  }}
-                  animate={
-                    isActive
-                      ? {
-                        opacity: 1,
-                        scale: 1,
-                        x: pos.x + '%',
-                        y: pos.y + '%',
-                      }
-                      : {
-                        opacity: 0,
-                        scale: 0.3,
-                        x: pos.x * 2,
-                        y: pos.y * 2,
-                      }
-                  }
-                  exit={{ opacity: 0, scale: 0 }}
-                  transition={{
-                    delay: pos.delay,
-                    duration: 0.72,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  style={{
-                    position: 'absolute',
-                    transform: `translate(-50%, -50%)`,
-                  }}
-                >
-                  <motion.div
-                    whileHover={{ scale: 1.08 }}
-                    style={{
-                      border: `1.5px solid ${accentColor}`,
-                      backgroundColor: `${accentColor}08`,
-                      padding: '12px 18px',
-                      borderRadius: '6px',
-                      backdropFilter: 'blur(12px)',
-                      minWidth: '120px',
-                      textAlign: 'center',
-                      position: 'relative',
-                    }}
-                  >
-                    {/* Animated background pulse */}
-                    <motion.div
-                      animate={{
-                        boxShadow: [
-                          `0 0 12px ${accentColor}00`,
-                          `0 0 28px ${accentColor}44`,
-                          `0 0 12px ${accentColor}00`,
-                        ],
-                      }}
-                      transition={{ duration: 2.8, repeat: Infinity }}
-                      style={{
-                        position: 'absolute',
-                        inset: 0,
-                        borderRadius: 'inherit',
-                        pointerEvents: 'none',
-                      }}
-                    />
-
-                    <div
-                      style={{
-                        fontSize: '11px',
-                        fontWeight: 700,
-                        color: accentColor,
-                        letterSpacing: '0.15em',
-                        textTransform: 'uppercase',
-                        fontFamily: 'Inter, sans-serif',
-                        position: 'relative',
-                        zIndex: 1,
-                      }}
-                    >
-                      {item}
-                    </div>
-
-                    {/* Index badge */}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '-6px',
-                        right: '-6px',
-                        width: '20px',
-                        height: '20px',
-                        borderRadius: '50%',
-                        backgroundColor: accentColor,
-                        color: '#000',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '9px',
-                        fontWeight: 700,
-                        fontFamily: 'Inter, sans-serif',
-                      }}
-                    >
-                      {idx + 1}
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
-        </div>
-
-        {/* ── CENTER LABEL (category name) ── */}
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ zIndex: 3 }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={`cat-${categoryIdx}`}
-              initial={{ opacity: 0, scale: 0.6, y: 60 }}
-              animate={{ opacity: 0.08, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.8, y: -40 }}
-              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(90px, 32vw, 480px)',
-                color: accentColor,
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.02em',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {category.ghost}
-            </motion.span>
-          </AnimatePresence>
-        </motion.div>
-
-        {/* ── BOTTOM LETTERBOX BAR ── */}
-        <motion.div
-          className="absolute inset-x-0 bottom-0 flex items-center justify-between px-6 sm:px-10 lg:px-14"
-          animate={{ backgroundColor: `${accentColor}08` }}
-          transition={{ duration: 0.9 }}
-          style={{ zIndex: 30, height: '7vh', backdropFilter: 'blur(10px)', borderTop: `1px solid ${accentColor}22` }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1 }}>
-            <motion.span
-              animate={{ y: [0, 6, 0] }}
-              transition={{ duration: 1.8, repeat: Infinity }}
-              style={{ color: accentColor, fontSize: '14px', flexShrink: 0 }}
-            >
-              ↓
-            </motion.span>
-            <span style={{ color: 'rgba(255,255,255,0.32)', fontSize: '9px', fontWeight: 600, letterSpacing: '0.25em', textTransform: 'uppercase', fontFamily: 'Inter, sans-serif' }}>
-              Scroll to reveal skills around the character
-            </span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
-            <div style={{ width: 1, height: '40%', backgroundColor: `${accentColor}44` }} />
-            <motion.span
-              animate={{ x: [0, 4, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ color: accentColor, fontSize: '13px', fontWeight: 700 }}
-            >
-              •••
-            </motion.span>
-          </div>
-        </motion.div>
 
       </div>
     </section>
