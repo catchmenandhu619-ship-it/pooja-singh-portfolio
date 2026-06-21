@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll } from 'motion/react'
 import Lenis from 'lenis'
-import { NinjaDojo } from './NinjaDojo'
+import { ToonHub } from './ToonHub'
 import {
   ArrowUpRight,
   Award,
@@ -715,8 +715,8 @@ export default function App() {
         </motion.div>
       </section>
 
-      {/* ============ SECTION 3: NINJA DOJO SKILLS ============ */}
-      <NinjaDojo />
+      {/* ============ SECTION 3: TOONHUB SKILLS CAROUSEL ============ */}
+      <ToonHub />
 
       {/* ============ SECTION 3.6: WORK SHOWCASE ============ */}
       <SkillsCarousel />
