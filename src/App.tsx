@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { motion, AnimatePresence, useScroll } from 'motion/react'
 import Lenis from 'lenis'
 import { SkillsShowcase } from './SkillsShowcase'
+import { WorkShowcase } from './WorkShowcase'
 import {
   ArrowUpRight,
   Award,
@@ -24,53 +25,6 @@ const STATS: [string, string, string][] = [
 const DINO_VIDEO = '/assets/videos/dino_whatido.mp4'
 
 
-const WORK_CHAPTERS = [
-  {
-    num: '01',
-    category: 'YouTube Edits',
-    title: 'HIGH-RETENTION\nEDITS',
-    desc: 'Education & startup channels. High-energy hooks, zero dead frames — 100% on-time delivery.',
-    ghost: 'EDITS',
-    accent: '#FF3D2E',
-    video: '/assets/videos/char_running.mp4',
-  },
-  {
-    num: '02',
-    category: 'Motion Graphics',
-    title: 'KINETIC\nVISUAL STORIES',
-    desc: 'Dynamic text, motion titles, animated storytelling — built to stop the scroll dead in its tracks.',
-    ghost: 'MOTION',
-    accent: '#FF3D2E',
-    video: '/assets/videos/char_combat.mp4',
-  },
-  {
-    num: '03',
-    category: 'Thumbnail Design',
-    title: 'HIGH-CTR\nTHUMBNAILS',
-    desc: 'Click-bait done right. Social-first hooks that make audiences click before they know why.',
-    ghost: 'THUMBS',
-    accent: '#f0dfc4',
-    video: '/assets/videos/char_standing.mp4',
-  },
-  {
-    num: '04',
-    category: 'Brand Decks',
-    title: 'VISUAL BRAND\nLANGUAGE',
-    desc: "Decks that don't just look good — they sell ideas. Brand-consistent, stakeholder-ready.",
-    ghost: 'BRAND',
-    accent: '#FF3D2E',
-    video: '/assets/videos/char_leaning.mp4',
-  },
-  {
-    num: '05',
-    category: 'AI Content',
-    title: 'GENERATIVE\nAI WORKFLOWS',
-    desc: 'Midjourney · HeyGen · Sora · Minimax — generative pipelines that cut production time by 30%.',
-    ghost: 'AI',
-    accent: '#FF3D2E',
-    video: '/assets/videos/char_jumping.mp4',
-  },
-]
 
 
 
@@ -156,113 +110,6 @@ function MaskReveal({
         {children}
       </motion.span>
     </motion.span>
-  )
-}
-
-// Scroll-driven work section — each of 5 character videos scrubs as user scrolls,
-// smooth continuous playback mapped to scroll progress within each video's section.
-function SkillsCarousel() {
-  const sectionRef = useRef<HTMLElement>(null)
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([])
-
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end end'],
-  })
-
-  // Determine which video and update its time based on scroll progress
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (p: number) => {
-      const videoIndex = Math.floor(p * WORK_CHAPTERS.length)
-      const videoProgress = (p * WORK_CHAPTERS.length - videoIndex) % 1
-
-      for (let i = 0; i < videoRefs.current.length; i++) {
-        const video = videoRefs.current[i]
-        if (!video) continue
-
-        if (i === videoIndex) {
-          const duration = video.duration
-          if (duration > 0 && isFinite(duration)) {
-            video.currentTime = videoProgress * duration
-          }
-        } else {
-          video.currentTime = 0
-        }
-      }
-    })
-
-    return () => unsubscribe()
-  }, [scrollYProgress])
-
-  return (
-    <section
-      ref={sectionRef}
-      id="work"
-      className="relative w-full bg-black"
-      style={{ height: `${WORK_CHAPTERS.length * 100}svh` }}
-    >
-      {WORK_CHAPTERS.map((chapter, i) => (
-        <div
-          key={i}
-          className="sticky top-0 h-svh overflow-hidden bg-black"
-        >
-          {/* ── FULL VIDEO BACKGROUND (SCROLL-DRIVEN SCRUBBING) ── */}
-          <video
-            ref={(el) => {
-              videoRefs.current[i] = el
-            }}
-            muted
-            playsInline
-            preload="auto"
-            className="absolute inset-0 h-full w-full object-cover"
-            style={{ objectPosition: 'center' }}
-            src={chapter.video}
-          />
-
-          {/* ── VIGNETTE OVERLAY ── */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              zIndex: 10,
-              background: 'radial-gradient(ellipse 55% 60% at 50% 35%, transparent 0%, rgba(0,0,0,0.25) 58%, rgba(0,0,0,0.85) 100%)',
-            }}
-          />
-
-          {/* ── FILM GRAIN ── */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              zIndex: 11,
-              opacity: 0.22,
-              backgroundSize: '160px 160px',
-              backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
-            }}
-          />
-
-          {/* ── SCANLINES ── */}
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              zIndex: 11,
-              backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
-            }}
-          />
-
-          {/* ── CHAPTER INFO (bottom-left) ── */}
-          <div
-            className="pointer-events-none absolute bottom-8 left-8"
-            style={{ zIndex: 20 }}
-          >
-            <div style={{ color: chapter.accent, fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', marginBottom: '0.5rem', fontFamily: 'Inter, sans-serif' }}>
-              {chapter.num} — {chapter.category}
-            </div>
-            <h3 style={{ fontFamily: 'Anton, sans-serif', fontSize: 'clamp(1.8rem, 5vw, 3.2rem)', color: 'white', lineHeight: 0.9, maxWidth: '350px', textTransform: 'uppercase', letterSpacing: '-0.02em' }}>
-              {chapter.title}
-            </h3>
-          </div>
-        </div>
-      ))}
-    </section>
   )
 }
 
@@ -719,7 +566,7 @@ export default function App() {
       <SkillsShowcase />
 
       {/* ============ SECTION 3.6: WORK SHOWCASE ============ */}
-      <SkillsCarousel />
+      <WorkShowcase />
 
       {/* ============ SECTION 4: CONTACT (fullscreen hero video) ============ */}
       <section id="contact" className="relative min-h-screen overflow-hidden bg-[#f0f0ee]">
