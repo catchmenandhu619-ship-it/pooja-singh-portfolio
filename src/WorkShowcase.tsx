@@ -64,7 +64,8 @@ export function WorkShowcase() {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="relative z-10 max-w-2xl w-full overflow-hidden rounded-lg"
+          className="relative z-10 max-w-2xl w-full rounded-lg drop-shadow-2xl"
+          style={{ overflow: 'hidden' }}
         >
           <video
             autoPlay
@@ -72,9 +73,9 @@ export function WorkShowcase() {
             loop
             playsInline
             preload="auto"
-            className="w-full h-auto object-cover drop-shadow-2xl"
+            className="w-full h-auto object-cover"
             style={{
-              transform: 'scale(1.12)',
+              transform: 'scale(1.2)',
             }}
             src="/assets/videos/Character_unaware_of_dinosaur_be_202606210854.mp4"
           />

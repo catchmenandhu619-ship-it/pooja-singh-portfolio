@@ -50,21 +50,23 @@ export function SkillsShowcase() {
           transition={{ duration: 0.8 }}
           className="relative w-full min-h-screen overflow-hidden flex items-center"
         >
-          {/* Full-screen background video */}
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            className="absolute inset-0 w-full h-full"
-            style={{
-              objectFit: 'cover',
-              objectPosition: 'center',
-              transform: 'scale(1.08)',
-            }}
-            src={section.video}
-          />
+          {/* Video container with overflow hidden for cropping */}
+          <div className="absolute inset-0 overflow-hidden">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              className="w-full h-full"
+              style={{
+                objectFit: 'cover',
+                objectPosition: 'center',
+                transform: 'scale(1.15)',
+              }}
+              src={section.video}
+            />
+          </div>
 
           {/* Overlay gradient for text readability */}
           <div
@@ -77,27 +79,20 @@ export function SkillsShowcase() {
             }}
           />
 
-          {/* Content container */}
-          <div
-            className="absolute inset-0 flex items-center"
+          {/* Content container with absolute positioning */}
+          <motion.div
+            initial={{ opacity: 0, x: section.textPosition === 'left' ? 40 : -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="absolute z-10 w-1/2"
             style={{
-              paddingLeft: section.textPosition === 'left' ? 'clamp(3rem, 6vw, 5rem)' : 'auto',
-              paddingRight: section.textPosition === 'right' ? 'clamp(3rem, 6vw, 5rem)' : 'auto',
-              paddingTop: 'clamp(1rem, 3vh, 2rem)',
-              paddingBottom: 'clamp(1rem, 3vh, 2rem)',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              ...(section.textPosition === 'right'
+                ? { left: 'clamp(2rem, 4vw, 3.5rem)' }
+                : { right: 'clamp(2rem, 4vw, 3.5rem)' }),
             }}
           >
-            <motion.div
-              initial={{ opacity: 0, x: section.textPosition === 'left' ? -40 : 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="relative z-10"
-              style={{
-                maxWidth: '500px',
-                marginLeft: section.textPosition === 'left' ? 0 : 'auto',
-                marginRight: section.textPosition === 'right' ? 0 : 'auto',
-              }}
-            >
               {/* Section number and category */}
               <motion.div
                 initial={{ opacity: 0 }}
@@ -185,8 +180,7 @@ export function SkillsShowcase() {
                 className="h-1 rounded-full mt-8"
                 style={{ backgroundColor: section.accentColor }}
               />
-            </motion.div>
-          </div>
+          </motion.div>
 
           {/* Section indicator */}
           <motion.div
