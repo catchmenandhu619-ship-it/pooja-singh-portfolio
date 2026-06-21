@@ -166,32 +166,33 @@ function MaskReveal({
   )
 }
 
-// Scroll-driven video animation — video plays frame-by-frame as user scrolls,
-// smooth continuous scrubbing through entire video duration.
+// Scroll-driven video animation — video scrubs frame-by-frame as user scrolls,
+// smooth continuous playback mapped to scroll progress.
 function SkillsCarousel() {
   const sectionRef = useRef<HTMLElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
-  const [videoDuration, setVideoDuration] = useState(0)
 
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ['start start', 'end end'],
   })
 
-  // When video loads, capture duration for accurate scrubbing
-  const handleVideoLoadedMetadata = () => {
-    if (videoRef.current) {
-      setVideoDuration(videoRef.current.duration)
-    }
-  }
+  // Directly update video time on every scroll frame change
+  useEffect(() => {
+    if (!videoRef.current) return
 
-  useMotionValueEvent(scrollYProgress, 'change', (p) => {
-    if (videoRef.current && videoDuration > 0) {
-      // Map scroll progress (0-1) directly to video time (0-duration)
-      // This ensures the entire video plays across the entire scroll height
-      videoRef.current.currentTime = p * videoDuration
-    }
-  })
+    const unsubscribe = scrollYProgress.on('change', (p: number) => {
+      if (videoRef.current) {
+        const duration = videoRef.current.duration
+        if (duration > 0 && isFinite(duration)) {
+          // Map scroll progress directly to video time
+          videoRef.current.currentTime = p * duration
+        }
+      }
+    })
+
+    return () => unsubscribe()
+  }, [scrollYProgress])
 
   return (
     <section
@@ -205,8 +206,8 @@ function SkillsCarousel() {
         {/* ── FULL VIDEO BACKGROUND (SCROLL-DRIVEN SCRUBBING) ── */}
         <video
           ref={videoRef}
-          muted playsInline
-          onLoadedMetadata={handleVideoLoadedMetadata}
+          muted
+          playsInline
           preload="auto"
           className="absolute inset-0 h-full w-full object-cover"
           style={{ objectPosition: 'center' }}
