@@ -1,55 +1,41 @@
-import { useRef, useEffect, useState } from 'react'
-import { motion, useScroll } from 'motion/react'
+import { useState, useEffect } from 'react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 
-const SKILLS_DATA = [
+const IMAGES = [
   {
-    bg: '#FF3D2E',
-    panel: '#FF6B5B',
-    title: 'WARRIOR MASTER',
+    src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/1.02464a56.png',
+    bg: '#F4845F',
+    panel: '#F79B7F',
+    title: 'VIDEO MASTER',
     skills: ['Premiere Pro', 'After Effects', 'Color Grading', 'Reels & Shorts'],
-    image: '/assets/turtles/A_cinematic_character_portrait_of_202606172157.jpeg',
   },
   {
+    src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/2.b977faab.png',
     bg: '#6BBF7A',
     panel: '#85CC92',
-    title: 'GUARDIAN EXPERT',
+    title: 'DESIGN EXPERT',
     skills: ['Photoshop', 'Illustrator', 'Canva Pro', 'Brand Guides'],
-    image: '/assets/turtles/A_cinematic_character_portrait_of_202606172157 (1).jpeg',
   },
   {
+    src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/3.4df853b4.png',
     bg: '#E882B4',
     panel: '#ED9DC4',
-    title: 'NINJA WIZARD',
+    title: 'MOTION WIZARD',
     skills: ['Kinetic Text', 'Motion Design', 'Lower Thirds', 'Animation'],
-    image: '/assets/turtles/3D_animation_style_character_mockup,_202606210339 (1).jpeg',
   },
   {
+    src: 'https://fifth-gentle-45902158.figma.site/_components/v2/4de492f6d9cf8244ad5293233e5c6f52407d42fc/4.4457fbce.png',
     bg: '#6EB5FF',
     panel: '#8DC4FF',
-    title: 'MASTER INNOVATOR',
+    title: 'AI INNOVATOR',
     skills: ['Midjourney', 'HeyGen', 'Sora AI', 'ChatGPT'],
-    image: '/assets/turtles/3D_animation_style_character_mockup,_202606210339 (2).jpeg',
   },
 ]
 
 export function ToonHub() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false)
   const [activeIndex, setActiveIndex] = useState(0)
-
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ['start start', 'end start'],
-  })
-
-  // Map scroll progress (0-1) to active index (0-3)
-  useEffect(() => {
-    const unsubscribe = scrollYProgress.on('change', (latest) => {
-      const index = Math.floor(latest * SKILLS_DATA.length)
-      setActiveIndex(Math.min(index, SKILLS_DATA.length - 1))
-    })
-    return () => unsubscribe()
-  }, [scrollYProgress])
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 640 : false)
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 640)
@@ -58,241 +44,418 @@ export function ToonHub() {
   }, [])
 
   useEffect(() => {
-    SKILLS_DATA.forEach((skill) => {
-      const img = new Image()
-      img.src = skill.image
-    })
+    const preloadImages = () => {
+      IMAGES.forEach((img) => {
+        const imgElement = new Image()
+        imgElement.src = img.src
+      })
+    }
+    preloadImages()
   }, [])
 
+  const navigate = (direction: 'next' | 'prev') => {
+    if (isAnimating) return
+    setIsAnimating(true)
+
+    setActiveIndex((prev) => (direction === 'next' ? (prev + 1) % 4 : (prev + 3) % 4))
+
+    setTimeout(() => setIsAnimating(false), 650)
+  }
+
+  const current = IMAGES[activeIndex]
+  const left = IMAGES[(activeIndex + 3) % 4]
+  const right = IMAGES[(activeIndex + 1) % 4]
+  const back = IMAGES[(activeIndex + 2) % 4]
+
+  const getItemStyles = (role: 'center' | 'left' | 'right' | 'back') => {
+    const base = {
+      position: 'absolute' as const,
+      aspectRatio: '0.6 / 1',
+      width: 'auto',
+      transition: 'transform 650ms cubic-bezier(0.4,0,0.2,1), filter 650ms cubic-bezier(0.4,0,0.2,1), opacity 650ms cubic-bezier(0.4,0,0.2,1), left 650ms cubic-bezier(0.4,0,0.2,1)',
+      willChange: 'transform, filter, opacity',
+    }
+
+    if (role === 'center') {
+      return {
+        ...base,
+        transform: `translateX(-50%) scale(${isMobile ? 1.25 : 1.68})`,
+        filter: 'blur(0px)',
+        opacity: 1,
+        zIndex: 20,
+        left: '50%',
+        height: isMobile ? '60%' : '92%',
+        bottom: isMobile ? '22%' : 0,
+      }
+    }
+
+    if (role === 'left') {
+      return {
+        ...base,
+        transform: 'translateX(-50%) scale(1)',
+        filter: 'blur(8px)',
+        opacity: 0.85,
+        zIndex: 10,
+        left: isMobile ? '20%' : '30%',
+        height: isMobile ? '16%' : '28%',
+        bottom: isMobile ? '32%' : '12%',
+      }
+    }
+
+    if (role === 'right') {
+      return {
+        ...base,
+        transform: 'translateX(-50%) scale(1)',
+        filter: 'blur(8px)',
+        opacity: 0.85,
+        zIndex: 10,
+        left: isMobile ? '80%' : '70%',
+        height: isMobile ? '16%' : '28%',
+        bottom: isMobile ? '32%' : '12%',
+      }
+    }
+
+    // back
+    return {
+      ...base,
+      transform: 'translateX(-50%) scale(1)',
+      filter: 'blur(16px)',
+      opacity: 1,
+      zIndex: 5,
+      left: '50%',
+      height: isMobile ? '13%' : '22%',
+      bottom: isMobile ? '32%' : '12%',
+    }
+  }
+
   return (
-    <div ref={containerRef} style={{ height: `${SKILLS_DATA.length * 100}vh`, position: 'relative' }}>
-      {SKILLS_DATA.map((skill, idx) => (
-        <motion.div
-          key={idx}
+    <div
+      style={{
+        backgroundColor: current.bg,
+        transition: 'background-color 650ms cubic-bezier(0.4,0,0.2,1)',
+        fontFamily: "'Inter', sans-serif",
+        position: 'relative',
+        width: '100%',
+        overflow: 'hidden',
+      }}
+    >
+      <div style={{ position: 'relative', width: '100%', height: '100vh', overflow: 'hidden' }}>
+        {/* Grain overlay */}
+        <div
           style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100vh',
-            backgroundColor: skill.bg,
-            fontFamily: "'Inter', sans-serif",
-            overflow: 'hidden',
-            pointerEvents: idx === activeIndex ? 'auto' : 'none',
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            zIndex: 50,
+            opacity: 0.4,
+            backgroundSize: '200px 200px',
+            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
           }}
-          animate={{
-            opacity: idx === activeIndex ? 1 : 0,
+        />
+
+        {/* Giant ghost text "3D SHAPE" */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: '0 auto 0 0',
+            right: 0,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            pointerEvents: 'none',
+            userSelect: 'none',
+            zIndex: 2,
+            top: '18%',
           }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         >
-          {/* Grain overlay */}
           <div
             style={{
-              position: 'absolute',
-              inset: 0,
-              pointerEvents: 'none',
-              zIndex: 50,
-              opacity: 0.4,
-              backgroundSize: '200px 200px',
-              backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
+              fontFamily: "'Anton', sans-serif",
+              fontSize: 'clamp(90px, 28vw, 380px)',
+              fontWeight: 900,
+              color: 'white',
+              opacity: 1,
+              lineHeight: 1,
+              textTransform: 'uppercase',
+              letterSpacing: '-0.02em',
+              whiteSpace: 'nowrap',
             }}
-          />
-
-          {/* Giant ghost text */}
-          <motion.div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              pointerEvents: 'none',
-              userSelect: 'none',
-              zIndex: 2,
-            }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7, delay: 0.1 }}
           >
-            <div
-              style={{
-                fontFamily: "'Anton', sans-serif",
-                fontSize: 'clamp(90px, 28vw, 380px)',
-                fontWeight: 900,
-                color: 'white',
-                opacity: 0.08,
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.02em',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              SKILLS
-            </div>
-          </motion.div>
+            3D SHAPE
+          </div>
+        </div>
 
-          {/* Top-left brand label */}
-          <motion.div
+        {/* Top-left brand label */}
+        <div style={{ position: 'absolute', top: '1.5rem', left: '1rem', zIndex: 60 }}>
+          <div
             style={{
-              position: 'absolute',
-              top: '1.5rem',
-              left: '1rem',
-              zIndex: 60,
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              color: 'white',
+              opacity: 0.9,
+              letterSpacing: '0.18em',
+              fontFamily: "'Inter', sans-serif",
             }}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
           >
-            <div
-              style={{
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                color: 'white',
-                opacity: 0.9,
-                letterSpacing: '0.18em',
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              TOONHUB
-            </div>
-          </motion.div>
+            TOONHUB
+          </div>
+        </div>
 
-          {/* Character image */}
-          <motion.div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              display: 'flex',
-              alignItems: 'flex-end',
-              justifyContent: 'center',
-              zIndex: 10,
-            }}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.7 }}
-          >
-            <motion.img
-              src={skill.image}
-              alt={skill.title}
+        {/* Carousel */}
+        <div style={{ position: 'absolute', inset: 0, zIndex: 3 }}>
+          <div style={getItemStyles('center')}>
+            <img
+              src={current.src}
+              alt="Center"
               draggable={false}
               style={{
-                height: isMobile ? '70%' : '85%',
-                width: 'auto',
-                maxWidth: '90%',
+                width: '100%',
+                height: '100%',
                 objectFit: 'contain',
                 objectPosition: 'bottom center',
               }}
-              animate={{
-                y: [0, -10, 0],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: 'easeInOut',
+            />
+          </div>
+          <div style={getItemStyles('left')}>
+            <img
+              src={left.src}
+              alt="Left"
+              draggable={false}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'bottom center',
               }}
             />
-          </motion.div>
+          </div>
+          <div style={getItemStyles('right')}>
+            <img
+              src={right.src}
+              alt="Right"
+              draggable={false}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'bottom center',
+              }}
+            />
+          </div>
+          <div style={getItemStyles('back')}>
+            <img
+              src={back.src}
+              alt="Back"
+              draggable={false}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'contain',
+                objectPosition: 'bottom center',
+              }}
+            />
+          </div>
+        </div>
 
-          {/* Skills panel */}
-          <motion.div
+        {/* Bottom-left text + nav buttons */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '1.5rem',
+            left: '1rem',
+            zIndex: 60,
+            maxWidth: '320px',
+          }}
+          className="sm:bottom-20 sm:left-24"
+        >
+          <p
             style={{
-              position: 'absolute',
-              bottom: isMobile ? '1.5rem' : '4rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              backgroundColor: skill.panel,
-              padding: isMobile ? '1rem' : '1.5rem',
-              borderRadius: '12px',
-              zIndex: 60,
-              maxWidth: '90%',
-              width: isMobile ? '100%' : 'auto',
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              marginBottom: '0.5rem',
+              fontSize: '1rem',
+              color: 'white',
+              opacity: 0.95,
+              letterSpacing: '0.02em',
+              fontFamily: "'Inter', sans-serif",
             }}
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            className="sm:mb-3 sm:text-[22px]"
           >
-            <p
-              style={{
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                fontSize: isMobile ? '0.875rem' : '1rem',
-                color: 'white',
-                opacity: 0.9,
-                letterSpacing: '0.15em',
-                marginBottom: '0.75rem',
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              {skill.title}
-            </p>
-            <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-              {skill.skills.map((s, i) => (
-                <motion.span
-                  key={s}
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-                    color: 'white',
-                    padding: '0.4rem 0.75rem',
-                    borderRadius: '4px',
-                    fontSize: '0.75rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.1em',
-                    textTransform: 'uppercase',
-                    fontFamily: "'Inter', sans-serif",
-                  }}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 + i * 0.1 }}
-                >
-                  {s}
-                </motion.span>
-              ))}
-            </div>
-          </motion.div>
+            TOONHUB FIGURINES
+          </p>
+          <p
+            style={{
+              fontSize: '0.875rem',
+              color: 'white',
+              opacity: 0.85,
+              lineHeight: 1.6,
+              marginBottom: '1rem',
+              display: 'none',
+              fontFamily: "'Inter', sans-serif",
+            }}
+            className="sm:block sm:mb-5 sm:text-sm"
+          >
+            The artwork is stunning, shipped fully prepared. The finish is a vision, the 3D craft is flawless. Many thanks! Wishing you the win. Order now.
+          </p>
 
-          {/* Scroll hint */}
-          <motion.div
+          {/* Nav buttons */}
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              onClick={() => navigate('prev')}
+              style={{
+                width: '3rem',
+                height: '3rem',
+                backgroundColor: 'transparent',
+                border: '2px solid white',
+                borderRadius: '50%',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'transform 150ms, background-color 150ms',
+              }}
+              className="sm:w-16 sm:h-16 hover:scale-108 hover:bg-white/10"
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)'
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.12)'
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+              }}
+            >
+              <ArrowLeft size={26} strokeWidth={2.25} />
+            </button>
+            <button
+              onClick={() => navigate('next')}
+              style={{
+                width: '3rem',
+                height: '3rem',
+                backgroundColor: 'transparent',
+                border: '2px solid white',
+                borderRadius: '50%',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+                transition: 'transform 150ms, background-color 150ms',
+              }}
+              className="sm:w-16 sm:h-16 hover:scale-108 hover:bg-white/10"
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1.08)'
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = 'rgba(255,255,255,0.12)'
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.transform = 'scale(1)'
+                ;(e.currentTarget as HTMLButtonElement).style.backgroundColor = 'transparent'
+              }}
+            >
+              <ArrowRight size={26} strokeWidth={2.25} />
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom-right link "DISCOVER IT" */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: '1.5rem',
+            right: '1rem',
+            zIndex: 60,
+          }}
+          className="sm:bottom-20 sm:right-10"
+        >
+          <a
+            href="#"
             style={{
-              position: 'absolute',
-              bottom: '1.5rem',
-              left: '50%',
-              transform: 'translateX(-50%)',
-              zIndex: 60,
-              textAlign: 'center',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              fontFamily: "'Anton', sans-serif",
+              fontSize: 'clamp(20px, 4vw, 56px)',
+              fontWeight: 400,
+              color: 'white',
+              opacity: 0.95,
+              letterSpacing: '-0.02em',
+              lineHeight: 1,
+              textTransform: 'uppercase',
+              textDecoration: 'none',
+              transition: 'opacity 200ms',
             }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.opacity = '1'
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLAnchorElement).style.opacity = '0.95'
+            }}
           >
-            <motion.div
-              animate={{ y: [0, 8, 0] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
+            DISCOVER IT
+            <ArrowRight
+              size={20}
+              strokeWidth={2.25}
               style={{
-                color: 'white',
-                opacity: 0.6,
-                fontSize: '14px',
-                marginBottom: '8px',
+                width: '1.25rem',
+                height: '1.25rem',
               }}
-            >
-              ↓
-            </motion.div>
-            <div
-              style={{
-                color: 'white',
-                opacity: 0.5,
-                fontSize: '11px',
-                fontWeight: 600,
-                letterSpacing: '0.15em',
-                textTransform: 'uppercase',
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              Scroll to explore
-            </div>
-          </motion.div>
-        </motion.div>
-      ))}
+              className="sm:w-8 sm:h-8"
+            />
+          </a>
+        </div>
+
+        {/* Skills panel */}
+        <div
+          style={{
+            position: 'absolute',
+            bottom: isMobile ? '1rem' : '4rem',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            backgroundColor: current.panel,
+            padding: isMobile ? '1rem' : '1.5rem',
+            borderRadius: '12px',
+            zIndex: 60,
+            maxWidth: '90%',
+            width: isMobile ? '100%' : 'auto',
+          }}
+        >
+          <p
+            style={{
+              fontWeight: 700,
+              textTransform: 'uppercase',
+              fontSize: isMobile ? '0.875rem' : '1rem',
+              color: 'white',
+              opacity: 0.9,
+              letterSpacing: '0.15em',
+              marginBottom: '0.75rem',
+              fontFamily: "'Inter', sans-serif",
+            }}
+          >
+            {current.title}
+          </p>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            {current.skills.map((skill) => (
+              <span
+                key={skill}
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                  color: 'white',
+                  padding: '0.4rem 0.75rem',
+                  borderRadius: '4px',
+                  fontSize: '0.75rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
+                  fontFamily: "'Inter', sans-serif",
+                }}
+              >
+                {skill}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
