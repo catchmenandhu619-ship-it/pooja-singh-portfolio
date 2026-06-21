@@ -64,7 +64,7 @@ export function WorkShowcase() {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="relative z-10 max-w-2xl w-full"
+          className="relative z-10 max-w-2xl w-full overflow-hidden rounded-lg"
         >
           <video
             autoPlay
@@ -72,7 +72,10 @@ export function WorkShowcase() {
             loop
             playsInline
             preload="auto"
-            className="w-full h-auto object-contain drop-shadow-2xl"
+            className="w-full h-auto object-cover drop-shadow-2xl"
+            style={{
+              transform: 'scale(1.12)',
+            }}
             src="/assets/videos/Character_unaware_of_dinosaur_be_202606210854.mp4"
           />
         </motion.div>
@@ -87,9 +90,9 @@ export function WorkShowcase() {
               whileInView={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
               viewport={{ once: false, margin: '-100px' }}
-              className="absolute top-0 left-0 p-4 pointer-events-auto"
+              className="absolute top-8 left-6 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-xs group cursor-pointer">
+              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[0].accent }}>
                     {WORK_ITEMS[0].num} — {WORK_ITEMS[0].category}
@@ -112,9 +115,9 @@ export function WorkShowcase() {
               whileInView={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
               viewport={{ once: false, margin: '-100px' }}
-              className="absolute top-0 right-0 p-4 pointer-events-auto"
+              className="absolute top-8 right-6 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-xs group cursor-pointer">
+              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[1].accent }}>
                     {WORK_ITEMS[1].num} — {WORK_ITEMS[1].category}
@@ -137,9 +140,9 @@ export function WorkShowcase() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
               viewport={{ once: false, margin: '-100px' }}
-              className="absolute top-1/2 left-0 transform -translate-y-1/2 p-4 pointer-events-auto"
+              className="absolute top-1/2 left-6 transform -translate-y-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-xs group cursor-pointer">
+              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[2].accent }}>
                     {WORK_ITEMS[2].num} — {WORK_ITEMS[2].category}
@@ -162,9 +165,9 @@ export function WorkShowcase() {
               whileInView={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.25 }}
               viewport={{ once: false, margin: '-100px' }}
-              className="absolute top-1/2 right-0 transform -translate-y-1/2 p-4 pointer-events-auto"
+              className="absolute top-1/2 right-6 transform -translate-y-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-xs group cursor-pointer">
+              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[3].accent }}>
                     {WORK_ITEMS[3].num} — {WORK_ITEMS[3].category}
@@ -187,9 +190,9 @@ export function WorkShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
               viewport={{ once: false, margin: '-100px' }}
-              className="absolute bottom-0 left-1/2 transform -translate-x-1/2 p-4 pointer-events-auto"
+              className="absolute bottom-8 left-1/2 transform -translate-x-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-xs group cursor-pointer">
+              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[4].accent }}>
                     {WORK_ITEMS[4].num} — {WORK_ITEMS[4].category}

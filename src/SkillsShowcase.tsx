@@ -57,7 +57,12 @@ export function SkillsShowcase() {
             loop
             playsInline
             preload="auto"
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full"
+            style={{
+              objectFit: 'cover',
+              objectPosition: 'center',
+              transform: 'scale(1.08)',
+            }}
             src={section.video}
           />
 
@@ -76,8 +81,10 @@ export function SkillsShowcase() {
           <div
             className="absolute inset-0 flex items-center"
             style={{
-              paddingLeft: section.textPosition === 'left' ? 'clamp(2rem, 5vw, 4rem)' : 'auto',
-              paddingRight: section.textPosition === 'right' ? 'clamp(2rem, 5vw, 4rem)' : 'auto',
+              paddingLeft: section.textPosition === 'left' ? 'clamp(3rem, 6vw, 5rem)' : 'auto',
+              paddingRight: section.textPosition === 'right' ? 'clamp(3rem, 6vw, 5rem)' : 'auto',
+              paddingTop: 'clamp(1rem, 3vh, 2rem)',
+              paddingBottom: 'clamp(1rem, 3vh, 2rem)',
             }}
           >
             <motion.div
@@ -86,7 +93,7 @@ export function SkillsShowcase() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="relative z-10"
               style={{
-                maxWidth: '450px',
+                maxWidth: '500px',
                 marginLeft: section.textPosition === 'left' ? 0 : 'auto',
                 marginRight: section.textPosition === 'right' ? 0 : 'auto',
               }}

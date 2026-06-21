@@ -2,11 +2,11 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "pooja-portfolio",
+      "name": "dev",
       "runtimeExecutable": "npm",
       "runtimeArgs": ["run", "dev"],
       "port": 5173,
-      "cwd": "C:\\Users\\nandh\\Downloads\\pooja-portfolio"
+      "autoPort": false
     }
   ]
 }
