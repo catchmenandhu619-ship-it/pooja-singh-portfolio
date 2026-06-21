@@ -77,14 +77,11 @@ export function SkillsShowcase() {
             initial={{ opacity: 0, x: section.textPosition === 'left' ? 40 : -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="absolute z-10"
+            className="relative z-10"
             style={{
-              top: '50%',
-              transform: 'translateY(-50%)',
               maxWidth: '55%',
-              ...(section.textPosition === 'right'
-                ? { left: 'clamp(2rem, 4vw, 3.5rem)', paddingRight: '2rem' }
-                : { right: 'clamp(2rem, 4vw, 3.5rem)', paddingLeft: '2rem' }),
+              marginLeft: 'clamp(2rem, 4vw, 3.5rem)',
+              paddingRight: '2rem',
             }}
           >
               {/* Section number and category */}
@@ -92,11 +89,11 @@ export function SkillsShowcase() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.5 }}
-                className="mb-4"
+                className="mb-5"
               >
                 <span
-                  className="text-sm font-bold uppercase tracking-widest"
-                  style={{ color: section.accentColor }}
+                  className="text-xs font-black uppercase tracking-widest"
+                  style={{ color: section.accentColor, letterSpacing: '0.12em', fontWeight: 900 }}
                 >
                   [ {String(idx + 1).padStart(2, '0')} ] {section.category}
                 </span>
@@ -107,12 +104,12 @@ export function SkillsShowcase() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
-                className="font-display text-5xl sm:text-6xl lg:text-7xl font-black text-white mb-6"
+                className="font-display text-5xl sm:text-6xl lg:text-7xl text-white mb-7"
                 style={{
-                  fontFamily: "'Anton', sans-serif",
-                  lineHeight: 1.1,
-                  letterSpacing: '-0.02em',
+                  lineHeight: 1.0,
+                  letterSpacing: '0.04em',
                   textTransform: 'uppercase',
+                  fontWeight: 400,
                 }}
               >
                 {section.title.split(' ').map((word, i) => (
@@ -133,8 +130,8 @@ export function SkillsShowcase() {
                 initial={{ opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
-                className="text-base sm:text-lg text-white/85 mb-8 leading-relaxed"
-                style={{ fontFamily: "'Inter', sans-serif" }}
+                className="text-base sm:text-lg mb-6 leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500, letterSpacing: '0.005em', color: '#ffffff', textShadow: '0 2px 8px rgba(0,0,0,0.7)' }}
               >
                 {section.description}
               </motion.p>
@@ -152,13 +149,16 @@ export function SkillsShowcase() {
                     initial={{ opacity: 0, scale: 0.8 }}
                     whileInView={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.4, delay: 0.5 + i * 0.08 }}
-                    className="px-4 py-2 rounded-lg text-sm font-semibold uppercase tracking-wide"
+                    className="px-6 py-3 rounded-full text-sm font-black uppercase tracking-widest"
                     style={{
-                      backgroundColor: `${section.accentColor}22`,
-                      color: section.accentColor,
-                      border: `1.5px solid ${section.accentColor}44`,
+                      backgroundColor: `${section.accentColor}`,
+                      color: '#ffffff',
+                      border: `none`,
                       fontFamily: "'Inter', sans-serif",
-                      backdropFilter: 'blur(8px)',
+                      fontWeight: 900,
+                      letterSpacing: '0.08em',
+                      opacity: 1,
+                      boxShadow: '0 4px 15px rgba(0,0,0,0.3)',
                     }}
                   >
                     {skill}
@@ -171,7 +171,7 @@ export function SkillsShowcase() {
                 initial={{ width: 0 }}
                 whileInView={{ width: '60px' }}
                 transition={{ duration: 0.7, delay: 0.6 }}
-                className="h-1 rounded-full mt-8"
+                className="h-1 rounded-full mt-6"
                 style={{ backgroundColor: section.accentColor }}
               />
           </motion.div>

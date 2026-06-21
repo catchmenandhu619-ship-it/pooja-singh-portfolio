@@ -89,17 +89,17 @@ export function WorkShowcase() {
               viewport={{ once: false, margin: '-100px' }}
               className="absolute top-8 left-6 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[0].accent }}>
+              <div className="rounded-3xl px-7 py-6 transition-all duration-300 max-w-sm group cursor-pointer" style={{ backgroundColor: '#1e293b', border: '2px solid #ffffff', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[0].accent, letterSpacing: '0.08em' }}>
                     {WORK_ITEMS[0].num} — {WORK_ITEMS[0].category}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white/100 transition-colors" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white group-hover:text-white/100 transition-colors" />
                 </div>
-                <h3 className="font-display text-lg font-black text-white mb-2 leading-tight uppercase" style={{ letterSpacing: '-0.02em' }}>
+                <h3 className="font-display text-2xl md:text-3xl text-white mb-3 leading-tight uppercase" style={{ letterSpacing: '0.04em', fontWeight: 400, lineHeight: 1.05 }}>
                   {WORK_ITEMS[0].title.replace('\n', ' ')}
                 </h3>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-3">
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3">
                   {WORK_ITEMS[0].desc}
                 </p>
                 <div className="h-0.5 w-8 rounded-full" style={{ backgroundColor: WORK_ITEMS[0].accent }} />
@@ -114,17 +114,17 @@ export function WorkShowcase() {
               viewport={{ once: false, margin: '-100px' }}
               className="absolute top-8 right-6 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[1].accent }}>
+              <div className="rounded-3xl px-7 py-6 transition-all duration-300 max-w-sm group cursor-pointer" style={{ backgroundColor: '#1e293b', border: '2px solid #ffffff', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[1].accent, letterSpacing: '0.08em' }}>
                     {WORK_ITEMS[1].num} — {WORK_ITEMS[1].category}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white/100 transition-colors" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white group-hover:text-white/100 transition-colors" />
                 </div>
-                <h3 className="font-display text-lg font-black text-white mb-2 leading-tight uppercase" style={{ letterSpacing: '-0.02em' }}>
+                <h3 className="font-display text-2xl md:text-3xl text-white mb-3 leading-tight uppercase" style={{ letterSpacing: '0.04em', fontWeight: 400, lineHeight: 1.05 }}>
                   {WORK_ITEMS[1].title.replace('\n', ' ')}
                 </h3>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-3">
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3">
                   {WORK_ITEMS[1].desc}
                 </p>
                 <div className="h-0.5 w-8 rounded-full" style={{ backgroundColor: WORK_ITEMS[1].accent }} />
@@ -139,17 +139,17 @@ export function WorkShowcase() {
               viewport={{ once: false, margin: '-100px' }}
               className="absolute top-1/2 left-6 transform -translate-y-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[2].accent }}>
+              <div className="rounded-3xl px-7 py-6 transition-all duration-300 max-w-sm group cursor-pointer" style={{ backgroundColor: '#1e293b', border: '2px solid #ffffff', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[2].accent, letterSpacing: '0.08em' }}>
                     {WORK_ITEMS[2].num} — {WORK_ITEMS[2].category}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white/100 transition-colors" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white group-hover:text-white/100 transition-colors" />
                 </div>
-                <h3 className="font-display text-lg font-black text-white mb-2 leading-tight uppercase" style={{ letterSpacing: '-0.02em' }}>
+                <h3 className="font-display text-2xl md:text-3xl text-white mb-3 leading-tight uppercase" style={{ letterSpacing: '0.04em', fontWeight: 400, lineHeight: 1.05 }}>
                   {WORK_ITEMS[2].title.replace('\n', ' ')}
                 </h3>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-3">
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3">
                   {WORK_ITEMS[2].desc}
                 </p>
                 <div className="h-0.5 w-8 rounded-full" style={{ backgroundColor: WORK_ITEMS[2].accent }} />
@@ -164,17 +164,17 @@ export function WorkShowcase() {
               viewport={{ once: false, margin: '-100px' }}
               className="absolute top-1/2 right-6 transform -translate-y-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
+              <div className="rounded-3xl px-7 py-6 transition-all duration-300 max-w-sm group cursor-pointer" style={{ backgroundColor: '#1e293b', border: '2px solid #ffffff', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                <div className="flex items-center justify-between mb-3">
                   <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[3].accent }}>
                     {WORK_ITEMS[3].num} — {WORK_ITEMS[3].category}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white/100 transition-colors" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white/70 group-hover:text-white/100 transition-colors" />
                 </div>
-                <h3 className="font-display text-lg font-black text-white mb-2 leading-tight uppercase" style={{ letterSpacing: '-0.02em' }}>
+                <h3 className="font-display text-2xl md:text-3xl text-white mb-3 leading-tight uppercase" style={{ letterSpacing: '0.04em', fontWeight: 400, lineHeight: 1.05 }}>
                   {WORK_ITEMS[3].title.replace('\n', ' ')}
                 </h3>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-3">
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3">
                   {WORK_ITEMS[3].desc}
                 </p>
                 <div className="h-0.5 w-8 rounded-full" style={{ backgroundColor: WORK_ITEMS[3].accent }} />
@@ -189,17 +189,17 @@ export function WorkShowcase() {
               viewport={{ once: false, margin: '-100px' }}
               className="absolute bottom-8 left-1/2 transform -translate-x-1/2 p-4 pointer-events-auto"
             >
-              <div className="backdrop-blur-sm bg-black/40 border border-white/10 rounded-lg p-5 hover:border-white/30 transition-all duration-300 max-w-sm group cursor-pointer">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[4].accent }}>
+              <div className="rounded-3xl px-7 py-6 transition-all duration-300 max-w-sm group cursor-pointer" style={{ backgroundColor: '#1e293b', border: '2px solid #ffffff', boxShadow: '0 10px 30px rgba(0,0,0,0.4)' }}>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-bold uppercase tracking-widest" style={{ color: WORK_ITEMS[4].accent, letterSpacing: '0.08em' }}>
                     {WORK_ITEMS[4].num} — {WORK_ITEMS[4].category}
                   </span>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-white/50 group-hover:text-white/100 transition-colors" />
+                  <ArrowUpRight className="h-3.5 w-3.5 text-white group-hover:text-white/100 transition-colors" />
                 </div>
-                <h3 className="font-display text-lg font-black text-white mb-2 leading-tight uppercase" style={{ letterSpacing: '-0.02em' }}>
+                <h3 className="font-display text-2xl md:text-3xl text-white mb-3 leading-tight uppercase" style={{ letterSpacing: '0.04em', fontWeight: 400, lineHeight: 1.05 }}>
                   {WORK_ITEMS[4].title.replace('\n', ' ')}
                 </h3>
-                <p className="text-xs sm:text-sm text-white/80 leading-relaxed mb-3">
+                <p className="text-sm sm:text-base text-white/90 leading-relaxed mb-3">
                   {WORK_ITEMS[4].desc}
                 </p>
                 <div className="h-0.5 w-8 rounded-full" style={{ backgroundColor: WORK_ITEMS[4].accent }} />

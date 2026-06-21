@@ -223,10 +223,13 @@ export default function App() {
           muted
           loop
           playsInline
-          className="absolute inset-0 h-full w-full object-contain"
+          className="absolute inset-0 h-full w-full object-cover portrait:object-contain"
           style={{ objectPosition: 'center' }}
           src="/assets/videos/hero_main.mp4"
         />
+
+        {/* Subtle white overlay for clarity — uniform across the full video */}
+        <div className="pointer-events-none absolute inset-0 z-[1] bg-white/[0.06]" />
 
 
         {/* Navbar */}
@@ -419,7 +422,7 @@ export default function App() {
         </motion.div>
 
         {/* Main heading */}
-        <h2 className="relative z-10 mb-10 max-w-4xl text-center font-display text-[2.2rem] font-medium leading-tight tracking-tight text-[#111] drop-shadow-[0_1px_3px_rgba(255,255,255,0.95)] md:mb-14 md:text-[3.5rem]">
+        <h2 className="relative z-10 mb-10 max-w-4xl text-center font-display text-[2.2rem] font-medium leading-tight tracking-tight text-[#111] md:mb-14 md:text-[3.5rem]">
           <RevealText text="Raw footage in. Scroll-stopping stories out — editing, motion and design built to make brands" />
           {' '}<span className="text-crimson"><RevealText text="impossible to ignore." delay={0.3} /></span>
         </h2>
