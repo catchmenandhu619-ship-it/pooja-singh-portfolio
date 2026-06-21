@@ -83,46 +83,53 @@ const SKILL_CHAPTERS = [
   {
     num: '01',
     category: 'Frontend',
+    mainText: 'FRONTEND',
     title: 'REACT &\nFRAMER MOTION',
     desc: 'Pixel-perfect UI, scroll animations, and interactive design systems built for performance.',
-    ghost: 'FRONTEND',
     accent: '#00D9FF',
-    pose: 'running',
     media: '/assets/videos/char_running.mp4',
-    skillLayout: 'forward',
+    // Text positioning: where text appears in viewport
+    textPosition: 'left-center',
+    // Character positioning relative to text: 'leaning-on' | 'standing-on' | 'standing-beside' | 'emerging-from'
+    charPosition: 'leaning-on',
+    // Text scale
+    textScale: 1.2,
   },
   {
     num: '02',
     category: 'Motion Design',
+    mainText: 'MOTION',
     title: 'ANIMATION\nARCHITECTURE',
     desc: 'Scroll-driven effects, gesture-based interactions, and cinematic transitions.',
-    ghost: 'MOTION',
     accent: '#FF3D2E',
-    pose: 'grounded',
     media: '/assets/videos/char_standing.mp4',
-    skillLayout: 'vertical',
+    textPosition: 'center',
+    charPosition: 'standing-on',
+    textScale: 1.15,
   },
   {
     num: '03',
     category: 'Video Editing',
+    mainText: 'VIDEO',
     title: 'CINEMATIC\nVIDEO CRAFT',
     desc: 'Color grading, sound design, pacing—every frame engineered for maximum impact.',
-    ghost: 'VIDEO',
     accent: '#FFD700',
-    pose: 'confident',
     media: '/assets/videos/char_combat.mp4',
-    skillLayout: 'shield',
+    textPosition: 'right-center',
+    charPosition: 'standing-beside',
+    textScale: 1.18,
   },
   {
     num: '04',
     category: 'Creative Tools',
+    mainText: 'CREATIVE',
     title: 'GENERATIVE\nWORKFLOWS',
     desc: 'AI-first design: Midjourney, HeyGen, Sora—pushing the boundary of what\'s possible.',
-    ghost: 'AI',
     accent: '#00FF88',
-    pose: 'walking',
     media: '/assets/videos/char_leaning.mp4',
-    skillLayout: 'trailing',
+    textPosition: 'center-bottom',
+    charPosition: 'emerging-from',
+    textScale: 1.2,
   },
 ]
 
@@ -372,208 +379,136 @@ function ImmersiveWorkSection() {
       className="relative w-full"
       style={{ height: `${SKILL_CHAPTERS.length * 100}svh` }}
     >
-      <div className="sticky top-0 h-svh overflow-hidden bg-black">
+      <div className="sticky top-0 h-svh overflow-hidden bg-black" style={{ perspective: '1200px' }}>
 
-        {/* ── CHARACTER VIDEO (center, morphing between poses) ── */}
+        {/* ── BACKGROUND GRADIENT ── */}
+        <div
+          className="absolute inset-0"
+          style={{
+            zIndex: 0,
+            background: 'linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,40,0.9) 100%)',
+          }}
+        />
+
+        {/* ── 3D TEXT + CHARACTER STAGE ── */}
         <div
           className="pointer-events-none absolute inset-0 flex items-center justify-center"
-          style={{ zIndex: 2 }}
+          style={{ zIndex: 5, perspective: '1000px' }}
         >
           <AnimatePresence mode="wait">
             <motion.div
-              key={`char-${activeIndex}`}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}
-              className="relative"
+              key={`stage-${activeIndex}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="relative w-full h-full flex items-center justify-center"
+              style={{
+                transformStyle: 'preserve-3d',
+              }}
             >
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                preload="auto"
-                className="h-auto w-auto max-h-[85vh] max-w-[55vw]"
-                style={{ filter: 'drop-shadow(0 0 40px rgba(0,0,0,0.3))' }}
-                src={ch.media}
-              />
+              {/* ── MAIN 3D TEXT ── */}
+              <motion.div
+                initial={{
+                  opacity: 0,
+                  y: 100,
+                  x: ch.textPosition.includes('left') ? -200 : ch.textPosition.includes('right') ? 200 : 0,
+                }}
+                animate={{
+                  opacity: 1,
+                  y: 0,
+                  x: 0,
+                }}
+                transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  position: 'absolute',
+                  fontSize: `clamp(80px, ${ch.textScale * 15}vw, 320px)`,
+                  fontWeight: 900,
+                  fontFamily: 'Anton, sans-serif',
+                  textTransform: 'uppercase',
+                  letterSpacing: '-0.03em',
+                  color: ch.accent,
+                  textShadow: `
+                    0 10px 30px rgba(${parseInt(ch.accent.slice(1, 3), 16)}, ${parseInt(ch.accent.slice(3, 5), 16)}, ${parseInt(ch.accent.slice(5, 7), 16)}, 0.15),
+                    0 20px 50px rgba(0, 0, 0, 0.3),
+                    -3px -3px 0px rgba(255, 255, 255, 0.05)
+                  `,
+                  WebkitTextStroke: '0.5px rgba(255,255,255,0.1)',
+                  lineHeight: 0.9,
+                  whiteSpace: 'nowrap',
+                  zIndex: 10,
+                  transform: ch.textPosition.includes('bottom') ? 'translateY(120px)' : 'translateY(0)',
+                }}
+              >
+                {ch.mainText}
+              </motion.div>
+
+              {/* ── CHARACTER VIDEO (positioned relative to text) ── */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.7, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+                style={{
+                  position: 'absolute',
+                  zIndex: ch.charPosition === 'standing-on' ? 15 : 12,
+                  ...(ch.charPosition === 'leaning-on' && {
+                    right: '-15%',
+                    top: '50%',
+                    transform: 'translateY(-50%) rotateZ(-15deg)',
+                  }),
+                  ...(ch.charPosition === 'standing-on' && {
+                    bottom: '-10%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                  }),
+                  ...(ch.charPosition === 'standing-beside' && {
+                    left: '-10%',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                  }),
+                  ...(ch.charPosition === 'emerging-from' && {
+                    bottom: '-5%',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                  }),
+                }}
+              >
+                <video
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  preload="auto"
+                  className="h-auto w-auto max-h-[80vh] max-w-[50vw]"
+                  src={ch.media}
+                  style={{
+                    filter: `drop-shadow(0px 40px 80px rgba(${parseInt(ch.accent.slice(1, 3), 16)}, ${parseInt(ch.accent.slice(3, 5), 16)}, ${parseInt(ch.accent.slice(5, 7), 16)}, 0.25)) drop-shadow(0px 20px 40px rgba(0,0,0,0.4))`,
+                  }}
+                />
+              </motion.div>
             </motion.div>
           </AnimatePresence>
         </div>
 
-        {/* ── ACCENT COLOR GLOW behind character (resonance effect) ── */}
+        {/* ── SUBTLE ACCENT GLOW (very subtle) ── */}
         <motion.div
           className="pointer-events-none absolute"
           animate={{
-            opacity: energyPulse ? 0.18 : 0.05,
-            scale: energyPulse ? 1.12 : 1,
+            opacity: energyPulse ? 0.08 : 0.02,
           }}
-          transition={{ duration: energyPulse ? 0.3 : 0.6 }}
+          transition={{ duration: 0.6 }}
           style={{
-            zIndex: 2,
-            left: '50%', top: '50%',
-            width: '70%', height: '70%',
+            zIndex: 3,
+            left: '50%',
+            top: '50%',
+            width: '80%',
+            height: '80%',
             borderRadius: '50%',
             backgroundColor: ch.accent,
-            filter: 'blur(80px)',
+            filter: 'blur(100px)',
             transform: 'translate(-50%, -50%)',
           }}
         />
-
-        {/* ── CINEMATIC FLASH ── */}
-        <motion.div
-          className="pointer-events-none absolute inset-0"
-          animate={{ opacity: flash ? 0.22 : 0 }}
-          transition={{ duration: flash ? 0.04 : 0.3 }}
-          style={{ zIndex: 9, backgroundColor: '#fff' }}
-        />
-
-        {/* ── HORIZONTAL CUT LINES on chapter change ── */}
-        <motion.div
-          key={`ca-${lineKey}`}
-          className="pointer-events-none absolute inset-x-0"
-          initial={{ scaleX: 0, opacity: 1 }}
-          animate={{ scaleX: 1, opacity: 0 }}
-          transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
-          style={{ zIndex: 15, height: 1, backgroundColor: ch.accent, top: '31%', transformOrigin: 'left center' }}
-        />
-        <motion.div
-          key={`cb-${lineKey}`}
-          className="pointer-events-none absolute inset-x-0"
-          initial={{ scaleX: 0, opacity: 1 }}
-          animate={{ scaleX: 1, opacity: 0 }}
-          transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1], delay: 0.08 }}
-          style={{ zIndex: 15, height: 1, backgroundColor: ch.accent, top: '69%', transformOrigin: 'right center' }}
-        />
-
-        {/* ── SPOTLIGHT VIGNETTE ── */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 4,
-            background: 'radial-gradient(ellipse 56% 60% at 64% 36%, transparent 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.96) 100%)',
-          }}
-        />
-
-        {/* ── BOTTOM GRADIENT (text + watermark) ── */}
-        <div
-          className="pointer-events-none absolute inset-x-0 bottom-0"
-          style={{
-            zIndex: 4,
-            height: '62%',
-            background: 'linear-gradient(to top, rgba(0,0,0,0.99) 0%, rgba(0,0,0,0.9) 18%, rgba(0,0,0,0.55) 46%, rgba(0,0,0,0.08) 70%, transparent 100%)',
-          }}
-        />
-
-        {/* ── LEFT VIGNETTE ── */}
-        <div
-          className="pointer-events-none absolute inset-y-0 left-0"
-          style={{
-            zIndex: 4,
-            width: '46%',
-            background: 'linear-gradient(to right, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.28) 58%, transparent 100%)',
-          }}
-        />
-
-        {/* ── FILM GRAIN ── */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 5, opacity: 0.28, backgroundSize: '160px 160px',
-            backgroundImage: "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E\")",
-          }}
-        />
-
-        {/* ── SCANLINES ── */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            zIndex: 5,
-            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.07) 2px, rgba(0,0,0,0.07) 4px)',
-          }}
-        />
-
-        {/* ── GHOST WORD (accent-tinted, bigger, more presence) ── */}
-        <div
-          className="pointer-events-none absolute inset-x-0 flex select-none items-start justify-center overflow-hidden"
-          style={{ zIndex: 3, top: '5%' }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={ch.ghost}
-              initial={{ opacity: 0, y: 32, scale: 1.07 }}
-              animate={{ opacity: 0.09, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -22, scale: 0.94 }}
-              transition={{ duration: 0.95, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(100px, 34vw, 520px)',
-                color: ch.accent,
-                lineHeight: 1,
-                textTransform: 'uppercase',
-                letterSpacing: '-0.02em',
-                whiteSpace: 'nowrap',
-              }}
-            >
-              {ch.ghost}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-
-        {/* ── GIANT CHAPTER NUMBER (mega typographic backdrop, bottom-right) ── */}
-        <div
-          className="pointer-events-none absolute select-none overflow-hidden"
-          style={{ zIndex: 3, bottom: '5%', right: '-5%' }}
-        >
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={`n-${ch.num}`}
-              initial={{ opacity: 0, y: 80 }}
-              animate={{ opacity: 0.11, y: 0 }}
-              exit={{ opacity: 0, y: -55 }}
-              transition={{ duration: 0.88, ease: [0.22, 1, 0.36, 1] }}
-              style={{
-                fontFamily: 'Anton, sans-serif',
-                fontSize: 'clamp(200px, 50vw, 760px)',
-                color: ch.accent,
-                lineHeight: 0.8,
-                letterSpacing: '-0.05em',
-                display: 'block',
-              }}
-            >
-              {ch.num}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-
-        {/* ── VERTICAL CATEGORY TEXT (right side, rotated, ghostly) ── */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`vt-${activeIndex}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.7 }}
-            className="pointer-events-none absolute hidden select-none lg:block"
-            style={{
-              zIndex: 20,
-              right: '3.5rem',
-              top: '50%',
-              writingMode: 'vertical-rl',
-              transform: 'translateY(-50%) rotate(180deg)',
-              color: 'rgba(255,255,255,0.1)',
-              fontSize: '9px',
-              fontWeight: 700,
-              letterSpacing: '0.55em',
-              textTransform: 'uppercase',
-              fontFamily: 'Inter, sans-serif',
-              whiteSpace: 'nowrap',
-            }}
-          >
-            {ch.category}
-          </motion.div>
-        </AnimatePresence>
 
         {/* ── LEFT EDGE PROGRESS BAR ── */}
         <div
