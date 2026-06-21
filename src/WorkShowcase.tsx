@@ -64,8 +64,7 @@ export function WorkShowcase() {
           whileInView={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="relative z-10 max-w-2xl w-full rounded-lg drop-shadow-2xl"
-          style={{ overflow: 'hidden' }}
+          className="relative z-10 max-w-2xl w-full rounded-lg drop-shadow-2xl overflow-hidden"
         >
           <video
             autoPlay
@@ -74,15 +73,12 @@ export function WorkShowcase() {
             playsInline
             preload="auto"
             className="w-full h-auto object-cover"
-            style={{
-              transform: 'scale(1.2)',
-            }}
             src="/assets/videos/Character_unaware_of_dinosaur_be_202606210854.mp4"
           />
         </motion.div>
 
         {/* Dynamic Text Grid - Positioned around video */}
-        <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
+        <div className="absolute inset-0 pointer-events-none flex items-center justify-center z-20">
           <div className="relative w-full h-full max-w-6xl mx-auto">
 
             {/* TOP-LEFT Position - Item 01 */}

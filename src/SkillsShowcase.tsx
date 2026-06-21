@@ -50,23 +50,16 @@ export function SkillsShowcase() {
           transition={{ duration: 0.8 }}
           className="relative w-full min-h-screen overflow-hidden flex items-center"
         >
-          {/* Video container with overflow hidden for cropping */}
-          <div className="absolute inset-0 overflow-hidden">
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              preload="auto"
-              className="w-full h-full"
-              style={{
-                objectFit: 'cover',
-                objectPosition: 'center',
-                transform: 'scale(1.15)',
-              }}
-              src={section.video}
-            />
-          </div>
+          {/* Full-screen background video */}
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-cover"
+            src={section.video}
+          />
 
           {/* Overlay gradient for text readability */}
           <div
@@ -84,13 +77,14 @@ export function SkillsShowcase() {
             initial={{ opacity: 0, x: section.textPosition === 'left' ? 40 : -40 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2 }}
-            className="absolute z-10 w-1/2"
+            className="absolute z-10"
             style={{
               top: '50%',
               transform: 'translateY(-50%)',
+              maxWidth: '55%',
               ...(section.textPosition === 'right'
-                ? { left: 'clamp(2rem, 4vw, 3.5rem)' }
-                : { right: 'clamp(2rem, 4vw, 3.5rem)' }),
+                ? { left: 'clamp(2rem, 4vw, 3.5rem)', paddingRight: '2rem' }
+                : { right: 'clamp(2rem, 4vw, 3.5rem)', paddingLeft: '2rem' }),
             }}
           >
               {/* Section number and category */}
